@@ -32,9 +32,10 @@ export default function BreathRing({
   onWimHofStop,
 }: Props) {
   const offset = CIRC * (1 - Math.min(1, Math.max(0, fill)));
+  const isIdle = !running && !showWimHofPrompt;
 
   return (
-    <div className={`ring-wrap ${phaseClass}`}>
+    <div className={`ring-wrap ${phaseClass}${isIdle ? ' ring-idle' : ''}`}>
       <svg className="ring-svg" viewBox="0 0 220 220">
         <circle cx="110" cy="110" r="95" className="ring-track" />
         <circle
@@ -47,7 +48,7 @@ export default function BreathRing({
       </svg>
 
       <div className="ring-content">
-        {!running && !showWimHofPrompt && (
+        {isIdle && (
           <button className="btn-begin" onClick={onBegin}>Begin</button>
         )}
 

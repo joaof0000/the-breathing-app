@@ -8,6 +8,17 @@
   justify-content: center;
 }
 
+/* Living idle pulse — slow calm heartbeat */
+@keyframes ring-pulse {
+  0%, 100% { transform: scale(1);     filter: drop-shadow(0 0 0px transparent); }
+  50%       { transform: scale(1.022); filter: drop-shadow(0 0 18px rgba(201,168,76,0.12)); }
+}
+
+.ring-idle {
+  animation: ring-pulse 5s ease-in-out infinite;
+  will-change: transform;
+}
+
 .ring-svg {
   position: absolute;
   inset: 0;
@@ -18,7 +29,7 @@
 
 .ring-track {
   fill: none;
-  stroke: rgba(255,255,255,0.05);
+  stroke: rgba(255,255,255,0.045);
   stroke-width: 7;
 }
 
@@ -61,24 +72,31 @@
   padding: 0 1.2rem;
 }
 
+/* Begin button — elevated capsule */
 .btn-begin {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 400;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   color: var(--gold);
-  background: none;
-  border: 1px solid var(--gdim);
-  border-radius: 4px;
-  padding: 0.45rem 1.4rem;
+  background: rgba(201,168,76,0.06);
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 28px;
+  padding: 0.5rem 1.7rem;
   cursor: pointer;
-  transition: border-color 0.2s, background 0.2s, color 0.2s;
+  transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.12s, box-shadow 0.2s;
 }
 
 .btn-begin:hover {
   border-color: var(--gold);
-  background: rgba(201,168,76,0.08);
+  background: rgba(201,168,76,0.11);
   color: #e0c070;
+  box-shadow: 0 0 18px rgba(201,168,76,0.14);
+}
+
+.btn-begin:active {
+  transform: scale(0.95);
+  box-shadow: 0 0 10px rgba(201,168,76,0.2);
 }
 
 .r-phase {
@@ -153,13 +171,14 @@
   font-size: 0.8rem;
   letter-spacing: 0.08em;
   color: var(--gold);
-  background: none;
-  border: 1px solid var(--gdim);
-  border-radius: 4px;
-  padding: 0.35rem 1rem;
+  background: rgba(201,168,76,0.06);
+  border: 1px solid rgba(201,168,76,0.28);
+  border-radius: 24px;
+  padding: 0.38rem 1.1rem;
   cursor: pointer;
   margin-top: 0.3rem;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, background 0.2s, transform 0.12s;
 }
 
-.wh-stop-btn:hover { border-color: var(--gold); }
+.wh-stop-btn:hover { border-color: var(--gold); background: rgba(201,168,76,0.1); }
+.wh-stop-btn:active { transform: scale(0.95); }

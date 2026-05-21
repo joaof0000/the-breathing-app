@@ -3,8 +3,8 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-  --bg:    #0a0b12;
-  --card:  #13151f;
+  --bg:    #080912;
+  --card:  #0f1019;
   --gold:  #c9a84c;
   --gdim:  #8a7234;
   --text:  #d4cfc0;
@@ -16,12 +16,17 @@
   --ice:   #4a9ab5;
   --sun:   #d4854a;
   --moon:  #6b8ab5;
-  --bdr:   rgba(255,255,255,0.06);
+  --bdr:   rgba(255,255,255,0.055);
+}
+
+html {
+  background: radial-gradient(ellipse at 50% 20%, #0e1020 0%, #080912 55%, #050508 100%) fixed;
+  background-color: #080912;
 }
 
 body {
   font-family: 'Cormorant Garamond', serif;
-  background: var(--bg);
+  background: transparent;
   color: var(--text);
   min-height: 100dvh;
   overflow-x: hidden;

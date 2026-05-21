@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import GoalScreen from './components/GoalScreen';
 import SessionScreen from './components/SessionScreen';
+import SacredGeometry from './components/SacredGeometry';
 import './App.css';
+import './components/SacredGeometry.css';
 
 export default function App() {
   const [page, setPage] = useState<'goal' | 'session'>('goal');
@@ -22,6 +24,8 @@ export default function App() {
       <div className="grain" />
       <div className="glow glow-1" />
       <div className="glow glow-2" />
+      <div className="glow glow-3" />
+      <SacredGeometry />
 
       {page === 'goal' ? (
         <GoalScreen onSelectTech={handleSelectTech} />

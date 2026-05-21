@@ -1,27 +1,31 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Newsreader:ital,wght@0,300;0,400;1,300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Newsreader:ital,wght@0,300;0,400;1,300&family=Poppins:wght@300;400;500;600&display=swap');
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-  --bg:    #080912;
-  --card:  #0f1019;
-  --gold:  #c9a84c;
-  --gdim:  #8a7234;
-  --text:  #d4cfc0;
-  --dim:   #7a7668;
-  --faint: #4a4840;
-  --grn:   #5b8a72;
-  --pur:   #7b6b8a;
-  --fire:  #c45c3e;
-  --ice:   #4a9ab5;
-  --sun:   #d4854a;
-  --moon:  #6b8ab5;
-  --bdr:   rgba(255,255,255,0.055);
+  /* ── Sanctuary Colorway ── */
+  --bg:     #120F0D;
+  --card:   #1C1815;
+  --gold:   #E5A93C;
+  --gdim:   #B8893A;
+  --rose:   #D48C70;
+  --text:   #F2EFE9;
+  --dim:    #9A8F82;
+  --faint:  #5A5248;
+  --bdr:    rgba(229,169,60,0.1);
+
+  /* ── Breath phase colors (kept warm) ── */
+  --grn:   #6A9E7F;
+  --pur:   #8E7A9C;
+  --fire:  #D4663A;
+  --ice:   #5AAABF;
+  --sun:   #D4854A;
+  --moon:  #7A8FC2;
 }
 
 html {
-  background: radial-gradient(ellipse at 50% 20%, #0e1020 0%, #080912 55%, #050508 100%) fixed;
-  background-color: #080912;
+  background: linear-gradient(160deg, #120F0D 0%, #1A1412 60%, #150E0C 100%) fixed;
+  background-color: #120F0D;
 }
 
 body {

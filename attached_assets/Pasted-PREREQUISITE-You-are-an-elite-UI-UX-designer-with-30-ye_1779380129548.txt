@@ -1,0 +1,33 @@
+PREREQUISITE: You are an elite UI/UX designer with 30 years of experience creating transformative, high-emotional-impact digital experiences. We are overhauling a single-file breathwork app targeted at individuals battling addiction and severe anxiety. The current UI is cold, black, and rigid. We need a visual transformation so beautiful, warm, and deeply grounding that it instantly connects the user to their heart. 
+
+Do NOT touch any JavaScript logic, handlers, or counters. Completely rewrite the CSS/styles using this absolute, non-negotiable design system:
+
+1. The "Sanctuary" Colorway (Absolute Warmth):
+   - Replace the cold black background with a rich, comforting, ultra-dark gradient: from a deep velvet charcoal (#120F0D) to a warm, grounding dark espresso (#1A1412).
+   - Text color must NEVER be pure white. Use a soft, elegant cream (#F2EFE9) for high readability without eye strain.
+   - Active/Selected states must radiate a soft, warm amber/rose-gold glow (#E5A93C or #D48C70). This color represents life, heart, and warmth.
+
+2. Subliminal Sacred Geometry (The Matrix of Order):
+   - Inject a pure CSS background watermark behind the content to give the brain a subconscious sense of perfect natural order. Use this exact background property on the main container:
+     background-image: radial-gradient(rgba(229, 169, 60, 0.02) 1.5px, transparent 1.5px);
+     background-size: 32px 32px;
+   - If using SVG, center a beautifully thin, ultra-faint (opacity: 0.03) Flower of Life vector perfectly behind the central breathing circle.
+
+3. Complete "Capsule" Fluidity (Destroy the Boxes):
+   - Completely remove all harsh rectangular borders and enclosing lines. 
+   - Every single button (techniques like 4-7-8, and durations) must become a smooth, borderless capsule (border-radius: 9999px) with generous padding.
+   - Unselected buttons should melt into the background with a soft, semi-transparent warm tint (background: rgba(255, 255, 255, 0.03)).
+   - Selected buttons must softly illuminate with the warm amber glow and a very gentle blur shadow (box-shadow: 0 0 15px rgba(229, 169, 60, 0.2)).
+
+4. The Living Pulse (The Heart Anchor):
+   - The central breathing circle is the hero. Make it a perfect circle with a soft, dual-tone gradient border (Cream to Amber).
+   - Change the font inside ("Ready") to a clean, bold, modern sans-serif (like Inter or Poppins), absolutely centered.
+   - Add a permanent, incredibly slow, fluid pulsing animation to the entire circle using CSS keyframes:
+     @keyframes heartPulse {
+       0% { transform: scale(1); opacity: 0.9; }
+       50% { transform: scale(1.04); opacity: 1; filter: drop-shadow(0 0 12px rgba(229, 169, 60, 0.15)); }
+       100% { transform: scale(1); opacity: 0.9; }
+     }
+     Apply this animation (duration: 4s, infinite, ease-in-out) so the circle literally breathes on its own, inviting the user to match its rhythm before they even tap it.
+
+Execute this transformation with maximum visual precision. Make it look stunning, premium, and deeply soulful.

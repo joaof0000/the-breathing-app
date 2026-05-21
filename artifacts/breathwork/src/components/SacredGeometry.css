@@ -7,14 +7,14 @@
   height: min(680px, 130vw);
   pointer-events: none;
   z-index: 0;
-  opacity: 0.028;
-  animation: geo-breathe 18s ease-in-out infinite;
+  opacity: 0.03;
+  animation: geo-breathe 20s ease-in-out infinite;
   will-change: opacity;
 }
 
 @keyframes geo-breathe {
-  0%, 100% { opacity: 0.022; }
-  50%       { opacity: 0.036; }
+  0%, 100% { opacity: 0.024; }
+  50%       { opacity: 0.04; }
 }
 
 .sacred-geometry-svg {

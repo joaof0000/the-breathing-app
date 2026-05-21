@@ -8,15 +8,34 @@
   justify-content: center;
 }
 
-/* Living idle pulse — slow calm heartbeat */
-@keyframes ring-pulse {
-  0%, 100% { transform: scale(1);     filter: drop-shadow(0 0 0px transparent); }
-  50%       { transform: scale(1.022); filter: drop-shadow(0 0 18px rgba(201,168,76,0.12)); }
+/* ── Cream-to-amber gradient halo border ── */
+.ring-wrap::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background: conic-gradient(
+    #F2EFE9 0%,
+    #E5A93C 30%,
+    #D48C70 58%,
+    #E5A93C 75%,
+    #F2EFE9 100%
+  );
+  opacity: 0.09;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ── The Living Pulse — permanent heartbeat when idle ── */
+@keyframes heartPulse {
+  0%   { transform: scale(1);    opacity: 0.9; }
+  50%  { transform: scale(1.04); opacity: 1;   filter: drop-shadow(0 0 12px rgba(229,169,60,0.15)); }
+  100% { transform: scale(1);    opacity: 0.9; }
 }
 
 .ring-idle {
-  animation: ring-pulse 5s ease-in-out infinite;
-  will-change: transform;
+  animation: heartPulse 4s ease-in-out infinite;
+  will-change: transform, opacity;
 }
 
 .ring-svg {
@@ -25,11 +44,12 @@
   width: 100%;
   height: 100%;
   transform: rotate(-90deg);
+  z-index: 1;
 }
 
 .ring-track {
   fill: none;
-  stroke: rgba(255,255,255,0.045);
+  stroke: rgba(242,239,233,0.055);
   stroke-width: 7;
 }
 
@@ -38,28 +58,28 @@
   stroke-width: 7;
   stroke-linecap: round;
   stroke: var(--gold);
-  filter: drop-shadow(0 0 6px rgba(201,168,76,0.5));
+  filter: drop-shadow(0 0 7px rgba(229,169,60,0.45));
 }
 
 /* Phase color overrides */
-.p-inhale  .ring-fill { stroke: #5b8a72; filter: drop-shadow(0 0 6px rgba(91,138,114,0.5)); }
-.p-hold    .ring-fill { stroke: #7b6b8a; filter: drop-shadow(0 0 6px rgba(123,107,138,0.5)); }
-.p-hold2   .ring-fill { stroke: #6b6070; filter: drop-shadow(0 0 6px rgba(107,96,112,0.5)); }
-.p-exhale  .ring-fill { stroke: #4a9ab5; filter: drop-shadow(0 0 6px rgba(74,154,181,0.5)); }
-.p-fire    .ring-fill { stroke: #c45c3e; filter: drop-shadow(0 0 6px rgba(196,92,62,0.5)); }
-.p-ret     .ring-fill { stroke: #3a5a8a; filter: drop-shadow(0 0 6px rgba(58,90,138,0.5)); }
-.p-sun     .ring-fill { stroke: #d4854a; filter: drop-shadow(0 0 6px rgba(212,133,74,0.5)); }
-.p-moon    .ring-fill { stroke: #6b8ab5; filter: drop-shadow(0 0 6px rgba(107,138,181,0.5)); }
+.p-inhale  .ring-fill { stroke: #6A9E7F; filter: drop-shadow(0 0 7px rgba(106,158,127,0.45)); }
+.p-hold    .ring-fill { stroke: #8E7A9C; filter: drop-shadow(0 0 7px rgba(142,122,156,0.45)); }
+.p-hold2   .ring-fill { stroke: #7A6E7A; filter: drop-shadow(0 0 7px rgba(122,110,122,0.45)); }
+.p-exhale  .ring-fill { stroke: #5AAABF; filter: drop-shadow(0 0 7px rgba(90,170,191,0.45)); }
+.p-fire    .ring-fill { stroke: #D4663A; filter: drop-shadow(0 0 7px rgba(212,102,58,0.45)); }
+.p-ret     .ring-fill { stroke: #4A6A9A; filter: drop-shadow(0 0 7px rgba(74,106,154,0.45)); }
+.p-sun     .ring-fill { stroke: #D4854A; filter: drop-shadow(0 0 7px rgba(212,133,74,0.45)); }
+.p-moon    .ring-fill { stroke: #7A8FC2; filter: drop-shadow(0 0 7px rgba(122,143,194,0.45)); }
 
 /* Phase label color */
-.p-inhale  .r-phase { color: #5b8a72; }
-.p-hold    .r-phase { color: #7b6b8a; }
-.p-hold2   .r-phase { color: #6b6070; }
-.p-exhale  .r-phase { color: #4a9ab5; }
-.p-fire    .r-phase { color: #c45c3e; }
-.p-ret     .r-phase { color: #3a5a8a; }
-.p-sun     .r-phase { color: #d4854a; }
-.p-moon    .r-phase { color: #6b8ab5; }
+.p-inhale  .r-phase { color: #6A9E7F; }
+.p-hold    .r-phase { color: #8E7A9C; }
+.p-hold2   .r-phase { color: #7A6E7A; }
+.p-exhale  .r-phase { color: #5AAABF; }
+.p-fire    .r-phase { color: #D4663A; }
+.p-ret     .r-phase { color: #4A6A9A; }
+.p-sun     .r-phase { color: #D4854A; }
+.p-moon    .r-phase { color: #7A8FC2; }
 
 .ring-content {
   position: relative;
@@ -72,31 +92,31 @@
   padding: 0 1.2rem;
 }
 
-/* Begin button — elevated capsule */
+/* ── Begin — Poppins capsule ── */
 .btn-begin {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.05rem;
-  font-weight: 400;
-  letter-spacing: 0.14em;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--gold);
-  background: rgba(201,168,76,0.06);
-  border: 1px solid rgba(201,168,76,0.3);
-  border-radius: 28px;
-  padding: 0.5rem 1.7rem;
+  background: rgba(229,169,60,0.07);
+  border: 1px solid rgba(229,169,60,0.22);
+  border-radius: 9999px;
+  padding: 0.52rem 1.8rem;
   cursor: pointer;
-  transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.12s, box-shadow 0.2s;
+  transition: background 0.2s, border-color 0.2s, transform 0.12s, box-shadow 0.2s;
 }
 
 .btn-begin:hover {
-  border-color: var(--gold);
-  background: rgba(201,168,76,0.11);
-  color: #e0c070;
-  box-shadow: 0 0 18px rgba(201,168,76,0.14);
+  background: rgba(229,169,60,0.12);
+  border-color: rgba(229,169,60,0.45);
+  box-shadow: 0 0 18px rgba(229,169,60,0.18);
 }
 
 .btn-begin:active {
   transform: scale(0.95);
-  box-shadow: 0 0 10px rgba(201,168,76,0.2);
+  box-shadow: 0 0 22px rgba(229,169,60,0.25);
 }
 
 .r-phase {
@@ -108,9 +128,10 @@
   color: var(--gold);
 }
 
+/* Poppins for the countdown number — clean, modern, bold */
 .r-count {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(2rem, 8vw, 3rem);
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(1.9rem, 8vw, 2.8rem);
   font-weight: 300;
   color: var(--text);
   letter-spacing: -0.02em;
@@ -159,26 +180,30 @@
 }
 
 .wh-live-timer {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2.4rem;
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.2rem;
   font-weight: 300;
-  color: #4a9ab5;
+  color: #5AAABF;
   letter-spacing: -0.02em;
 }
 
 .wh-stop-btn {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 0.8rem;
-  letter-spacing: 0.08em;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
   color: var(--gold);
-  background: rgba(201,168,76,0.06);
-  border: 1px solid rgba(201,168,76,0.28);
-  border-radius: 24px;
-  padding: 0.38rem 1.1rem;
+  background: rgba(229,169,60,0.07);
+  border: 1px solid rgba(229,169,60,0.22);
+  border-radius: 9999px;
+  padding: 0.4rem 1.2rem;
   cursor: pointer;
   margin-top: 0.3rem;
   transition: border-color 0.2s, background 0.2s, transform 0.12s;
 }
 
-.wh-stop-btn:hover { border-color: var(--gold); background: rgba(201,168,76,0.1); }
+.wh-stop-btn:hover {
+  border-color: rgba(229,169,60,0.45);
+  background: rgba(229,169,60,0.11);
+}
 .wh-stop-btn:active { transform: scale(0.95); }

@@ -1,0 +1,27 @@
+### Objective
+Modify the second page of the existing breathwork application to incorporate a strategic Intention Setting layout before a session begins, a transitional flash screen animation, and an integrated post-session Journal Module inside the central display ring. 
+
+### Core System Requirements
+
+1. **Intention Configuration Block (Page 2 Options Panel)**
+   - Directly underneath the active breathwork options panel (and above the Begin control trigger), insert a dedicated input layer titled "Your Intention".
+   - **Input UI Element:** A text fields input that takes an anchor thought or focus phrase (e.g., "To anchor my awareness completely into the current action.")
+   - **Guidance Mechanism ("Inspire Me"):** Right next to the text field input, insert an minimalist text link button called "Inspire Me". Clicking it cycles randomly through a list of foundational focus anchors to aid users who lack immediate clarity.
+   - **Styling:** Keep it visually integrated with the dark palette, utilizing low-opacity background bounds, `--bdr` variables, and the serif italic text aesthetic of the `'Newsreader'` typography framework.
+
+2. **Transitional Intention Flash Screen Animation**
+   - When the user hits the "Begin" action button, check if an intention is present.
+   - If an intention exists, pause the execution of the breathwork loop or timer engine for exactly 3 seconds.
+   - During these 3 seconds, display a full-screen or layered card overlay containing only the text of their written intention rendered in large, clear typography.
+   - Apply a elegant, smooth fade-in and scale-up CSS transitions to draw focus into the words.
+   - Once the 3-second flash window expires, automatically fade out the text screen gracefully and execute the target breathing protocol loop seamlessly.
+
+3. **Integrated Post-Session Journal Module**
+   - When the breathwork tracking loop hits the 'Complete' state, do not instantly show the 'Ready' text layout.
+   - Instead, conditionally swap out the central HTML structure within the `.ring-center` selector container. Hide the metrics/phase variables (`#ringActiveUI`) and display a compact form (`#ringJournalUI`).
+   - **Form Layout Elements:** 
+     * An elegant label text reading "Capture Your Insight".
+     * A simple, low-opacity text entry or text area element focused on immediate sharing (e.g., "What shifted during this practice?").
+     * An uppercase action trigger button: "Save Insight".
+   - **Integration Actions:** Clicking "Save Insight" must capture the typed string text, save it dynamically into the active LocalStorage state object array mapped specifically to that completed session's timestamp ID, and cleanly toggle back to the original operational UI.
+   - Update your historical session tracking template logic so that this saved insight shows up in the "View full session history" table matrix data data, and append it as a clean new string field column value on your CSV Export method function data lines.

@@ -8,6 +8,7 @@ export interface SessionRecord {
   ts: number;
   time: string;
   dur: number;
+  insight?: string;
 }
 
 function todayStr() {
@@ -36,6 +37,15 @@ export function saveSessions(s: SessionRecord[]) {
   try { localStorage.setItem(SK, JSON.stringify(s)); } catch { /* empty */ }
 }
 
+export function addInsight(ts: number, insight: string) {
+  const sessions = loadSessions();
+  const idx = sessions.findIndex(s => s.ts === ts);
+  if (idx !== -1) {
+    sessions[idx] = { ...sessions[idx], insight: insight.trim() };
+    saveSessions(sessions);
+  }
+}
+
 export function calcStreak(sess: SessionRecord[]): number {
   if (!sess.length) return 0;
   const days = [...new Set(sess.map(s => s.date))].sort();
@@ -53,12 +63,14 @@ export function calcStreak(sess: SessionRecord[]): number {
 }
 
 export function useSessionStorage() {
-  const record = useCallback((tech: string, durSecs: number) => {
+  const record = useCallback((tech: string, durSecs: number): number => {
     const s = loadSessions();
     const now = new Date();
     const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
-    s.push({ date: todayStr(), tech, ts: Date.now(), time: timeStr, dur: durSecs || 0 });
+    const ts = Date.now();
+    s.push({ date: todayStr(), tech, ts, time: timeStr, dur: durSecs || 0 });
     saveSessions(s);
+    return ts;
   }, []);
 
   const reset = useCallback(() => {

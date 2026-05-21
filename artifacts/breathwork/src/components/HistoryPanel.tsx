@@ -30,9 +30,17 @@ export default function HistoryPanel({ refreshKey, onRefresh }: Props) {
     return sessions.filter(s => s.tech === filter);
   }, [sessions, filter]);
 
+  const hasInsights = useMemo(() => sessions.some(s => s.insight), [sessions]);
+
   const exportCSV = () => {
-    const rows = [['Date', 'Time', 'Technique', 'Duration']];
-    sessions.forEach(s => rows.push([s.date, s.time, TECH_LABELS[s.tech] || s.tech, fmtDur(s.dur)]));
+    const headers = ['Date', 'Time', 'Technique', 'Duration'];
+    if (hasInsights) headers.push('Insight');
+    const rows = [headers];
+    sessions.forEach(s => {
+      const row = [s.date, s.time, TECH_LABELS[s.tech] || s.tech, fmtDur(s.dur)];
+      if (hasInsights) row.push(s.insight ? `"${s.insight.replace(/"/g, '""')}"` : '');
+      rows.push(row);
+    });
     const csv = rows.map(r => r.join(',')).join('\n');
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
@@ -76,6 +84,7 @@ export default function HistoryPanel({ refreshKey, onRefresh }: Props) {
                   <th>Technique</th>
                   <th>Duration</th>
                   <th>Time</th>
+                  {hasInsights && <th>Insight</th>}
                 </tr>
               </thead>
               <tbody>
@@ -85,6 +94,9 @@ export default function HistoryPanel({ refreshKey, onRefresh }: Props) {
                     <td>{TECH_LABELS[s.tech] || s.tech}</td>
                     <td>{fmtDur(s.dur)}</td>
                     <td>{s.time}</td>
+                    {hasInsights && (
+                      <td className="history-insight">{s.insight || '—'}</td>
+                    )}
                   </tr>
                 ))}
               </tbody>

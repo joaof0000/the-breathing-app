@@ -8,13 +8,28 @@ import HistoryPanel from './HistoryPanel';
 import ReferenceTable from './ReferenceTable';
 import { TABS, NOSTRIL_TECHS, PUMP_TECHS, YT_LINKS, YT_LABELS, REC_DURATION, getPhases } from '../data/techniques';
 import { useAudio } from '../hooks/useAudio';
-import { useSessionStorage } from '../hooks/useSessionStorage';
+import { useSessionStorage, addInsight } from '../hooks/useSessionStorage';
 import './SessionScreen.css';
 
 interface Props {
   initialTech: string | null;
   onBack: () => void;
 }
+
+const INTENTION_ANCHORS = [
+  'To anchor my awareness completely into the present moment.',
+  'To release what no longer serves me with each exhale.',
+  'To meet myself with compassion and without judgment.',
+  'To return to the stillness that is always present beneath thought.',
+  'To breathe life into the version of myself I am becoming.',
+  'To let my nervous system know it is safe.',
+  'To transmute restless energy into focused clarity.',
+  'To practice showing up — one breath at a time.',
+  'To feel, rather than think, my way through this moment.',
+  'To honor my body\'s intelligence and wisdom.',
+  'To open space for healing without forcing anything.',
+  'To be present with whatever arises — fully and without resistance.',
+];
 
 function fmtTime(s: number) {
   const m = Math.floor(s / 60);
@@ -34,6 +49,16 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
   const [infoOpen, setInfoOpen] = useState(false);
   const [running, setRunning] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+
+  // Intention state
+  const [intention, setIntention] = useState('');
+  const [inspireIdx, setInspireIdx] = useState(0);
+  const [intentionFlash, setIntentionFlash] = useState(false);
+
+  // Journal state
+  const [journalMode, setJournalMode] = useState(false);
+  const [journalText, setJournalText] = useState('');
+  const lastSessionTsRef = useRef<number>(0);
 
   // Ring state
   const [fill, setFill] = useState(0);
@@ -81,7 +106,8 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
 
   const finishSession = useCallback((techUsed: string) => {
     const elapsed = Math.floor((Date.now() - sessionStartRef.current) / 1000);
-    record(techUsed, elapsed);
+    const ts = record(techUsed, elapsed);
+    lastSessionTsRef.current = ts;
     setRefreshKey(k => k + 1);
     audio.doneTone();
     setRunning(false);
@@ -94,6 +120,8 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
     setNostrilL('idle');
     setNostrilR('idle');
     stopAllEngines();
+    setJournalMode(true);
+    setJournalText('');
   }, [record, audio, stopAllEngines]);
 
   const stopSession = useCallback(() => {
@@ -121,7 +149,6 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
     let phaseIdx = 0;
     let phaseStart = performance.now();
     let lastTick = -1;
-    let elapsedTotal = 0;
     sessionStartRef.current = Date.now();
 
     const playPhaseSound = (p: typeof phases[0]) => {
@@ -156,7 +183,6 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
       const p = phases[phaseIdx];
       const elapsed = (now - phaseStart) / 1000;
       const remaining = p.s - elapsed;
-      elapsedTotal = (now - performance.now()) + (durMin * 60);
 
       const totalElapsed = (Date.now() - sessionStartRef.current) / 1000;
       if (totalElapsed >= totalSecs) {
@@ -324,7 +350,6 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
           setRingInfo(`Breath ${breathCount} of ${BREATH_COUNT}`);
 
           if (breathCount >= BREATH_COUNT) {
-            // Go to retention
             audio.S.exhale();
             setPhaseClass('p-ret');
             setPhaseName('Exhale fully — Hold empty');
@@ -334,7 +359,7 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
             setWhWaiting(true);
             whRetStartRef.current = Date.now();
 
-            const retLoop = (ts: number) => {
+            const retLoop = (_ts: number) => {
               if (!runningRef.current || !whWaitingRef.current) return;
               const retSecs = Math.floor((Date.now() - whRetStartRef.current) / 1000);
               setWhLiveTimer(fmtTime(retSecs));
@@ -348,7 +373,6 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
               setWhWaiting(false);
               if (whRafRef.current) { cancelAnimationFrame(whRafRef.current); whRafRef.current = null; }
 
-              // Recovery breath
               setPhaseClass('p-inhale');
               setPhaseName('Deep Inhale — Hold 15s');
               setRingInfo('Recovery breath');
@@ -391,20 +415,32 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
     doRound();
   }, [whRounds, audio, finishSession]);
 
-  const beginSession = useCallback(() => {
-    audio.ensureAC();
+  // Launch engines (shared by beginSession and intention flash)
+  const launchEngines = useCallback(() => {
     setRunning(true);
     runningRef.current = true;
     whWaitingRef.current = false;
     setWhWaiting(false);
     setWhLiveTimer('');
     setWhPromptText('');
-
     if (tech === 'wimhof') { startWimHof(); return; }
     if (tech === 'bhramari') { startBhramari(); return; }
     if (PUMP_TECHS.includes(tech)) { startPump(tech); return; }
     startDuration(tech);
-  }, [tech, audio, startWimHof, startBhramari, startPump, startDuration]);
+  }, [tech, startWimHof, startBhramari, startPump, startDuration]);
+
+  const beginSession = useCallback(() => {
+    audio.ensureAC();
+    if (intention.trim()) {
+      setIntentionFlash(true);
+      setTimeout(() => {
+        setIntentionFlash(false);
+        launchEngines();
+      }, 3000);
+      return;
+    }
+    launchEngines();
+  }, [audio, intention, launchEngines]);
 
   const handleWimHofStop = useCallback(() => {
     if (whStopRetRef.current) {
@@ -415,18 +451,36 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
     }
   }, [stopSession]);
 
+  const handleSaveInsight = useCallback(() => {
+    if (journalText.trim() && lastSessionTsRef.current) {
+      addInsight(lastSessionTsRef.current, journalText.trim());
+      setRefreshKey(k => k + 1);
+    }
+    setJournalMode(false);
+    setJournalText('');
+  }, [journalText]);
+
+  const handleSkipInsight = useCallback(() => {
+    setJournalMode(false);
+    setJournalText('');
+  }, []);
+
+  const handleInspireMe = useCallback(() => {
+    const next = (inspireIdx + 1) % INTENTION_ANCHORS.length;
+    setInspireIdx(next);
+    setIntention(INTENTION_ANCHORS[next]);
+  }, [inspireIdx]);
+
   const activateTech = useCallback((t: string) => {
     if (running) stopSession();
     setTech(t);
     setInfoOpen(false);
-    // Scroll tab into view
     setTimeout(() => {
       const tab = tabsRef.current?.querySelector(`[data-t="${t}"]`) as HTMLElement;
       if (tab) tab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     }, 50);
   }, [running, stopSession]);
 
-  // Activate initialTech
   useEffect(() => {
     if (initialTech) {
       setTech(initialTech);
@@ -455,6 +509,16 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
 
   return (
     <div className="page2-scroll">
+      {/* Intention Flash Overlay */}
+      {intentionFlash && (
+        <div className="intention-flash">
+          <div className="intention-flash-card">
+            <div className="intention-flash-label">Your intention</div>
+            <div className="intention-flash-text">{intention}</div>
+          </div>
+        </div>
+      )}
+
       <div className="wrap">
         <h1>
           <button className="back-btn" onClick={onBack}>←</button>
@@ -489,6 +553,11 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
           wimHofPromptText={whPromptText}
           wimHofLiveTimer={whLiveTimer}
           onWimHofStop={handleWimHofStop}
+          showJournal={journalMode}
+          journalText={journalText}
+          onJournalChange={setJournalText}
+          onSaveInsight={handleSaveInsight}
+          onSkipInsight={handleSkipInsight}
         />
 
         {showNostril && (
@@ -596,6 +665,21 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
           )}
 
           {recDur && <div className="rec-label">{recDur}</div>}
+
+          {/* Intention Block */}
+          <div className="intention-block">
+            <div className="intention-header">
+              <span className="intention-title">Your Intention</span>
+              <button className="inspire-btn" onClick={handleInspireMe}>Inspire Me</button>
+            </div>
+            <textarea
+              className="intention-input"
+              placeholder="An anchor thought or focus phrase for this session…"
+              value={intention}
+              onChange={e => setIntention(e.target.value)}
+              rows={2}
+            />
+          </div>
 
           <button className="info-link" onClick={() => setInfoOpen(o => !o)}>
             {infoOpen ? 'Hide info ↑' : 'How does this work? ↓'}

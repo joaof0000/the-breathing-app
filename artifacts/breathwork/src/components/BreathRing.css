@@ -169,6 +169,84 @@
 
 .btn-stop:hover { color: var(--dim); }
 
+/* ── Post-Session Journal (inside ring) ── */
+.journal-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0 0.4rem;
+  width: 100%;
+  animation: fi 0.4s ease forwards;
+}
+
+@keyframes fi {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.journal-label {
+  font-family: 'Newsreader', serif;
+  font-size: 0.7rem;
+  font-style: italic;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+.journal-textarea {
+  width: 100%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(229,169,60,0.12);
+  border-radius: 12px;
+  color: var(--text);
+  font-family: 'Newsreader', serif;
+  font-size: 0.72rem;
+  font-style: italic;
+  line-height: 1.45;
+  padding: 0.45rem 0.55rem;
+  resize: none;
+  box-sizing: border-box;
+  text-align: center;
+}
+.journal-textarea::placeholder { color: var(--faint); }
+.journal-textarea:focus {
+  outline: none;
+  border-color: rgba(229,169,60,0.25);
+  background: rgba(255,255,255,0.055);
+}
+
+.journal-save-btn {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #120F0D;
+  background: #E5A93C;
+  border: none;
+  border-radius: 9999px;
+  padding: 0.42rem 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 0 16px rgba(229,169,60,0.35);
+  transition: box-shadow 0.2s, transform 0.12s;
+}
+.journal-save-btn:hover { box-shadow: 0 0 24px rgba(229,169,60,0.5); }
+.journal-save-btn:active { transform: scale(0.95); }
+
+.journal-skip-btn {
+  background: none;
+  border: none;
+  font-family: 'Newsreader', serif;
+  font-size: 0.65rem;
+  font-style: italic;
+  color: var(--faint);
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 0;
+}
+.journal-skip-btn:hover { color: var(--dim); }
+
 /* Wim Hof prompt */
 .wh-prompt {
   display: flex;

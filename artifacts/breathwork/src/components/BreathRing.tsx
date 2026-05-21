@@ -13,6 +13,11 @@ interface Props {
   wimHofPromptText?: string;
   wimHofLiveTimer?: string;
   onWimHofStop?: () => void;
+  showJournal?: boolean;
+  journalText?: string;
+  onJournalChange?: (t: string) => void;
+  onSaveInsight?: () => void;
+  onSkipInsight?: () => void;
 }
 
 const CIRC = 2 * Math.PI * 95;
@@ -30,9 +35,14 @@ export default function BreathRing({
   wimHofPromptText,
   wimHofLiveTimer,
   onWimHofStop,
+  showJournal,
+  journalText,
+  onJournalChange,
+  onSaveInsight,
+  onSkipInsight,
 }: Props) {
   const offset = CIRC * (1 - Math.min(1, Math.max(0, fill)));
-  const isIdle = !running && !showWimHofPrompt;
+  const isIdle = !running && !showWimHofPrompt && !showJournal;
 
   return (
     <div className={`ring-wrap ${phaseClass}${isIdle ? ' ring-idle' : ''}`}>
@@ -52,7 +62,7 @@ export default function BreathRing({
           <button className="btn-begin" onClick={onBegin}>Begin</button>
         )}
 
-        {running && !showWimHofPrompt && (
+        {running && !showWimHofPrompt && !showJournal && (
           <>
             <div className="r-phase">{phaseName}</div>
             <div className="r-count">{countdown}</div>
@@ -70,6 +80,25 @@ export default function BreathRing({
                 {wimHofPromptText?.includes('Breathe') ? '■ Stop' : 'Breathe now →'}
               </button>
             )}
+          </div>
+        )}
+
+        {showJournal && (
+          <div className="journal-prompt">
+            <div className="journal-label">Capture Your Insight</div>
+            <textarea
+              className="journal-textarea"
+              placeholder="What shifted during this practice?"
+              value={journalText}
+              onChange={e => onJournalChange?.(e.target.value)}
+              rows={3}
+            />
+            <button className="journal-save-btn" onClick={onSaveInsight}>
+              Save Insight
+            </button>
+            <button className="journal-skip-btn" onClick={onSkipInsight}>
+              skip
+            </button>
           </div>
         )}
       </div>

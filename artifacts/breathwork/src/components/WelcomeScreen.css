@@ -1,0 +1,110 @@
+.welcome {
+  position: relative;
+  z-index: 10;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+}
+
+.welcome-inner {
+  max-width: 420px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  animation: welcome-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes welcome-rise {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.welcome-symbol {
+  width: 72px;
+  height: 72px;
+  color: var(--gold);
+  opacity: 0.85;
+  animation: welcome-breathe 5s ease-in-out infinite;
+}
+
+@keyframes welcome-breathe {
+  0%, 100% { transform: scale(1);   opacity: 0.75; }
+  50%       { transform: scale(1.07); opacity: 1; }
+}
+
+.welcome-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(2.6rem, 8vw, 3.4rem);
+  font-weight: 300;
+  letter-spacing: 0.12em;
+  color: var(--text);
+  text-align: center;
+  line-height: 1;
+  margin-bottom: -0.5rem;
+}
+
+.welcome-tagline {
+  font-family: 'Newsreader', Georgia, serif;
+  font-style: italic;
+  font-size: 1rem;
+  font-weight: 300;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+  text-align: center;
+  opacity: 0.9;
+}
+
+.welcome-body {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 300;
+  line-height: 1.75;
+  color: var(--dim);
+  text-align: center;
+  max-width: 360px;
+}
+
+.welcome-btn {
+  margin-top: 0.5rem;
+  padding: 0.85rem 3.5rem;
+  background: transparent;
+  border: 1px solid var(--gold);
+  border-radius: 3px;
+  color: var(--gold);
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.welcome-btn:hover {
+  background: rgba(229, 169, 60, 0.12);
+  box-shadow: 0 0 24px rgba(229, 169, 60, 0.18);
+  color: var(--text);
+}
+
+.welcome-btn:active {
+  background: rgba(229, 169, 60, 0.2);
+}
+
+.welcome-hint {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 300;
+  color: var(--faint);
+  letter-spacing: 0.03em;
+  text-align: center;
+}

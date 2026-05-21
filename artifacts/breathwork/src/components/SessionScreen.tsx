@@ -6,7 +6,6 @@ import Tracker from './Tracker';
 import Heatmap from './Heatmap';
 import HistoryPanel from './HistoryPanel';
 import ReferenceTable from './ReferenceTable';
-import GratitudePicker from './GratitudePicker';
 import { TABS, NOSTRIL_TECHS, PUMP_TECHS, YT_LINKS, YT_LABELS, REC_DURATION, TECH_LABELS, getPhases } from '../data/techniques';
 import { useAudio } from '../hooks/useAudio';
 import { useSessionStorage, addInsight } from '../hooks/useSessionStorage';
@@ -15,6 +14,7 @@ import './SessionScreen.css';
 interface Props {
   initialTech: string | null;
   onBack: () => void;
+  gratitude: string;
 }
 
 const INTENTION_ANCHORS = [
@@ -38,7 +38,7 @@ function fmtTime(s: number) {
   return m > 0 ? m + ':' + String(sc).padStart(2, '0') : String(sc);
 }
 
-export default function SessionScreen({ initialTech, onBack }: Props) {
+export default function SessionScreen({ initialTech, onBack, gratitude }: Props) {
   const [tech, setTech] = useState(initialTech || '478');
   const [volume, setVolume] = useState(60);
   const [durMin, setDurMin] = useState(5);
@@ -55,9 +55,6 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
   const [intention, setIntention] = useState('');
   const [inspireIdx, setInspireIdx] = useState(0);
   const [intentionFlash, setIntentionFlash] = useState(false);
-
-  // Gratitude state
-  const [gratitude, setGratitude] = useState('');
 
   // Journal state
   const [journalMode, setJournalMode] = useState(false);
@@ -520,12 +517,7 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
             ))}
           </div>
 
-          {/* Gratitude Picker — above the ring */}
-          {isIdle && (
-            <GratitudePicker selected={gratitude} onSelect={setGratitude} />
-          )}
-
-          {/* Intention Block — below gratitude, above ring */}
+          {/* Intention Block — above ring */}
           {isIdle && (
             <div className="intention-block">
               <div className="intention-header">

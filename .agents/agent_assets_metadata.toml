@@ -1,0 +1,8 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "vtalvwmn-wJK26f3Z7AzE"
+uri = "file://artifacts/breathwork/src/assets/hero.png"
+type = "image"
+title = "generated_image"

@@ -9,17 +9,13 @@ import './components/SacredGeometry.css';
 const WELCOME_KEY = 'breathwork_welcomed';
 
 function hasSeenWelcome(): boolean {
-  try {
-    return localStorage.getItem(WELCOME_KEY) === '1';
-  } catch {
-    return false;
-  }
+  try { return localStorage.getItem(WELCOME_KEY) === '1'; }
+  catch { return false; }
 }
 
 function markWelcomeSeen() {
-  try {
-    localStorage.setItem(WELCOME_KEY, '1');
-  } catch { /* empty */ }
+  try { localStorage.setItem(WELCOME_KEY, '1'); }
+  catch { /* empty */ }
 }
 
 export default function App() {
@@ -27,11 +23,9 @@ export default function App() {
     hasSeenWelcome() ? 'goal' : 'welcome'
   );
   const [selectedTech, setSelectedTech] = useState<string | null>(null);
+  const [gratitude, setGratitude] = useState('');
 
-  const handleBegin = () => {
-    markWelcomeSeen();
-    setPage('goal');
-  };
+  const handleBegin = () => { markWelcomeSeen(); setPage('goal'); };
 
   const handleSelectTech = (tech: string | null) => {
     setSelectedTech(tech);
@@ -54,9 +48,17 @@ export default function App() {
       {page === 'welcome' ? (
         <WelcomeScreen onBegin={handleBegin} />
       ) : page === 'goal' ? (
-        <GoalScreen onSelectTech={handleSelectTech} />
+        <GoalScreen
+          onSelectTech={handleSelectTech}
+          gratitude={gratitude}
+          onGratitudeChange={setGratitude}
+        />
       ) : (
-        <SessionScreen initialTech={selectedTech} onBack={handleBack} />
+        <SessionScreen
+          initialTech={selectedTech}
+          onBack={handleBack}
+          gratitude={gratitude}
+        />
       )}
     </div>
   );

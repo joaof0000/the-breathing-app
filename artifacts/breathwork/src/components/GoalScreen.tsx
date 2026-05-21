@@ -1,9 +1,13 @@
 import { useState } from 'react';
 import { GOAL_BUTTONS, GOALS } from '../data/goals';
+import GratitudePicker from './GratitudePicker';
+import heroImg from '../assets/hero.png';
 import './GoalScreen.css';
 
 interface Props {
   onSelectTech: (tech: string | null) => void;
+  gratitude: string;
+  onGratitudeChange: (g: string) => void;
 }
 
 const TECH_ICONS: Record<string, string> = {
@@ -52,15 +56,21 @@ const TECH_COLORS: Record<string, string> = {
   custom:           'rgba(200,180,100,0.16)',
 };
 
-export default function GoalScreen({ onSelectTech }: Props) {
+export default function GoalScreen({ onSelectTech, gratitude, onGratitudeChange }: Props) {
   const [activePicker, setActivePicker] = useState<string | null>(null);
 
-  const goal     = activePicker ? GOALS[activePicker] : null;
-  const goalBtn  = activePicker ? GOAL_BUTTONS.find(b => b.key === activePicker) : null;
+  const goal    = activePicker ? GOALS[activePicker] : null;
+  const goalBtn = activePicker ? GOAL_BUTTONS.find(b => b.key === activePicker) : null;
 
   return (
     <div className="page1">
       <div className="p1-wrap">
+
+        {/* Hero image */}
+        <div className="p1-hero">
+          <img src={heroImg} alt="Meditation sanctuary" />
+        </div>
+
         <div className="p1-title">Breathwork</div>
         <p className="p1-sub">What do you need today?</p>
 
@@ -72,6 +82,11 @@ export default function GoalScreen({ onSelectTech }: Props) {
               <span className="goal-sub">{btn.sub}</span>
             </button>
           ))}
+        </div>
+
+        {/* Gratitude picker — fills the space below the grid */}
+        <div className="p1-gratitude">
+          <GratitudePicker selected={gratitude} onSelect={onGratitudeChange} />
         </div>
 
         <button className="p1-browse" onClick={() => onSelectTech(null)}>

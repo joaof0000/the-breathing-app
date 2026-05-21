@@ -1,24 +1,21 @@
-.sacred-geometry-wrap {
+.sacred-geo {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: min(680px, 130vw);
-  height: min(680px, 130vw);
+  width: 80vmin;
+  height: 80vmin;
   pointer-events: none;
   z-index: 0;
-  opacity: 0.03;
-  animation: geo-breathe 20s ease-in-out infinite;
+  fill: none;
+  stroke: #E5A93C;
+  stroke-width: 0.2;
+  opacity: 0.04;
+  animation: geo-breathe 22s ease-in-out infinite;
   will-change: opacity;
 }
 
 @keyframes geo-breathe {
-  0%, 100% { opacity: 0.024; }
-  50%       { opacity: 0.04; }
-}
-
-.sacred-geometry-svg {
-  width: 100%;
-  height: 100%;
-  display: block;
+  0%, 100% { opacity: 0.03; }
+  50%       { opacity: 0.048; }
 }

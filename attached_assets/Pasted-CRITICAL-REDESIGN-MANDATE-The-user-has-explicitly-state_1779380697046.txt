@@ -1,0 +1,41 @@
+CRITICAL REDESIGN MANDATE: The user has explicitly stated they are 100% willing to let the app crash for this visual rebirth. You have full permission to completely overwrite the layout. The core requirement is to embed a subliminal, highly grounding piece of sacred geometry (The Flower of Life) directly into the background, and use Poppins typography.
+
+Completely rewrite the styles of the file using this exact template:
+
+1. The Background & Sacred Geometry Matrix:
+   - Apply 'Poppins' as the global font for the entire document via Google Fonts.
+   - Inject this exact inline SVG wrapper directly behind your main content wrapper (fixed, centered, full screen, z-index: 0, opacity: 0.03 to 0.04 so it is ultra-subliminal):
+
+   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80vmin; height: 80vmin; pointer-events: none; stroke: #E5A93C; fill: none; stroke-width: 0.2; opacity: 0.04; z-index: 0;">
+     <defs>
+       <circle id="c" cx="50" cy="50" r="15"/>
+     </defs>
+     <use href="#c"/>
+     <circle cx="50" cy="35" r="15"/><circle cx="50" cy="65" r="15"/>
+     <circle cx="37.01" cy="42.5" r="15"/><circle cx="62.99" cy="42.5" r="15"/>
+     <circle cx="37.01" cy="57.5" r="15"/><circle cx="62.99" cy="57.5" r="15"/>
+     <circle cx="50" cy="20" r="15"/><circle cx="50" cy="80" r="15"/>
+     <circle cx="24.02" cy="35" r="15"/><circle cx="75.98" cy="35" r="15"/>
+     <circle cx="24.02" cy="65" r="15"/><circle cx="75.98" cy="65" r="15"/>
+     <circle cx="37.01" cy="27.5" r="15"/><circle cx="62.99" cy="27.5" r="15"/>
+     <circle cx="37.01" cy="72.5" r="15"/><circle cx="62.99" cy="72.5" r="15"/>
+     <circle cx="50" cy="50" r="30" stroke-width="0.3"/>
+   </svg>
+
+2. The Sanctuary Canvas Colorway:
+   - Change the body background to a rich, soothing dark gradient: from a deep velvet charcoal (#120F0D) to a grounding dark espresso (#1A1412).
+   - Use a soft, elegant cream (#F2EFE9) for text. No pure whites.
+   - Selected items must glow with warm amber/rose-gold (#E5A93C).
+
+3. Capsule Transitions (Zero Boxes):
+   - Wipe out all square frames and rigid borders. 
+   - Turn all technique selection buttons and duration options into seamless, borderless capsules (border-radius: 9999px) with generous padding.
+   - Unselected buttons: background: rgba(255, 255, 255, 0.03).
+   - Selected buttons: background: #E5A93C, color: #120F0D, box-shadow: 0 0 20px rgba(229, 169, 60, 0.4).
+
+4. The Breathing Hero Portal:
+   - Center the main breathing circle perfectly over the center of the Flower of Life geometry.
+   - Give the circle a soft, thick gradient border and a permanent, incredibly slow, infinite breathing pulse animation using CSS transitions/keyframes (transform: scale(1) to scale(1.05) every 4 seconds).
+   - Ensure the "Ready" text inside is perfectly centered, crisp, and bold using the new Poppins font.
+
+Execute this now. Do not be timid. Let the app transform completely.

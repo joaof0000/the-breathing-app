@@ -6,7 +6,7 @@ import Tracker from './Tracker';
 import Heatmap from './Heatmap';
 import HistoryPanel from './HistoryPanel';
 import ReferenceTable from './ReferenceTable';
-import { TABS, NOSTRIL_TECHS, PUMP_TECHS, YT_LINKS, YT_LABELS, REC_DURATION, getPhases } from '../data/techniques';
+import { TABS, NOSTRIL_TECHS, PUMP_TECHS, YT_LINKS, YT_LABELS, REC_DURATION, TECH_LABELS, getPhases } from '../data/techniques';
 import { useAudio } from '../hooks/useAudio';
 import { useSessionStorage, addInsight } from '../hooks/useSessionStorage';
 import './SessionScreen.css';
@@ -539,6 +539,26 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
           ))}
         </div>
 
+        {/* Intention Block — above the ring, linked to the selected technique */}
+        {!running && !journalMode && (
+          <div className="intention-block">
+            <div className="intention-header">
+              <span className="intention-title">
+                Intention
+                {tech && <span className="intention-tech-link"> · {TECH_LABELS[tech] || tech}</span>}
+              </span>
+              <button className="inspire-btn" onClick={handleInspireMe}>Inspire Me</button>
+            </div>
+            <textarea
+              className="intention-input"
+              placeholder="An anchor phrase for this session…"
+              value={intention}
+              onChange={e => setIntention(e.target.value)}
+              rows={2}
+            />
+          </div>
+        )}
+
         {/* Ring */}
         <BreathRing
           fill={fill}
@@ -558,6 +578,8 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
           onJournalChange={setJournalText}
           onSaveInsight={handleSaveInsight}
           onSkipInsight={handleSkipInsight}
+          idleIntention={!running && !journalMode ? intention : ''}
+          idleTechLabel={!running && !journalMode ? (TECH_LABELS[tech] || tech) : ''}
         />
 
         {showNostril && (
@@ -665,21 +687,6 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
           )}
 
           {recDur && <div className="rec-label">{recDur}</div>}
-
-          {/* Intention Block */}
-          <div className="intention-block">
-            <div className="intention-header">
-              <span className="intention-title">Your Intention</span>
-              <button className="inspire-btn" onClick={handleInspireMe}>Inspire Me</button>
-            </div>
-            <textarea
-              className="intention-input"
-              placeholder="An anchor thought or focus phrase for this session…"
-              value={intention}
-              onChange={e => setIntention(e.target.value)}
-              rows={2}
-            />
-          </div>
 
           <button className="info-link" onClick={() => setInfoOpen(o => !o)}>
             {infoOpen ? 'Hide info ↑' : 'How does this work? ↓'}

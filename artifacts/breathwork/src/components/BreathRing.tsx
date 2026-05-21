@@ -18,6 +18,8 @@ interface Props {
   onJournalChange?: (t: string) => void;
   onSaveInsight?: () => void;
   onSkipInsight?: () => void;
+  idleIntention?: string;
+  idleTechLabel?: string;
 }
 
 const CIRC = 2 * Math.PI * 95;
@@ -40,6 +42,8 @@ export default function BreathRing({
   onJournalChange,
   onSaveInsight,
   onSkipInsight,
+  idleIntention,
+  idleTechLabel,
 }: Props) {
   const offset = CIRC * (1 - Math.min(1, Math.max(0, fill)));
   const isIdle = !running && !showWimHofPrompt && !showJournal;
@@ -59,7 +63,15 @@ export default function BreathRing({
 
       <div className="ring-content">
         {isIdle && (
-          <button className="btn-begin" onClick={onBegin}>Begin</button>
+          <>
+            {idleTechLabel && (
+              <div className="ring-idle-tech">{idleTechLabel}</div>
+            )}
+            {idleIntention && (
+              <div className="ring-idle-intention">"{idleIntention}"</div>
+            )}
+            <button className="btn-begin" onClick={onBegin}>Begin</button>
+          </>
         )}
 
         {running && !showWimHofPrompt && !showJournal && (

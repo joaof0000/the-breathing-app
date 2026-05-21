@@ -6,6 +6,7 @@ import Tracker from './Tracker';
 import Heatmap from './Heatmap';
 import HistoryPanel from './HistoryPanel';
 import ReferenceTable from './ReferenceTable';
+import GratitudePicker from './GratitudePicker';
 import { TABS, NOSTRIL_TECHS, PUMP_TECHS, YT_LINKS, YT_LABELS, REC_DURATION, TECH_LABELS, getPhases } from '../data/techniques';
 import { useAudio } from '../hooks/useAudio';
 import { useSessionStorage, addInsight } from '../hooks/useSessionStorage';
@@ -55,6 +56,9 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
   const [inspireIdx, setInspireIdx] = useState(0);
   const [intentionFlash, setIntentionFlash] = useState(false);
 
+  // Gratitude state
+  const [gratitude, setGratitude] = useState('');
+
   // Journal state
   const [journalMode, setJournalMode] = useState(false);
   const [journalText, setJournalText] = useState('');
@@ -81,7 +85,7 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
 
   const getVolume = useCallback(() => volRef.current / 100, []);
   const audio = useAudio(getVolume);
-  const { record, loadSessions } = useSessionStorage();
+  const { record } = useSessionStorage();
 
   // Refs for engine control
   const runningRef = useRef(false);
@@ -90,11 +94,9 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
   const sessionStartRef = useRef(0);
   const whRetStartRef = useRef(0);
   const whWaitingRef = useRef(false);
-  const whBreathCountRef = useRef(0);
   const whRoundRef = useRef(0);
   const whStopRetRef = useRef<(() => void) | null>(null);
 
-  // Scroll tabs to active tech
   const tabsRef = useRef<HTMLDivElement>(null);
 
   const stopAllEngines = useCallback(() => {
@@ -169,10 +171,7 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
       setPhaseClass(p.cls);
       setPhaseName(p.name);
       setFill(0);
-      if (p.nos) {
-        setNostrilL(p.nos.l);
-        setNostrilR(p.nos.r);
-      }
+      if (p.nos) { setNostrilL(p.nos.l); setNostrilR(p.nos.r); }
       playPhaseSound(p);
     };
 
@@ -183,15 +182,10 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
       const p = phases[phaseIdx];
       const elapsed = (now - phaseStart) / 1000;
       const remaining = p.s - elapsed;
-
       const totalElapsed = (Date.now() - sessionStartRef.current) / 1000;
-      if (totalElapsed >= totalSecs) {
-        finishSession(techKey);
-        return;
-      }
+      if (totalElapsed >= totalSecs) { finishSession(techKey); return; }
 
-      const rem = Math.max(0, Math.ceil(remaining));
-      setCountdown(fmtTime(rem));
+      setCountdown(fmtTime(Math.max(0, Math.ceil(remaining))));
       setFill(elapsed / p.s);
 
       const floorRem = Math.floor(remaining);
@@ -206,14 +200,12 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
         lastTick = -1;
         startPhase(phaseIdx);
       }
-
       rafRef.current = requestAnimationFrame(tick);
     };
-
     rafRef.current = requestAnimationFrame(tick);
   }, [durMin, customIn, customH1, customOut, customH2, audio, finishSession]);
 
-  // Pump engine (Kapalabhati / Bhastrika)
+  // Pump engine
   const startPump = useCallback((techKey: string) => {
     const totalSecs = durMin * 60;
     const bpm = techKey === 'bhastrika' ? 50 : 80;
@@ -230,12 +222,8 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
     const tick = (now: number) => {
       if (!runningRef.current) return;
       const totalElapsed = (Date.now() - sessionStartRef.current) / 1000;
-      if (totalElapsed >= totalSecs) {
-        finishSession(techKey);
-        return;
-      }
-      const elapsed = (now - lastTime);
-      if (elapsed >= interval) {
+      if (totalElapsed >= totalSecs) { finishSession(techKey); return; }
+      if (now - lastTime >= interval) {
         lastTime = now;
         count++;
         audio.pumpTone();
@@ -256,7 +244,6 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
       }
       rafRef.current = requestAnimationFrame(tick);
     };
-
     rafRef.current = requestAnimationFrame(tick);
   }, [durMin, audio, finishSession]);
 
@@ -264,8 +251,8 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
   const startBhramari = useCallback(() => {
     const totalSecs = durMin * 60;
     const phases = [
-      { name: 'Deep Inhale', s: 4, cls: 'p-inhale', snd: 'inhale', hum: false },
-      { name: 'Hum — MMMMmmm', s: 6, cls: 'p-hold', snd: 'hold', hum: true },
+      { name: 'Deep Inhale', s: 4, cls: 'p-inhale', hum: false },
+      { name: 'Hum — MMMMmmm', s: 6, cls: 'p-hold', hum: true },
     ];
     let phaseIdx = 0;
     let phaseStart = performance.now();
@@ -277,40 +264,33 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
       setPhaseClass(p.cls);
       setPhaseName(p.name);
       setFill(0);
-      if (p.hum) { audio.hum(p.s); }
-      else { audio.S.inhale(); }
+      if (p.hum) audio.hum(p.s);
+      else audio.S.inhale();
     };
 
     startPhase(0);
-
     const tick = (now: number) => {
       if (!runningRef.current) return;
       const p = phases[phaseIdx];
       const elapsed = (now - phaseStart) / 1000;
       const remaining = p.s - elapsed;
       const totalElapsed = (Date.now() - sessionStartRef.current) / 1000;
-
       if (totalElapsed >= totalSecs) { finishSession('bhramari'); return; }
-
       setCountdown(fmtTime(Math.max(0, Math.ceil(remaining))));
       setFill(elapsed / p.s);
-
       const floorRem = Math.floor(remaining);
       if (floorRem !== lastTick && remaining > 0.5) {
         lastTick = floorRem;
         if (!p.hum && remaining > 1.5 && remaining < p.s - 0.5) audio.tick();
       }
-
       if (elapsed >= p.s) {
         phaseIdx = (phaseIdx + 1) % phases.length;
         phaseStart = now;
         lastTick = -1;
         startPhase(phaseIdx);
       }
-
       rafRef.current = requestAnimationFrame(tick);
     };
-
     rafRef.current = requestAnimationFrame(tick);
   }, [durMin, audio, finishSession]);
 
@@ -322,9 +302,7 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
     const BREATH_INTERVAL = 1500;
     let lastBreathTime = performance.now();
     sessionStartRef.current = Date.now();
-
     whRoundRef.current = 0;
-    whBreathCountRef.current = 0;
 
     const doRound = () => {
       if (!runningRef.current) return;
@@ -341,14 +319,12 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
       const breathLoop = (now: number) => {
         if (!runningRef.current) return;
         if (whWaitingRef.current) return;
-        const elapsed = now - lastBreathTime;
-        if (elapsed >= BREATH_INTERVAL) {
+        if (now - lastBreathTime >= BREATH_INTERVAL) {
           lastBreathTime = now;
           breathCount++;
           audio.powerBreathTone();
           setFill(breathCount / BREATH_COUNT);
           setRingInfo(`Breath ${breathCount} of ${BREATH_COUNT}`);
-
           if (breathCount >= BREATH_COUNT) {
             audio.S.exhale();
             setPhaseClass('p-ret');
@@ -358,21 +334,17 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
             whWaitingRef.current = true;
             setWhWaiting(true);
             whRetStartRef.current = Date.now();
-
             const retLoop = (_ts: number) => {
               if (!runningRef.current || !whWaitingRef.current) return;
-              const retSecs = Math.floor((Date.now() - whRetStartRef.current) / 1000);
-              setWhLiveTimer(fmtTime(retSecs));
+              setWhLiveTimer(fmtTime(Math.floor((Date.now() - whRetStartRef.current) / 1000)));
               setWhPromptText('Hold empty lungs. Tap when you need to breathe.');
               whRafRef.current = requestAnimationFrame(retLoop);
             };
             whRafRef.current = requestAnimationFrame(retLoop);
-
             whStopRetRef.current = () => {
               whWaitingRef.current = false;
               setWhWaiting(false);
               if (whRafRef.current) { cancelAnimationFrame(whRafRef.current); whRafRef.current = null; }
-
               setPhaseClass('p-inhale');
               setPhaseName('Deep Inhale — Hold 15s');
               setRingInfo('Recovery breath');
@@ -380,7 +352,6 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
               setWhLiveTimer('');
               setWhPromptText('');
               audio.S.recov();
-
               let recStart = performance.now();
               const recLoop = (ts: number) => {
                 if (!runningRef.current) return;
@@ -389,13 +360,8 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
                 setCountdown(fmtTime(Math.max(0, Math.ceil(15 - el))));
                 if (el >= 15) {
                   audio.S.exhale();
-                  if (round >= whRounds) {
-                    finishSession('wimhof');
-                  } else {
-                    lastBreathTime = performance.now();
-                    breathCount = 0;
-                    doRound();
-                  }
+                  if (round >= whRounds) { finishSession('wimhof'); }
+                  else { lastBreathTime = performance.now(); breathCount = 0; doRound(); }
                   return;
                 }
                 rafRef.current = requestAnimationFrame(recLoop);
@@ -407,15 +373,13 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
         }
         whRafRef.current = requestAnimationFrame(breathLoop);
       };
-
       lastBreathTime = performance.now();
       whRafRef.current = requestAnimationFrame(breathLoop);
     };
-
     doRound();
   }, [whRounds, audio, finishSession]);
 
-  // Launch engines (shared by beginSession and intention flash)
+  // Launch engines — called by beginSession (direct or after flash)
   const launchEngines = useCallback(() => {
     setRunning(true);
     runningRef.current = true;
@@ -423,7 +387,7 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
     setWhWaiting(false);
     setWhLiveTimer('');
     setWhPromptText('');
-    if (tech === 'wimhof') { startWimHof(); return; }
+    if (tech === 'wimhof')   { startWimHof();   return; }
     if (tech === 'bhramari') { startBhramari(); return; }
     if (PUMP_TECHS.includes(tech)) { startPump(tech); return; }
     startDuration(tech);
@@ -431,7 +395,9 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
 
   const beginSession = useCallback(() => {
     audio.ensureAC();
-    if (intention.trim()) {
+    const hasIntention = intention.trim().length > 0;
+    const hasGratitude = gratitude.trim().length > 0;
+    if (hasIntention || hasGratitude) {
       setIntentionFlash(true);
       setTimeout(() => {
         setIntentionFlash(false);
@@ -440,15 +406,11 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
       return;
     }
     launchEngines();
-  }, [audio, intention, launchEngines]);
+  }, [audio, intention, gratitude, launchEngines]);
 
   const handleWimHofStop = useCallback(() => {
-    if (whStopRetRef.current) {
-      whStopRetRef.current();
-      whStopRetRef.current = null;
-    } else {
-      stopSession();
-    }
+    if (whStopRetRef.current) { whStopRetRef.current(); whStopRetRef.current = null; }
+    else stopSession();
   }, [stopSession]);
 
   const handleSaveInsight = useCallback(() => {
@@ -506,207 +468,201 @@ export default function SessionScreen({ initialTech, onBack }: Props) {
   const ytLink = YT_LINKS[tech];
   const ytLabel = YT_LABELS[tech];
   const recDur = REC_DURATION[tech];
+  const isIdle = !running && !journalMode;
+  const techLabel = TECH_LABELS[tech] || tech;
 
   return (
-    <div className="page2-scroll">
-      {/* Intention Flash Overlay */}
+    <>
+      {/* ── Flash overlay — OUTSIDE the scrolling/animated container ── */}
       {intentionFlash && (
         <div className="intention-flash">
           <div className="intention-flash-card">
-            <div className="intention-flash-label">Your intention</div>
-            <div className="intention-flash-text">{intention}</div>
+            {gratitude && (
+              <div className="flash-gratitude-row">
+                <span className="flash-gratitude-label">Grateful for</span>
+                <span className="flash-gratitude-text">{gratitude}</span>
+              </div>
+            )}
+            {intention && (
+              <>
+                <div className="intention-flash-label">Intention</div>
+                <div className="intention-flash-text">{intention}</div>
+              </>
+            )}
+            {!intention && gratitude && (
+              <div className="flash-only-gratitude">
+                <div className="intention-flash-label">Hold this in your heart</div>
+                <div className="intention-flash-text">{gratitude}</div>
+              </div>
+            )}
           </div>
         </div>
       )}
 
-      <div className="wrap">
-        <h1>
-          <button className="back-btn" onClick={onBack}>←</button>
-          Breathwork
-        </h1>
+      <div className="page2-scroll">
+        <div className="wrap">
+          <h1>
+            <button className="back-btn" onClick={onBack}>←</button>
+            Breathwork
+          </h1>
 
-        {/* Tabs */}
-        <div className="tabs" ref={tabsRef}>
-          {TABS.map(tab => (
-            <button
-              key={tab.id}
-              className={`tab ${tech === tab.id ? 'on' : ''}`}
-              data-t={tab.id}
-              onClick={() => activateTech(tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Intention Block — above the ring, linked to the selected technique */}
-        {!running && !journalMode && (
-          <div className="intention-block">
-            <div className="intention-header">
-              <span className="intention-title">
-                Intention
-                {tech && <span className="intention-tech-link"> · {TECH_LABELS[tech] || tech}</span>}
-              </span>
-              <button className="inspire-btn" onClick={handleInspireMe}>Inspire Me</button>
-            </div>
-            <textarea
-              className="intention-input"
-              placeholder="An anchor phrase for this session…"
-              value={intention}
-              onChange={e => setIntention(e.target.value)}
-              rows={2}
-            />
+          {/* Tabs */}
+          <div className="tabs" ref={tabsRef}>
+            {TABS.map(tab => (
+              <button
+                key={tab.id}
+                className={`tab ${tech === tab.id ? 'on' : ''}`}
+                data-t={tab.id}
+                onClick={() => activateTech(tab.id)}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
-        )}
 
-        {/* Ring */}
-        <BreathRing
-          fill={fill}
-          phaseClass={phaseClass}
-          phaseName={phaseName}
-          countdown={countdown}
-          info={ringInfo}
-          running={running && !whWaiting}
-          onBegin={beginSession}
-          onStop={stopSession}
-          showWimHofPrompt={whWaiting}
-          wimHofPromptText={whPromptText}
-          wimHofLiveTimer={whLiveTimer}
-          onWimHofStop={handleWimHofStop}
-          showJournal={journalMode}
-          journalText={journalText}
-          onJournalChange={setJournalText}
-          onSaveInsight={handleSaveInsight}
-          onSkipInsight={handleSkipInsight}
-          idleIntention={!running && !journalMode ? intention : ''}
-          idleTechLabel={!running && !journalMode ? (TECH_LABELS[tech] || tech) : ''}
-        />
+          {/* Gratitude Picker — above the ring */}
+          {isIdle && (
+            <GratitudePicker selected={gratitude} onSelect={setGratitude} />
+          )}
 
-        {showNostril && (
-          <NostrilIndicator
-            show={running}
-            left={nostrilL}
-            right={nostrilR}
+          {/* Intention Block — below gratitude, above ring */}
+          {isIdle && (
+            <div className="intention-block">
+              <div className="intention-header">
+                <span className="intention-title">
+                  Intention
+                  <span className="intention-tech-link"> · {techLabel}</span>
+                </span>
+                <button className="inspire-btn" onClick={handleInspireMe}>Inspire Me</button>
+              </div>
+              <textarea
+                className="intention-input"
+                placeholder="An anchor phrase for this session…"
+                value={intention}
+                onChange={e => setIntention(e.target.value)}
+                rows={2}
+              />
+            </div>
+          )}
+
+          {/* Ring */}
+          <BreathRing
+            fill={fill}
+            phaseClass={phaseClass}
+            phaseName={phaseName}
+            countdown={countdown}
+            info={ringInfo}
+            running={running && !whWaiting}
+            onBegin={beginSession}
+            onStop={stopSession}
+            showWimHofPrompt={whWaiting}
+            wimHofPromptText={whPromptText}
+            wimHofLiveTimer={whLiveTimer}
+            onWimHofStop={handleWimHofStop}
+            showJournal={journalMode}
+            journalText={journalText}
+            onJournalChange={setJournalText}
+            onSaveInsight={handleSaveInsight}
+            onSkipInsight={handleSkipInsight}
+            idleIntention={isIdle ? intention : ''}
+            idleTechLabel={isIdle ? techLabel : ''}
+            idleGratitude={isIdle ? gratitude : ''}
           />
-        )}
 
-        {/* Options */}
-        <div className="options">
-          {tech !== 'wimhof' && (
-            <div className="opt-row">
-              <span className="opt-label">Duration</span>
-              <div className="dur-btns">
-                {[1, 2, 3, 5, 10, 20].map(m => (
-                  <button
-                    key={m}
-                    className={`dur-btn ${durMin === m ? 'on' : ''}`}
-                    onClick={() => setDurMin(m)}
-                  >
-                    {m}
-                  </button>
-                ))}
-              </div>
-              <div className="dur-custom">
-                <input
-                  type="number"
-                  min={1} max={60}
-                  value={durMin}
-                  onChange={e => setDurMin(Math.max(1, Math.min(60, parseInt(e.target.value) || 1)))}
-                />
-                <span>min</span>
-              </div>
-            </div>
+          {showNostril && (
+            <NostrilIndicator show={running} left={nostrilL} right={nostrilR} />
           )}
 
-          {tech === 'wimhof' && (
-            <div className="opt-row">
-              <span className="opt-label">Rounds</span>
-              <div className="dur-btns">
-                {[2, 3, 4, 5].map(r => (
-                  <button
-                    key={r}
-                    className={`dur-btn ${whRounds === r ? 'on' : ''}`}
-                    onClick={() => setWhRounds(r)}
-                  >
-                    {r}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {tech === 'custom' && (
-            <div className="custom-grid-wrap">
-              <div className="custom-grid-label">Pattern (seconds per phase)</div>
-              <div className="custom-grid">
-                <div className="cg-item">
-                  <label>Inhale</label>
-                  <input type="number" min={1} max={30} value={customIn} onChange={e => setCustomIn(+e.target.value)} />
-                  <span className="cg-unit">seconds</span>
+          {/* Options */}
+          <div className="options">
+            {tech !== 'wimhof' && (
+              <div className="opt-row">
+                <span className="opt-label">Duration</span>
+                <div className="dur-btns">
+                  {[1, 2, 3, 5, 10, 20].map(m => (
+                    <button key={m} className={`dur-btn ${durMin === m ? 'on' : ''}`} onClick={() => setDurMin(m)}>{m}</button>
+                  ))}
                 </div>
-                <div className="cg-item">
-                  <label>Hold In</label>
-                  <input type="number" min={0} max={30} value={customH1} onChange={e => setCustomH1(+e.target.value)} />
-                  <span className="cg-unit">0 = skip</span>
-                </div>
-                <div className="cg-item">
-                  <label>Exhale</label>
-                  <input type="number" min={1} max={30} value={customOut} onChange={e => setCustomOut(+e.target.value)} />
-                  <span className="cg-unit">seconds</span>
-                </div>
-                <div className="cg-item">
-                  <label>Hold Out</label>
-                  <input type="number" min={0} max={30} value={customH2} onChange={e => setCustomH2(+e.target.value)} />
-                  <span className="cg-unit">0 = skip</span>
+                <div className="dur-custom">
+                  <input
+                    type="number" min={1} max={60} value={durMin}
+                    onChange={e => setDurMin(Math.max(1, Math.min(60, parseInt(e.target.value) || 1)))}
+                  />
+                  <span>min</span>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          <div className="opt-row opt-vol-row">
-            <span className="opt-label">Volume</span>
-            <input
-              type="range"
-              min={0} max={100}
-              value={volume}
-              className="vol-slider"
-              onChange={e => setVolume(+e.target.value)}
-            />
-            <span className="vol-val">{volume}%</span>
+            {tech === 'wimhof' && (
+              <div className="opt-row">
+                <span className="opt-label">Rounds</span>
+                <div className="dur-btns">
+                  {[2, 3, 4, 5].map(r => (
+                    <button key={r} className={`dur-btn ${whRounds === r ? 'on' : ''}`} onClick={() => setWhRounds(r)}>{r}</button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {tech === 'custom' && (
+              <div className="custom-grid-wrap">
+                <div className="custom-grid-label">Pattern (seconds per phase)</div>
+                <div className="custom-grid">
+                  <div className="cg-item">
+                    <label>Inhale</label>
+                    <input type="number" min={1} max={30} value={customIn} onChange={e => setCustomIn(+e.target.value)} />
+                    <span className="cg-unit">seconds</span>
+                  </div>
+                  <div className="cg-item">
+                    <label>Hold In</label>
+                    <input type="number" min={0} max={30} value={customH1} onChange={e => setCustomH1(+e.target.value)} />
+                    <span className="cg-unit">0 = skip</span>
+                  </div>
+                  <div className="cg-item">
+                    <label>Exhale</label>
+                    <input type="number" min={1} max={30} value={customOut} onChange={e => setCustomOut(+e.target.value)} />
+                    <span className="cg-unit">seconds</span>
+                  </div>
+                  <div className="cg-item">
+                    <label>Hold Out</label>
+                    <input type="number" min={0} max={30} value={customH2} onChange={e => setCustomH2(+e.target.value)} />
+                    <span className="cg-unit">0 = skip</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="opt-row opt-vol-row">
+              <span className="opt-label">Volume</span>
+              <input type="range" min={0} max={100} value={volume} className="vol-slider" onChange={e => setVolume(+e.target.value)} />
+              <span className="vol-val">{volume}%</span>
+            </div>
+
+            {ytLink && (
+              <div className="opt-yt-row">
+                <a className="opt-yt-link" href={ytLink} target="_blank" rel="noopener">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="#ff4444">
+                    <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/>
+                  </svg>
+                  <span>{ytLabel || 'Watch tutorial on YouTube'}</span>
+                </a>
+              </div>
+            )}
+
+            {recDur && <div className="rec-label">{recDur}</div>}
+
+            <button className="info-link" onClick={() => setInfoOpen(o => !o)}>
+              {infoOpen ? 'Hide info ↑' : 'How does this work? ↓'}
+            </button>
           </div>
 
-          {ytLink && (
-            <div className="opt-yt-row">
-              <a className="opt-yt-link" href={ytLink} target="_blank" rel="noopener">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="#ff4444">
-                  <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/>
-                </svg>
-                <span>{ytLabel || 'Watch tutorial on YouTube'}</span>
-              </a>
-            </div>
-          )}
-
-          {recDur && <div className="rec-label">{recDur}</div>}
-
-          <button className="info-link" onClick={() => setInfoOpen(o => !o)}>
-            {infoOpen ? 'Hide info ↑' : 'How does this work? ↓'}
-          </button>
+          <InfoDrawer tech={tech} open={infoOpen} onClose={() => setInfoOpen(false)} />
+          <Tracker refreshKey={refreshKey} onManualLog={handleManualLog} onReset={handleReset} />
+          <Heatmap refreshKey={refreshKey} />
+          <HistoryPanel refreshKey={refreshKey} onRefresh={() => setRefreshKey(k => k + 1)} />
+          <ReferenceTable onActivateTech={activateTech} />
         </div>
-
-        <InfoDrawer tech={tech} open={infoOpen} onClose={() => setInfoOpen(false)} />
-
-        {/* Tracker */}
-        <Tracker refreshKey={refreshKey} onManualLog={handleManualLog} onReset={handleReset} />
-
-        {/* Heatmap */}
-        <Heatmap refreshKey={refreshKey} />
-
-        {/* History */}
-        <HistoryPanel refreshKey={refreshKey} onRefresh={() => setRefreshKey(k => k + 1)} />
-
-        {/* Reference */}
-        <ReferenceTable onActivateTech={activateTech} />
       </div>
-    </div>
+    </>
   );
 }

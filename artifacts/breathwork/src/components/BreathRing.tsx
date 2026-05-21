@@ -20,6 +20,7 @@ interface Props {
   onSkipInsight?: () => void;
   idleIntention?: string;
   idleTechLabel?: string;
+  idleGratitude?: string;
 }
 
 const CIRC = 2 * Math.PI * 95;
@@ -44,6 +45,7 @@ export default function BreathRing({
   onSkipInsight,
   idleIntention,
   idleTechLabel,
+  idleGratitude,
 }: Props) {
   const offset = CIRC * (1 - Math.min(1, Math.max(0, fill)));
   const isIdle = !running && !showWimHofPrompt && !showJournal;
@@ -66,6 +68,11 @@ export default function BreathRing({
           <>
             {idleTechLabel && (
               <div className="ring-idle-tech">{idleTechLabel}</div>
+            )}
+            {idleGratitude && (
+              <div className="ring-idle-grateful">Grateful for<br />
+                <span className="ring-idle-grateful-text">{idleGratitude}</span>
+              </div>
             )}
             {idleIntention && (
               <div className="ring-idle-intention">"{idleIntention}"</div>

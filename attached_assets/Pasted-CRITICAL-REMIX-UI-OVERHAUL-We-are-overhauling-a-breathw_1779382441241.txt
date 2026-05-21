@@ -1,0 +1,38 @@
+CRITICAL REMIX UI OVERHAUL: We are overhauling a breathwork app targeted at individuals battling addiction and anxiety. The current UI is cold, black, and rigid. We need a visual transformation so beautiful, warm, and deeply grounding that it instantly connects the user to their heart. 
+
+Do NOT touch any component state, loaders, actions, breath timers, counters, or video logic. Completely update the layout and styling (using Tailwind or your framework classes) to implement this absolute design system:
+
+1. The "Sanctuary" Colorway & Poppins Typography:
+   - Replace the cold black background with an immersive, premium dark gradient on the main wrapper: from a deep velvet charcoal (#120F0D) to a grounding dark espresso (#1A1412).
+   - Use Google Fonts to load 'Poppins' and apply it globally.
+   - Text color must be a soft, elegant cream (#F2EFE9)—never harsh pure white.
+   - Active/Selected states must radiate a soft, warm amber/rose-gold glow (#E5A93C).
+
+2. Subliminal Sacred Geometry (The Flower of Life):
+   - Inject this exact raw SVG directly into the background of the root layout or main route container so it sits fixed, centered, and completely subliminal behind the UI (opacity: 0.04):
+
+   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" style={{position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '80vmin', height: '80vmin', pointerEvents: 'none', stroke: '#E5A93C', fill: 'none', strokeWidth: '0.2', opacity: 0.04, zIndex: 0}}>
+     <defs><circle id="c" cx="50" cy="50" r="15"/></defs>
+     <use href="#c"/>
+     <circle cx="50" cy="35" r="15"/><circle cx="50" cy="65" r="15"/>
+     <circle cx="37.01" cy="42.5" r="15"/><circle cx="62.99" cy="42.5" r="15"/>
+     <circle cx="37.01" cy="57.5" r="15"/><circle cx="62.99" cy="57.5" r="15"/>
+     <circle cx="50" cy="20" r="15"/><circle cx="50" cy="80" r="15"/>
+     <circle cx="24.02" cy="35" r="15"/><circle cx="75.98" cy="35" r="15"/>
+     <circle cx="24.02" cy="65" r="15"/><circle cx="75.98" cy="65" r="15"/>
+     <circle cx="37.01" cy="27.5" r="15"/><circle cx="62.99" cy="27.5" r="15"/>
+     <circle cx="37.01" cy="72.5" r="15"/><circle cx="62.99" cy="72.5" r="15"/>
+     <circle cx="50" cy="50" r="30" strokeWidth="0.3"/>
+   </svg>
+
+3. Complete Capsule Fluidity (Destroy All Sharp Boxes):
+   - Remove all harsh borders, rigid container lines, and enclosing squares. Let the layout breathe with extensive padding and whitespace.
+   - Convert all technique selection items and duration options into seamless, borderless capsules (rounded-full / border-radius: 9999px) with generous internal padding.
+   - Unselected items should use a subtle, warm transparent background (rgba(255, 255, 255, 0.03)).
+   - Selected items must softly illuminate with the warm amber glow and a soft blur shadow.
+
+4. The Living Pulse (The Heart Anchor):
+   - The central breathing circle must sit perfectly centered over the sacred geometry. Give it a soft, dual-tone gradient border (Cream to Amber).
+   - Add a permanent, incredibly slow, fluid pulsing animation to the circle using CSS keyframes so it subtly expands and contracts (scale(1) to scale(1.05) every 4 seconds), inviting the user to match its rhythm before they even tap it.
+
+Execute this transformation directly on the current route view. We are 100% willing to let it crash to achieve this beautiful, life-changing sanctuary.

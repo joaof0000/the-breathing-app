@@ -12,18 +12,24 @@
 .ring-wrap::before {
   content: '';
   position: absolute;
-  inset: -3px;
+  inset: -4px;
   border-radius: 50%;
   background: conic-gradient(
     #F2EFE9 0%,
-    #E5A93C 30%,
-    #D48C70 58%,
+    #E5A93C 28%,
+    #D48C70 55%,
     #E5A93C 75%,
     #F2EFE9 100%
   );
-  opacity: 0.1;
+  opacity: 0.22;
   z-index: 0;
   pointer-events: none;
+  animation: haloRotate 18s linear infinite;
+}
+
+@keyframes haloRotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 
 /* ── The Living Pulse — permanent heartbeat when idle ── */

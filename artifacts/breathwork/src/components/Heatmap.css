@@ -1,10 +1,12 @@
 .heatmap-section {
   width: 100%;
-  background: var(--card);
-  border: 1px solid var(--bdr);
-  border-radius: 10px;
+  background: rgba(28,24,21,0.55);
+  border: none;
+  border-radius: 20px;
   padding: 1rem;
   margin-bottom: 0.8rem;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 .heatmap-title {
@@ -110,14 +112,17 @@
 .hm-tooltip {
   position: fixed;
   z-index: 999;
-  background: #111320;
-  border: 1px solid var(--bdr);
-  padding: 0.35rem 0.55rem;
+  background: rgba(28,24,21,0.92);
+  border: none;
+  border-radius: 9999px;
+  padding: 0.35rem 0.75rem;
   pointer-events: none;
   font-family: 'Newsreader', serif;
   font-size: 0.72rem;
   font-style: italic;
   color: var(--text);
   white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  box-shadow: 0 4px 18px rgba(0,0,0,0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }

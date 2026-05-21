@@ -14,8 +14,9 @@
 
 .info-drawer-content {
   padding: 1.2rem 1rem;
-  border: 1px solid var(--bdr);
-  border-radius: 8px;
+  border: none;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.015);
 }
 
 .info-drawer h2 {
@@ -92,8 +93,8 @@
 
 .time-block {
   background: rgba(255,255,255,0.03);
-  border: 1px solid var(--bdr);
-  border-radius: 6px;
+  border: none;
+  border-radius: 14px;
   padding: 0.65rem 0.8rem;
   margin: 0.7rem 0;
 }

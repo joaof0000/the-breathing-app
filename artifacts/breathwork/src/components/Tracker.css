@@ -1,9 +1,11 @@
 .tracker-section {
-  background: var(--card);
-  border: 1px solid var(--bdr);
-  border-radius: 10px;
-  padding: 1rem;
+  background: rgba(28,24,21,0.55);
+  border: none;
+  border-radius: 20px;
+  padding: 1.1rem 1.1rem;
   margin-bottom: 0.8rem;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 .tracker-title {
@@ -38,10 +40,10 @@
 
 .stat-box {
   flex: 1;
-  background: rgba(255,255,255,0.02);
-  border: 1px solid var(--bdr);
-  border-radius: 6px;
-  padding: 0.55rem 0.4rem;
+  background: rgba(255,255,255,0.025);
+  border: none;
+  border-radius: 14px;
+  padding: 0.65rem 0.4rem;
   text-align: center;
 }
 
@@ -70,19 +72,20 @@
 }
 
 .tracker-log-btn {
-  background: none;
-  border: 1px solid var(--faint);
-  border-radius: 4px;
+  background: rgba(255,255,255,0.03);
+  border: none;
+  border-radius: 9999px;
   font-family: 'Cormorant Garamond', serif;
   font-size: 0.78rem;
   letter-spacing: 0.06em;
   color: var(--dim);
-  padding: 0.3rem 0.8rem;
+  padding: 0.32rem 1rem;
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
 }
 
 .tracker-log-btn:hover {
-  border-color: var(--gdim);
+  background: rgba(229,169,60,0.08);
   color: var(--gold);
+  box-shadow: 0 0 16px rgba(229,169,60,0.1);
 }

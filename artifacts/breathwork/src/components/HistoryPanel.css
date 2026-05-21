@@ -1,9 +1,11 @@
 .history-section {
-  background: var(--card);
-  border: 1px solid var(--bdr);
-  border-radius: 10px;
+  background: rgba(28,24,21,0.55);
+  border: none;
+  border-radius: 20px;
   margin-bottom: 0.8rem;
   overflow: hidden;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 .history-toggle {
@@ -43,21 +45,22 @@
 }
 
 .hf-btn {
-  background: none;
-  border: 1px solid var(--bdr);
-  border-radius: 4px;
+  background: rgba(255,255,255,0.03);
+  border: none;
+  border-radius: 9999px;
   font-family: 'Newsreader', serif;
   font-size: 0.68rem;
   font-style: italic;
   color: var(--dim);
-  padding: 0.2rem 0.5rem;
+  padding: 0.22rem 0.7rem;
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
 }
 
 .hf-btn:hover, .hf-btn.on {
-  border-color: var(--gdim);
+  background: rgba(229,169,60,0.08);
   color: var(--gold);
+  box-shadow: 0 0 14px rgba(229,169,60,0.12);
 }
 
 .history-table {
@@ -75,7 +78,7 @@
   font-weight: 400;
   text-align: left;
   padding: 0.25rem 0.3rem;
-  border-bottom: 1px solid var(--bdr);
+  border-bottom: 1px solid rgba(229,169,60,0.06);
 }
 
 .history-table td {

@@ -1,0 +1,63 @@
+.ref-section {
+  background: var(--card);
+  border: 1px solid var(--bdr);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.ref-title {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 0.7rem;
+}
+
+.ref-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Newsreader', serif;
+  font-size: 0.78rem;
+}
+
+.ref-table th {
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--faint);
+  font-weight: 400;
+  text-align: left;
+  padding: 0.3rem 0.4rem;
+  border-bottom: 1px solid var(--bdr);
+}
+
+.ref-table td {
+  color: var(--dim);
+  padding: 0.32rem 0.4rem;
+  border-bottom: 1px solid rgba(255,255,255,0.025);
+  vertical-align: top;
+  line-height: 1.4;
+}
+
+.ref-table td:first-child { color: var(--text); }
+
+.ref-link {
+  color: var(--gold);
+  cursor: pointer;
+  transition: color 0.2s;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.ref-link:hover { color: #e0c070; }
+
+.ref-note {
+  font-family: 'Newsreader', serif;
+  font-size: 0.7rem;
+  font-style: italic;
+  color: var(--faint);
+  margin-top: 0.6rem;
+  text-align: center;
+}

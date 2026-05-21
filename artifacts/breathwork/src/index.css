@@ -1,0 +1,34 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Newsreader:ital,wght@0,300;0,400;1,300&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg:    #0a0b12;
+  --card:  #13151f;
+  --gold:  #c9a84c;
+  --gdim:  #8a7234;
+  --text:  #d4cfc0;
+  --dim:   #7a7668;
+  --faint: #4a4840;
+  --grn:   #5b8a72;
+  --pur:   #7b6b8a;
+  --fire:  #c45c3e;
+  --ice:   #4a9ab5;
+  --sun:   #d4854a;
+  --moon:  #6b8ab5;
+  --bdr:   rgba(255,255,255,0.06);
+}
+
+body {
+  font-family: 'Cormorant Garamond', serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100dvh;
+  overflow-x: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#root {
+  min-height: 100dvh;
+}

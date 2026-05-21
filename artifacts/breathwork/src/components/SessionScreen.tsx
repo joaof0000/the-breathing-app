@@ -1,0 +1,621 @@
+import { useState, useRef, useCallback, useEffect } from 'react';
+import BreathRing from './BreathRing';
+import NostrilIndicator from './NostrilIndicator';
+import InfoDrawer from './InfoDrawer';
+import Tracker from './Tracker';
+import Heatmap from './Heatmap';
+import HistoryPanel from './HistoryPanel';
+import ReferenceTable from './ReferenceTable';
+import { TABS, NOSTRIL_TECHS, PUMP_TECHS, YT_LINKS, YT_LABELS, REC_DURATION, getPhases } from '../data/techniques';
+import { useAudio } from '../hooks/useAudio';
+import { useSessionStorage } from '../hooks/useSessionStorage';
+import './SessionScreen.css';
+
+interface Props {
+  initialTech: string | null;
+  onBack: () => void;
+}
+
+function fmtTime(s: number) {
+  const m = Math.floor(s / 60);
+  const sc = Math.floor(s % 60);
+  return m > 0 ? m + ':' + String(sc).padStart(2, '0') : String(sc);
+}
+
+export default function SessionScreen({ initialTech, onBack }: Props) {
+  const [tech, setTech] = useState(initialTech || '478');
+  const [volume, setVolume] = useState(60);
+  const [durMin, setDurMin] = useState(5);
+  const [whRounds, setWhRounds] = useState(3);
+  const [customIn, setCustomIn] = useState(4);
+  const [customH1, setCustomH1] = useState(4);
+  const [customOut, setCustomOut] = useState(4);
+  const [customH2, setCustomH2] = useState(4);
+  const [infoOpen, setInfoOpen] = useState(false);
+  const [running, setRunning] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  // Ring state
+  const [fill, setFill] = useState(0);
+  const [phaseClass, setPhaseClass] = useState('');
+  const [phaseName, setPhaseName] = useState('');
+  const [countdown, setCountdown] = useState('');
+  const [ringInfo, setRingInfo] = useState('');
+
+  // Nostril state
+  const [nostrilL, setNostrilL] = useState('idle');
+  const [nostrilR, setNostrilR] = useState('idle');
+
+  // Wim Hof state
+  const [whPromptText, setWhPromptText] = useState('');
+  const [whLiveTimer, setWhLiveTimer] = useState('');
+  const [whWaiting, setWhWaiting] = useState(false);
+
+  const volRef = useRef(volume);
+  useEffect(() => { volRef.current = volume; }, [volume]);
+
+  const getVolume = useCallback(() => volRef.current / 100, []);
+  const audio = useAudio(getVolume);
+  const { record, loadSessions } = useSessionStorage();
+
+  // Refs for engine control
+  const runningRef = useRef(false);
+  const rafRef = useRef<number | null>(null);
+  const whRafRef = useRef<number | null>(null);
+  const sessionStartRef = useRef(0);
+  const whRetStartRef = useRef(0);
+  const whWaitingRef = useRef(false);
+  const whBreathCountRef = useRef(0);
+  const whRoundRef = useRef(0);
+  const whStopRetRef = useRef<(() => void) | null>(null);
+
+  // Scroll tabs to active tech
+  const tabsRef = useRef<HTMLDivElement>(null);
+
+  const stopAllEngines = useCallback(() => {
+    runningRef.current = false;
+    whWaitingRef.current = false;
+    if (rafRef.current) { cancelAnimationFrame(rafRef.current); rafRef.current = null; }
+    if (whRafRef.current) { cancelAnimationFrame(whRafRef.current); whRafRef.current = null; }
+  }, []);
+
+  const finishSession = useCallback((techUsed: string) => {
+    const elapsed = Math.floor((Date.now() - sessionStartRef.current) / 1000);
+    record(techUsed, elapsed);
+    setRefreshKey(k => k + 1);
+    audio.doneTone();
+    setRunning(false);
+    setWhWaiting(false);
+    setFill(0);
+    setPhaseClass('');
+    setPhaseName('');
+    setCountdown('');
+    setRingInfo('');
+    setNostrilL('idle');
+    setNostrilR('idle');
+    stopAllEngines();
+  }, [record, audio, stopAllEngines]);
+
+  const stopSession = useCallback(() => {
+    if (!runningRef.current && !whWaitingRef.current) return;
+    const elapsed = Math.floor((Date.now() - sessionStartRef.current) / 1000);
+    if (elapsed > 10) record(tech, elapsed);
+    setRefreshKey(k => k + 1);
+    setRunning(false);
+    setWhWaiting(false);
+    setFill(0);
+    setPhaseClass('');
+    setPhaseName('');
+    setCountdown('');
+    setRingInfo('');
+    setNostrilL('idle');
+    setNostrilR('idle');
+    stopAllEngines();
+  }, [record, tech, stopAllEngines]);
+
+  // Duration-based engine
+  const startDuration = useCallback((techKey: string) => {
+    const totalSecs = durMin * 60;
+    const phases = getPhases(techKey, customIn, customH1, customOut, customH2);
+    if (!phases.length) return;
+    let phaseIdx = 0;
+    let phaseStart = performance.now();
+    let lastTick = -1;
+    let elapsedTotal = 0;
+    sessionStartRef.current = Date.now();
+
+    const playPhaseSound = (p: typeof phases[0]) => {
+      switch (p.snd) {
+        case 'inhale': audio.S.inhale(); break;
+        case 'exhale': audio.S.exhale(); break;
+        case 'hold':   audio.S.hold();   break;
+        case 'fire':   audio.S.fire();   break;
+        case 'sun':    audio.S.sun();    break;
+        case 'moon':   audio.S.moon();   break;
+        case 'ret':    audio.S.ret();    break;
+        case 'recov':  audio.S.recov();  break;
+      }
+    };
+
+    const startPhase = (idx: number) => {
+      const p = phases[idx];
+      setPhaseClass(p.cls);
+      setPhaseName(p.name);
+      setFill(0);
+      if (p.nos) {
+        setNostrilL(p.nos.l);
+        setNostrilR(p.nos.r);
+      }
+      playPhaseSound(p);
+    };
+
+    startPhase(0);
+
+    const tick = (now: number) => {
+      if (!runningRef.current) return;
+      const p = phases[phaseIdx];
+      const elapsed = (now - phaseStart) / 1000;
+      const remaining = p.s - elapsed;
+      elapsedTotal = (now - performance.now()) + (durMin * 60);
+
+      const totalElapsed = (Date.now() - sessionStartRef.current) / 1000;
+      if (totalElapsed >= totalSecs) {
+        finishSession(techKey);
+        return;
+      }
+
+      const rem = Math.max(0, Math.ceil(remaining));
+      setCountdown(fmtTime(rem));
+      setFill(elapsed / p.s);
+
+      const floorRem = Math.floor(remaining);
+      if (floorRem !== lastTick && remaining > 0.5) {
+        lastTick = floorRem;
+        if (remaining > 1.5 && remaining < p.s - 0.5) audio.tick();
+      }
+
+      if (elapsed >= p.s) {
+        phaseIdx = (phaseIdx + 1) % phases.length;
+        phaseStart = now;
+        lastTick = -1;
+        startPhase(phaseIdx);
+      }
+
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+  }, [durMin, customIn, customH1, customOut, customH2, audio, finishSession]);
+
+  // Pump engine (Kapalabhati / Bhastrika)
+  const startPump = useCallback((techKey: string) => {
+    const totalSecs = durMin * 60;
+    const bpm = techKey === 'bhastrika' ? 50 : 80;
+    const interval = 60000 / bpm;
+    let count = 0;
+    let lastTime = performance.now();
+    sessionStartRef.current = Date.now();
+
+    setPhaseClass('p-fire');
+    setPhaseName(techKey === 'bhastrika' ? 'Pump — Full Force' : 'Pump — Sharp Exhale');
+    setFill(0);
+    audio.S.fire();
+
+    const tick = (now: number) => {
+      if (!runningRef.current) return;
+      const totalElapsed = (Date.now() - sessionStartRef.current) / 1000;
+      if (totalElapsed >= totalSecs) {
+        finishSession(techKey);
+        return;
+      }
+      const elapsed = (now - lastTime);
+      if (elapsed >= interval) {
+        lastTime = now;
+        count++;
+        audio.pumpTone();
+        setCountdown(String(count));
+        setFill(f => (f + (1 / 30)) % 1);
+        if (count % 30 === 0) {
+          setPhaseName('Rest — Breathe naturally');
+          setPhaseClass('p-inhale');
+          audio.S.recov();
+          setTimeout(() => {
+            if (runningRef.current) {
+              setPhaseName(techKey === 'bhastrika' ? 'Pump — Full Force' : 'Pump — Sharp Exhale');
+              setPhaseClass('p-fire');
+              audio.S.fire();
+            }
+          }, 3000);
+        }
+      }
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+  }, [durMin, audio, finishSession]);
+
+  // Bhramari engine
+  const startBhramari = useCallback(() => {
+    const totalSecs = durMin * 60;
+    const phases = [
+      { name: 'Deep Inhale', s: 4, cls: 'p-inhale', snd: 'inhale', hum: false },
+      { name: 'Hum — MMMMmmm', s: 6, cls: 'p-hold', snd: 'hold', hum: true },
+    ];
+    let phaseIdx = 0;
+    let phaseStart = performance.now();
+    let lastTick = -1;
+    sessionStartRef.current = Date.now();
+
+    const startPhase = (idx: number) => {
+      const p = phases[idx];
+      setPhaseClass(p.cls);
+      setPhaseName(p.name);
+      setFill(0);
+      if (p.hum) { audio.hum(p.s); }
+      else { audio.S.inhale(); }
+    };
+
+    startPhase(0);
+
+    const tick = (now: number) => {
+      if (!runningRef.current) return;
+      const p = phases[phaseIdx];
+      const elapsed = (now - phaseStart) / 1000;
+      const remaining = p.s - elapsed;
+      const totalElapsed = (Date.now() - sessionStartRef.current) / 1000;
+
+      if (totalElapsed >= totalSecs) { finishSession('bhramari'); return; }
+
+      setCountdown(fmtTime(Math.max(0, Math.ceil(remaining))));
+      setFill(elapsed / p.s);
+
+      const floorRem = Math.floor(remaining);
+      if (floorRem !== lastTick && remaining > 0.5) {
+        lastTick = floorRem;
+        if (!p.hum && remaining > 1.5 && remaining < p.s - 0.5) audio.tick();
+      }
+
+      if (elapsed >= p.s) {
+        phaseIdx = (phaseIdx + 1) % phases.length;
+        phaseStart = now;
+        lastTick = -1;
+        startPhase(phaseIdx);
+      }
+
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+  }, [durMin, audio, finishSession]);
+
+  // Wim Hof engine
+  const startWimHof = useCallback(() => {
+    let round = 0;
+    let breathCount = 0;
+    const BREATH_COUNT = 30;
+    const BREATH_INTERVAL = 1500;
+    let lastBreathTime = performance.now();
+    sessionStartRef.current = Date.now();
+
+    whRoundRef.current = 0;
+    whBreathCountRef.current = 0;
+
+    const doRound = () => {
+      if (!runningRef.current) return;
+      round++;
+      breathCount = 0;
+      whRoundRef.current = round;
+      setPhaseClass('p-fire');
+      setPhaseName(`Round ${round} — Power Breaths`);
+      setRingInfo(`Breath 1 of ${BREATH_COUNT}`);
+      setFill(0);
+      setCountdown('');
+      audio.powerBreathTone();
+
+      const breathLoop = (now: number) => {
+        if (!runningRef.current) return;
+        if (whWaitingRef.current) return;
+        const elapsed = now - lastBreathTime;
+        if (elapsed >= BREATH_INTERVAL) {
+          lastBreathTime = now;
+          breathCount++;
+          audio.powerBreathTone();
+          setFill(breathCount / BREATH_COUNT);
+          setRingInfo(`Breath ${breathCount} of ${BREATH_COUNT}`);
+
+          if (breathCount >= BREATH_COUNT) {
+            // Go to retention
+            audio.S.exhale();
+            setPhaseClass('p-ret');
+            setPhaseName('Exhale fully — Hold empty');
+            setRingInfo('');
+            setFill(0);
+            whWaitingRef.current = true;
+            setWhWaiting(true);
+            whRetStartRef.current = Date.now();
+
+            const retLoop = (ts: number) => {
+              if (!runningRef.current || !whWaitingRef.current) return;
+              const retSecs = Math.floor((Date.now() - whRetStartRef.current) / 1000);
+              setWhLiveTimer(fmtTime(retSecs));
+              setWhPromptText('Hold empty lungs. Tap when you need to breathe.');
+              whRafRef.current = requestAnimationFrame(retLoop);
+            };
+            whRafRef.current = requestAnimationFrame(retLoop);
+
+            whStopRetRef.current = () => {
+              whWaitingRef.current = false;
+              setWhWaiting(false);
+              if (whRafRef.current) { cancelAnimationFrame(whRafRef.current); whRafRef.current = null; }
+
+              // Recovery breath
+              setPhaseClass('p-inhale');
+              setPhaseName('Deep Inhale — Hold 15s');
+              setRingInfo('Recovery breath');
+              setFill(0);
+              setWhLiveTimer('');
+              setWhPromptText('');
+              audio.S.recov();
+
+              let recStart = performance.now();
+              const recLoop = (ts: number) => {
+                if (!runningRef.current) return;
+                const el = (ts - recStart) / 1000;
+                setFill(el / 15);
+                setCountdown(fmtTime(Math.max(0, Math.ceil(15 - el))));
+                if (el >= 15) {
+                  audio.S.exhale();
+                  if (round >= whRounds) {
+                    finishSession('wimhof');
+                  } else {
+                    lastBreathTime = performance.now();
+                    breathCount = 0;
+                    doRound();
+                  }
+                  return;
+                }
+                rafRef.current = requestAnimationFrame(recLoop);
+              };
+              rafRef.current = requestAnimationFrame(recLoop);
+            };
+            return;
+          }
+        }
+        whRafRef.current = requestAnimationFrame(breathLoop);
+      };
+
+      lastBreathTime = performance.now();
+      whRafRef.current = requestAnimationFrame(breathLoop);
+    };
+
+    doRound();
+  }, [whRounds, audio, finishSession]);
+
+  const beginSession = useCallback(() => {
+    audio.ensureAC();
+    setRunning(true);
+    runningRef.current = true;
+    whWaitingRef.current = false;
+    setWhWaiting(false);
+    setWhLiveTimer('');
+    setWhPromptText('');
+
+    if (tech === 'wimhof') { startWimHof(); return; }
+    if (tech === 'bhramari') { startBhramari(); return; }
+    if (PUMP_TECHS.includes(tech)) { startPump(tech); return; }
+    startDuration(tech);
+  }, [tech, audio, startWimHof, startBhramari, startPump, startDuration]);
+
+  const handleWimHofStop = useCallback(() => {
+    if (whStopRetRef.current) {
+      whStopRetRef.current();
+      whStopRetRef.current = null;
+    } else {
+      stopSession();
+    }
+  }, [stopSession]);
+
+  const activateTech = useCallback((t: string) => {
+    if (running) stopSession();
+    setTech(t);
+    setInfoOpen(false);
+    // Scroll tab into view
+    setTimeout(() => {
+      const tab = tabsRef.current?.querySelector(`[data-t="${t}"]`) as HTMLElement;
+      if (tab) tab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }, 50);
+  }, [running, stopSession]);
+
+  // Activate initialTech
+  useEffect(() => {
+    if (initialTech) {
+      setTech(initialTech);
+      setTimeout(() => {
+        const tab = tabsRef.current?.querySelector(`[data-t="${initialTech}"]`) as HTMLElement;
+        if (tab) tab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }, 100);
+    }
+  }, [initialTech]);
+
+  const handleManualLog = useCallback(() => {
+    record(tech, durMin * 60);
+    setRefreshKey(k => k + 1);
+  }, [record, tech, durMin]);
+
+  const handleReset = useCallback(() => {
+    if (!confirm('Reset all session data? This cannot be undone.')) return;
+    localStorage.removeItem('breathwork_v4');
+    setRefreshKey(k => k + 1);
+  }, []);
+
+  const showNostril = NOSTRIL_TECHS.includes(tech);
+  const ytLink = YT_LINKS[tech];
+  const ytLabel = YT_LABELS[tech];
+  const recDur = REC_DURATION[tech];
+
+  return (
+    <div className="page2-scroll">
+      <div className="wrap">
+        <h1>
+          <button className="back-btn" onClick={onBack}>←</button>
+          Breathwork
+        </h1>
+
+        {/* Tabs */}
+        <div className="tabs" ref={tabsRef}>
+          {TABS.map(tab => (
+            <button
+              key={tab.id}
+              className={`tab ${tech === tab.id ? 'on' : ''}`}
+              data-t={tab.id}
+              onClick={() => activateTech(tab.id)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Ring */}
+        <BreathRing
+          fill={fill}
+          phaseClass={phaseClass}
+          phaseName={phaseName}
+          countdown={countdown}
+          info={ringInfo}
+          running={running && !whWaiting}
+          onBegin={beginSession}
+          onStop={stopSession}
+          showWimHofPrompt={whWaiting}
+          wimHofPromptText={whPromptText}
+          wimHofLiveTimer={whLiveTimer}
+          onWimHofStop={handleWimHofStop}
+        />
+
+        {showNostril && (
+          <NostrilIndicator
+            show={running}
+            left={nostrilL}
+            right={nostrilR}
+          />
+        )}
+
+        {/* Options */}
+        <div className="options">
+          {tech !== 'wimhof' && (
+            <div className="opt-row">
+              <span className="opt-label">Duration</span>
+              <div className="dur-btns">
+                {[1, 2, 3, 5, 10, 20].map(m => (
+                  <button
+                    key={m}
+                    className={`dur-btn ${durMin === m ? 'on' : ''}`}
+                    onClick={() => setDurMin(m)}
+                  >
+                    {m}
+                  </button>
+                ))}
+              </div>
+              <div className="dur-custom">
+                <input
+                  type="number"
+                  min={1} max={60}
+                  value={durMin}
+                  onChange={e => setDurMin(Math.max(1, Math.min(60, parseInt(e.target.value) || 1)))}
+                />
+                <span>min</span>
+              </div>
+            </div>
+          )}
+
+          {tech === 'wimhof' && (
+            <div className="opt-row">
+              <span className="opt-label">Rounds</span>
+              <div className="dur-btns">
+                {[2, 3, 4, 5].map(r => (
+                  <button
+                    key={r}
+                    className={`dur-btn ${whRounds === r ? 'on' : ''}`}
+                    onClick={() => setWhRounds(r)}
+                  >
+                    {r}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {tech === 'custom' && (
+            <div className="custom-grid-wrap">
+              <div className="custom-grid-label">Pattern (seconds per phase)</div>
+              <div className="custom-grid">
+                <div className="cg-item">
+                  <label>Inhale</label>
+                  <input type="number" min={1} max={30} value={customIn} onChange={e => setCustomIn(+e.target.value)} />
+                  <span className="cg-unit">seconds</span>
+                </div>
+                <div className="cg-item">
+                  <label>Hold In</label>
+                  <input type="number" min={0} max={30} value={customH1} onChange={e => setCustomH1(+e.target.value)} />
+                  <span className="cg-unit">0 = skip</span>
+                </div>
+                <div className="cg-item">
+                  <label>Exhale</label>
+                  <input type="number" min={1} max={30} value={customOut} onChange={e => setCustomOut(+e.target.value)} />
+                  <span className="cg-unit">seconds</span>
+                </div>
+                <div className="cg-item">
+                  <label>Hold Out</label>
+                  <input type="number" min={0} max={30} value={customH2} onChange={e => setCustomH2(+e.target.value)} />
+                  <span className="cg-unit">0 = skip</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="opt-row opt-vol-row">
+            <span className="opt-label">Volume</span>
+            <input
+              type="range"
+              min={0} max={100}
+              value={volume}
+              className="vol-slider"
+              onChange={e => setVolume(+e.target.value)}
+            />
+            <span className="vol-val">{volume}%</span>
+          </div>
+
+          {ytLink && (
+            <div className="opt-yt-row">
+              <a className="opt-yt-link" href={ytLink} target="_blank" rel="noopener">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="#ff4444">
+                  <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/>
+                </svg>
+                <span>{ytLabel || 'Watch tutorial on YouTube'}</span>
+              </a>
+            </div>
+          )}
+
+          {recDur && <div className="rec-label">{recDur}</div>}
+
+          <button className="info-link" onClick={() => setInfoOpen(o => !o)}>
+            {infoOpen ? 'Hide info ↑' : 'How does this work? ↓'}
+          </button>
+        </div>
+
+        <InfoDrawer tech={tech} open={infoOpen} onClose={() => setInfoOpen(false)} />
+
+        {/* Tracker */}
+        <Tracker refreshKey={refreshKey} onManualLog={handleManualLog} onReset={handleReset} />
+
+        {/* Heatmap */}
+        <Heatmap refreshKey={refreshKey} />
+
+        {/* History */}
+        <HistoryPanel refreshKey={refreshKey} onRefresh={() => setRefreshKey(k => k + 1)} />
+
+        {/* Reference */}
+        <ReferenceTable onActivateTech={activateTech} />
+      </div>
+    </div>
+  );
+}

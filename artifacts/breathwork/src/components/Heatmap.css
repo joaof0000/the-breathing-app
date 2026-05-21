@@ -1,0 +1,123 @@
+.heatmap-section {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--bdr);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.heatmap-title {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 0.55rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.heatmap-year {
+  font-size: 0.65rem;
+  color: var(--faint);
+  letter-spacing: 0.08em;
+  font-weight: 400;
+}
+
+.heatmap-scroll {
+  overflow-x: auto;
+  padding-bottom: 0.3rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gdim) transparent;
+}
+
+.heatmap-scroll::-webkit-scrollbar { height: 3px; }
+.heatmap-scroll::-webkit-scrollbar-thumb { background: var(--gdim); }
+
+.heatmap-grid {
+  display: flex;
+  gap: 2px;
+  align-items: flex-start;
+}
+
+.heatmap-month-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+}
+
+.heatmap-month-label {
+  font-size: 0.58rem;
+  color: var(--faint);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  height: 14px;
+  line-height: 14px;
+  margin-bottom: 2px;
+  white-space: nowrap;
+}
+
+.heatmap-week {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hm-day {
+  width: 11px;
+  height: 11px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.04);
+  position: relative;
+  cursor: default;
+  flex-shrink: 0;
+  transition: transform 0.15s;
+}
+
+.hm-day:hover { transform: scale(1.4); z-index: 10; }
+
+.hm-empty { background: #000000; border: 1px solid rgba(255,255,255,0.04); }
+.hm-0     { background: #000000; border: 1px solid rgba(255,255,255,0.08); }
+.hm-1     { background: #1a3d1a; border: none; }
+.hm-2     { background: #1f5c1f; border: none; }
+.hm-3     { background: #278527; border: none; }
+.hm-4     { background: #2eb02e; border: none; }
+.hm-5     { background: #3ddd3d; border: none; }
+
+.heatmap-legend {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.heatmap-legend span {
+  font-size: 0.6rem;
+  color: var(--faint);
+  letter-spacing: 0.06em;
+}
+
+.hm-leg {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.hm-tooltip {
+  position: fixed;
+  z-index: 999;
+  background: #111320;
+  border: 1px solid var(--bdr);
+  padding: 0.35rem 0.55rem;
+  pointer-events: none;
+  font-family: 'Newsreader', serif;
+  font-size: 0.72rem;
+  font-style: italic;
+  color: var(--text);
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}

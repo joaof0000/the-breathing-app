@@ -1,0 +1,2701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Breathwork</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Newsreader:ital,wght@0,300;0,400;1,300&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg:    #0a0b12;
+    --card:  #13151f;
+    --gold:  #c9a84c;
+    --gdim:  #8a7234;
+    --text:  #d4cfc0;
+    --dim:   #7a7668;
+    --faint: #4a4840;
+    --grn:   #5b8a72;
+    --pur:   #7b6b8a;
+    --fire:  #c45c3e;
+    --ice:   #4a9ab5;
+    --sun:   #d4854a;
+    --moon:  #6b8ab5;
+    --bdr:   rgba(255,255,255,0.06);
+  }
+
+  body {
+    font-family: 'Cormorant Garamond', serif;
+    background: var(--bg); color: var(--text);
+    min-height: 100dvh;
+    display: flex; flex-direction: column; align-items: center;
+    overflow-x: hidden; user-select: none; -webkit-user-select: none;
+  }
+
+  /* Desktop centering */
+  @media (min-width: 700px) {
+    body { justify-content: flex-start; }
+    .wrap { max-width: 640px; padding: 2rem 2rem; }
+    .p1-wrap { max-width: 580px; }
+    .goal-grid { grid-template-columns: 1fr 1fr 1fr 1fr; }
+    .picker-sheet { max-width: 560px; margin: 0 auto; border-radius: 4px 4px 0 0; }
+    .tabs { max-width: 640px; }
+  }
+  @media (min-width: 1000px) {
+    .wrap { max-width: 720px; }
+    .p1-wrap { max-width: 660px; }
+    .goal-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+
+  .grain { position: fixed; inset: 0; z-index: 100; pointer-events: none; opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  .glow { position: fixed; width: 500px; height: 500px; border-radius: 50%; filter: blur(120px); opacity: 0.1; pointer-events: none; }
+  .glow-1 { top: -200px; left: -150px; background: var(--grn); }
+  .glow-2 { bottom: -200px; right: -150px; background: var(--pur); }
+
+  .wrap { position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center;
+    gap: 0.9rem; padding: 1.2rem 1rem; width: 100%; max-width: 500px; }
+
+  h1 { font-weight: 300; font-size: 0.95rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--dim); }
+
+  /* ══════════════════════════════════
+     PAGE 1 — Goal Screen
+  ══════════════════════════════════ */
+
+  .page { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.45s ease, transform 0.45s ease; z-index: 50; overflow-y: auto; }
+  .page.hidden { display: none; }
+
+  /* Page 1 wrapper */
+  .p1-wrap { display: flex; flex-direction: column; align-items: center; gap: 1.4rem; padding: 2rem 1.2rem; width: 100%; max-width: 440px; }
+  .p1-title { font-weight: 300; font-size: 1.05rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--dim); text-align: center; }
+  .p1-sub { font-family: 'Newsreader', serif; font-size: 1rem; font-style: italic; color: var(--text-dim); text-align: center; margin-top: -0.8rem; }
+
+  .goal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; width: 100%; }
+  .goal-btn {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 0.4rem; padding: 1rem 0.5rem;
+    background: var(--card); border: 1px solid var(--bdr);
+    cursor: pointer; transition: all 0.3s; min-height: 80px;
+  }
+  .goal-btn:hover { border-color: var(--gold); background: rgba(201,168,76,0.06); }
+  .goal-btn:active { transform: scale(0.97); }
+  .goal-icon { font-size: 2rem; line-height: 1; }
+  .goal-label { font-family: 'Cormorant Garamond', serif; font-size: 0.82rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text); text-align: center; line-height: 1.3; }
+  .goal-sub { font-family: 'Newsreader', serif; font-size: 0.7rem; font-style: italic; color: var(--dim); text-align: center; line-height: 1.3; }
+
+  .p1-browse { font-family: 'Newsreader', serif; font-size: 0.8rem; font-style: italic; background: none; border: none; color: var(--faint); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; transition: color 0.3s; margin-top: -0.5rem; }
+  .p1-browse:hover { color: var(--gold); }
+
+  /* ── Picker overlay ── */
+  .picker-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(10,11,18,0.92);
+    display: flex; align-items: flex-end; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.35s ease;
+    backdrop-filter: blur(4px);
+  }
+  .picker-overlay.open { opacity: 1; pointer-events: all; }
+
+  .picker-sheet {
+    width: 100%; max-width: 500px;
+    background: var(--card);
+    border-top: 1px solid var(--bdr);
+    padding: 1.4rem 1.2rem 2rem;
+    transform: translateY(20px);
+    transition: transform 0.35s ease;
+  }
+  .picker-overlay.open .picker-sheet { transform: translateY(0); }
+
+  .picker-goal { font-family: 'Newsreader', serif; font-size: 1.1rem; font-style: italic; color: var(--gold); margin-bottom: 0.3rem; }
+  .picker-prompt { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); margin-bottom: 1rem; }
+
+  .picker-choices { display: flex; flex-direction: column; gap: 0.5rem; }
+  .picker-choice {
+    display: flex; align-items: center; gap: 0.9rem;
+    padding: 0.85rem 1rem;
+    background: rgba(255,255,255,0.03); border: 1px solid var(--bdr);
+    cursor: pointer; transition: all 0.25s;
+  }
+  .picker-choice:hover { border-color: var(--gold); background: rgba(201,168,76,0.07); }
+  .picker-choice:active { transform: scale(0.99); }
+  .pc-num { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; color: var(--gold); min-width: 18px; }
+  .pc-name { font-size: 0.95rem; font-weight: 500; color: var(--text); letter-spacing: 0.06em; }
+  .pc-desc { font-family: 'Newsreader', serif; font-size: 0.75rem; font-style: italic; color: var(--dim); margin-top: 0.15rem; }
+
+  .picker-cancel { font-family: 'Newsreader', serif; font-size: 0.8rem; font-style: italic; background: none; border: none; color: var(--faint); cursor: pointer; margin-top: 1rem; display: block; width: 100%; text-align: center; transition: color 0.3s; }
+  .picker-cancel:hover { color: var(--text); }
+
+  /* Page 2 scroll container — hidden until activated */
+  .page2-scroll {
+    position: relative; z-index: 10;
+    width: 100%;
+    display: none;
+    flex-direction: column; align-items: center;
+  }
+  .page2-scroll.visible {
+    display: flex;
+  }
+
+  /* ── Tabs ── */
+  .tabs { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.3rem; width: 100%; }
+  .tab { font-family: 'Cormorant Garamond', serif; font-size: 0.72rem; font-weight: 500;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    background: rgba(255,255,255,0.03); border: 1px solid var(--bdr);
+    color: var(--dim); padding: 0.38rem 0.6rem; cursor: pointer; transition: all 0.3s; white-space: nowrap; }
+  .tab:hover { border-color: var(--gdim); color: var(--text); }
+  .tab.on { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.08); }
+
+  /* ── Options ── */
+  .options { width: 100%; background: var(--card); border: 1px solid var(--bdr); padding: 0.85rem 1rem;
+    display: flex; flex-direction: column; gap: 0.65rem; }
+  .opt-row { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+  .opt-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); min-width: 52px; }
+  .dur-btns { display: flex; gap: 0.28rem; flex-wrap: wrap; }
+  .dur-btn { font-family: 'Cormorant Garamond', serif; font-size: 0.78rem;
+    background: rgba(255,255,255,0.03); border: 1px solid var(--bdr);
+    color: var(--dim); padding: 0.28rem 0.5rem; cursor: pointer; transition: all 0.25s; }
+  .dur-btn:hover { border-color: var(--gdim); color: var(--text); }
+  .dur-btn.on { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.08); }
+  .dur-custom { display: flex; align-items: center; gap: 0.3rem; }
+  .dur-custom input { font-family: 'Cormorant Garamond', serif; font-size: 0.9rem;
+    background: rgba(255,255,255,0.05); border: 1px solid var(--bdr);
+    color: var(--text); width: 46px; padding: 0.25rem 0.35rem; text-align: center; }
+  .dur-custom input:focus { outline: 1px solid var(--gdim); }
+  .dur-custom span { font-size: 0.7rem; color: var(--dim); }
+
+  .custom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.45rem; width: 100%; }
+  .cg-item { display: flex; flex-direction: column; gap: 0.22rem; }
+  .cg-item label { font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); }
+  .cg-item input { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; font-weight: 300;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--bdr);
+    color: var(--text); padding: 0.3rem 0.45rem; text-align: center; width: 100%; }
+  .cg-item input:focus { outline: 1px solid var(--gdim); }
+  .cg-unit { font-size: 0.6rem; color: var(--faint); text-align: center; }
+
+  .info-link { font-family: 'Newsreader', serif; font-size: 0.76rem; font-style: italic;
+    background: none; border: none; color: var(--gdim); cursor: pointer;
+    text-decoration: underline; text-underline-offset: 2px; transition: color 0.3s; align-self: flex-start; }
+  .info-link:hover { color: var(--gold); }
+
+  /* ── Info drawer ── */
+  .info-drawer { display: none; width: 100%; background: var(--card); border: 1px solid var(--bdr);
+    padding: 1rem 1.1rem; max-height: 58vh; overflow-y: auto;
+    scrollbar-width: thin; scrollbar-color: var(--gdim) transparent; }
+  .info-drawer.open { display: block; }
+  .info-drawer::-webkit-scrollbar { width: 4px; }
+  .info-drawer::-webkit-scrollbar-thumb { background: var(--gdim); }
+  .info-drawer h2 { font-family: 'Newsreader', serif; font-size: 1.08rem; font-style: italic; color: var(--gold); margin-bottom: 0.55rem; }
+  .info-drawer h3 { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text); margin: 0.75rem 0 0.3rem; }
+  .info-drawer p, .info-drawer li { font-family: 'Newsreader', serif; font-size: 0.84rem; line-height: 1.58; color: var(--dim); }
+  .info-drawer ul { padding-left: 1rem; margin: 0.28rem 0; }
+  .info-drawer li { margin-bottom: 0.22rem; }
+  .tip { background: rgba(91,138,114,0.1); border-left: 2px solid var(--grn); padding: 0.45rem 0.65rem; margin-top: 0.45rem; }
+  .tip p { color: var(--grn); font-size: 0.8rem; }
+  .warn { background: rgba(196,92,62,0.1); border-left: 2px solid var(--fire); padding: 0.45rem 0.65rem; margin-top: 0.45rem; }
+  .warn p { color: var(--fire); font-size: 0.8rem; }
+  .sun-note { background: rgba(212,133,74,0.1); border-left: 2px solid var(--sun); padding: 0.45rem 0.65rem; margin-top: 0.45rem; }
+  .sun-note p { color: var(--sun); font-size: 0.8rem; }
+  .moon-note { background: rgba(107,138,181,0.1); border-left: 2px solid var(--moon); padding: 0.45rem 0.65rem; margin-top: 0.45rem; }
+  .moon-note p { color: var(--moon); font-size: 0.8rem; }
+  .btn-close { font-family: 'Cormorant Garamond', serif; font-size: 0.76rem; font-weight: 500;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    background: rgba(201,168,76,0.08); border: 1px solid var(--gdim);
+    color: var(--gold); padding: 0.42rem 1.1rem; cursor: pointer;
+    display: block; margin: 0.85rem auto 0; transition: all 0.3s; }
+  .btn-close:hover { background: rgba(201,168,76,0.15); }
+
+  /* Nostril diagram */
+  .nostril-guide { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; margin: 0.7rem 0; }
+  .nostril-step { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
+  .nostril-step svg { width: 56px; height: 56px; }
+  .nostril-step span { font-size: 0.68rem; color: var(--dim); text-align: center; max-width: 64px; line-height: 1.3; font-family: 'Newsreader', serif; font-style: italic; }
+
+  /* Hand diagram */
+  .hand-diagram { margin: 0.6rem auto; display: block; }
+
+  /* ── Ring ── */
+  .ring-wrap { position: relative; width: 220px; height: 220px; flex-shrink: 0; }
+  .ring-wrap svg.rsv { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .ring-bg   { fill: none; stroke: rgba(255,255,255,0.04); stroke-width: 3; }
+  .ring-fill { fill: none; stroke: var(--gold); stroke-width: 3; stroke-linecap: round;
+    stroke-dasharray: 597; stroke-dashoffset: 597; transition: stroke 0.5s;
+    filter: drop-shadow(0 0 5px var(--gdim)); }
+  .ring-center { position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 0.2rem; padding: 0 0.6rem; }
+  .ring-phase { font-family: 'Newsreader', serif; font-size: 1rem; font-weight: 300; font-style: italic;
+    color: var(--gold); transition: color 0.5s; min-height: 1.4rem; text-align: center; line-height: 1.25; }
+  .ring-count { font-size: 2.8rem; font-weight: 300; line-height: 1; color: var(--text); min-height: 3.2rem; }
+  .ring-info  { font-size: 0.72rem; color: var(--dim); letter-spacing: 0.1em; text-align: center; }
+
+  /* Nostril indicator on ring */
+  .nostril-indicator { display: none; align-items: center; gap: 0.5rem; margin-top: 0.15rem; }
+  .nostril-indicator.show { display: flex; }
+  .nos { width: 28px; height: 28px; border-radius: 50%; border: 2px solid;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.65rem; font-weight: 600; letter-spacing: 0.05em; transition: all 0.4s; }
+  .nos.left  { border-color: var(--moon); color: var(--moon); }
+  .nos.right { border-color: var(--sun);  color: var(--sun); }
+  .nos.active-l { background: var(--moon); color: var(--bg); }
+  .nos.active-r { background: var(--sun);  color: var(--bg); }
+  .nos.closed { opacity: 0.2; }
+
+  .p-inhale .ring-fill { stroke: var(--grn); }
+  .p-hold   .ring-fill { stroke: var(--gold); }
+  .p-exhale .ring-fill { stroke: var(--pur); }
+  .p-hold2  .ring-fill { stroke: var(--gdim); }
+  .p-fire   .ring-fill { stroke: var(--fire); }
+  .p-ret    .ring-fill { stroke: var(--ice); }
+  .p-sun    .ring-fill { stroke: var(--sun); }
+  .p-moon   .ring-fill { stroke: var(--moon); }
+  .p-inhale .ring-phase { color: var(--grn); }
+  .p-hold   .ring-phase { color: var(--gold); }
+  .p-exhale .ring-phase { color: var(--pur); }
+  .p-hold2  .ring-phase { color: var(--gdim); }
+  .p-fire   .ring-phase { color: var(--fire); }
+  .p-ret    .ring-phase { color: var(--ice); }
+  .p-sun    .ring-phase { color: var(--sun); }
+  .p-moon   .ring-phase { color: var(--moon); }
+
+  /* ── WH prompt ── */
+  .wh-prompt { display: none; flex-direction: column; align-items: center; gap: 0.6rem; }
+  .wh-prompt.show { display: flex; }
+  .wh-text { font-family: 'Newsreader', serif; font-size: 0.88rem; font-style: italic; color: var(--ice); text-align: center; }
+  .btn-ice { font-family: 'Cormorant Garamond', serif; font-size: 0.78rem; font-weight: 500;
+    letter-spacing: 0.18em; text-transform: uppercase; background: transparent;
+    border: 1px solid var(--ice); color: var(--ice); padding: 0.48rem 1.5rem; cursor: pointer; transition: all 0.3s; }
+  .btn-ice:hover { background: rgba(74,154,181,0.1); }
+  #whLiveTimer { font-size: 2rem; color: var(--ice); font-weight: 300; min-height: 2.4rem; text-align: center; }
+
+  /* ── Controls ── */
+  .controls { display: flex; flex-direction: column; align-items: center; gap: 0.65rem; width: 100%; }
+  .btn-begin { font-family: 'Cormorant Garamond', serif; font-size: 0.88rem; font-weight: 500;
+    letter-spacing: 0.25em; text-transform: uppercase;
+    background: transparent; border: 1px solid var(--gdim); color: var(--gold);
+    padding: 0.68rem 2.6rem; cursor: pointer; transition: all 0.35s; position: relative; overflow: hidden; }
+  .btn-begin::before { content: ''; position: absolute; inset: 0; background: var(--gold); opacity: 0; transition: opacity 0.35s; z-index: -1; }
+  .btn-begin:hover::before { opacity: 0.08; }
+  .btn-begin:hover { border-color: var(--gold); }
+  .vol-row { display: flex; align-items: center; gap: 0.5rem; }
+  .vol-row label { font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); }
+  input[type="range"] { -webkit-appearance: none; width: 80px; height: 2px; background: rgba(255,255,255,0.1); border: none; }
+  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 13px; height: 13px; border-radius: 50%; background: var(--gold); cursor: pointer; }
+
+  /* ── Tracker ── */
+  .tracker { width: 100%; background: var(--card); border: 1px solid var(--bdr); padding: 0.82rem 1rem; }
+  .trk-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; }
+  .trk-title { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--dim); }
+  .trk-reset { font-family: 'Newsreader', serif; font-size: 0.68rem; font-style: italic; background: none; border: none; color: var(--faint); cursor: pointer; transition: color 0.3s; }
+  .trk-reset:hover { color: var(--fire); }
+  .trk-stats { display: flex; gap: 1.1rem; margin-bottom: 0.65rem; }
+  .trk-stat { display: flex; flex-direction: column; gap: 0.04rem; }
+  .trk-num { font-size: 1.5rem; font-weight: 300; color: var(--gold); line-height: 1; }
+  .trk-lbl { font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); }
+  .trk-bars { display: flex; gap: 0.28rem; align-items: flex-end; height: 30px; }
+  .trk-bw { display: flex; flex-direction: column; align-items: center; gap: 0.12rem; flex: 1; }
+  .trk-b { width: 100%; height: 22px; position: relative; }
+  .trk-bf { position: absolute; bottom: 0; left: 0; right: 0; background: var(--gold); opacity: 0.6; transition: height 0.5s; }
+  .trk-bl { font-size: 0.54rem; color: var(--faint); letter-spacing: 0.03em; text-align: center; }
+  .trk-last { font-family: 'Newsreader', serif; font-size: 0.71rem; font-style: italic; color: var(--faint); margin-top: 0.32rem; }
+  .trk-manual { font-family: 'Newsreader', serif; font-size: 0.73rem; font-style: italic; background: none; border: none; color: var(--gdim); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; margin-top: 0.38rem; display: block; transition: color 0.3s; }
+  .trk-manual:hover { color: var(--gold); }
+  .trk-note { font-family: 'Newsreader', serif; font-size: 0.65rem; font-style: italic; color: var(--faint); margin-top: 0.28rem; }
+
+  .yt-link {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    font-family: 'Newsreader', serif; font-size: 0.8rem; font-style: italic;
+    color: #ff4444; text-decoration: none; margin-top: 0.7rem;
+    padding: 0.4rem 0.7rem;
+    border: 1px solid rgba(255,68,68,0.25);
+    background: rgba(255,68,68,0.06);
+    transition: all 0.3s; display: block; text-align: center;
+  }
+  .yt-link:hover { background: rgba(255,68,68,0.14); border-color: rgba(255,68,68,0.5); }
+  .yt-link svg { flex-shrink: 0; }
+
+  /* ── Always-visible YouTube link in options ── */
+  .opt-yt-row { width: 100%; }
+  .opt-yt-link {
+    display: flex; align-items: center; gap: 0.45rem;
+    font-family: 'Newsreader', serif; font-size: 0.82rem; font-style: italic;
+    color: #ff5555; text-decoration: none;
+    padding: 0.45rem 0.6rem;
+    border: 1px solid rgba(255,68,68,0.3);
+    background: rgba(255,68,68,0.06);
+    transition: all 0.25s; width: 100%;
+  }
+  .opt-yt-link:hover { background: rgba(255,68,68,0.13); border-color: rgba(255,68,68,0.55); }
+
+  /* ── Time to results block ── */
+  .time-block {
+    background: rgba(201,168,76,0.06);
+    border-left: 2px solid var(--gdim);
+    padding: 0.5rem 0.7rem;
+    margin-top: 0.6rem;
+  }
+  .time-row {
+    display: flex; gap: 0.5rem; flex-wrap: wrap;
+    align-items: baseline; margin-bottom: 0.25rem;
+  }
+  .time-label {
+    font-size: 0.62rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--faint);
+  }
+  .time-val {
+    font-size: 0.85rem; color: var(--gold);
+    font-weight: 500; margin-right: 0.8rem;
+  }
+  .time-note {
+    font-family: 'Newsreader', serif;
+    font-size: 0.78rem; font-style: italic;
+    color: var(--dim); line-height: 1.5;
+    margin: 0;
+  }
+
+  /* ── Clickable technique name in table ── */
+  .ref-link {
+    color: var(--gold);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-color: var(--gdim);
+    transition: color 0.2s;
+    font-style: italic;
+  }
+  .ref-link:hover { color: #f0d070; text-decoration-color: var(--gold); }
+
+  /* ── Reference Table ── */
+  .ref-section {
+    width: 100%; padding-bottom: 2rem;
+  }
+  .ref-title {
+    font-size: 0.7rem; font-weight: 600; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--dim);
+    margin-bottom: 0.6rem;
+  }
+  .ref-table {
+    width: 100%; border-collapse: collapse;
+    font-family: 'Newsreader', serif;
+  }
+  .ref-table th {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.65rem; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--faint); text-align: left;
+    padding: 0.3rem 0.5rem 0.4rem;
+    border-bottom: 1px solid var(--bdr);
+  }
+  .ref-table td {
+    font-size: 0.78rem; line-height: 1.4;
+    color: var(--dim); padding: 0.45rem 0.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    vertical-align: top;
+  }
+  .ref-table td:first-child {
+    color: var(--text); font-style: normal;
+    white-space: nowrap; font-size: 0.75rem;
+  }
+  .ref-table td:nth-child(2) {
+    color: var(--gold);
+  }
+  .ref-table tbody tr:hover td {
+    background: rgba(255,255,255,0.02);
+  }
+  .ref-note {
+    font-family: 'Newsreader', serif;
+    font-size: 0.7rem; font-style: italic;
+    color: var(--faint); margin-top: 0.6rem;
+    text-align: center; line-height: 1.5;
+  }
+
+  /* ── Session History Log ── */
+  .history-section {
+    width: 100%; margin-top: 0.5rem;
+  }
+  .history-toggle {
+    font-family: "Newsreader", serif; font-size: 0.78rem; font-style: italic;
+    background: none; border: none; color: var(--gdim);
+    cursor: pointer; text-decoration: underline; text-underline-offset: 2px;
+    transition: color 0.3s; display: block; margin-bottom: 0.5rem;
+  }
+  .history-toggle:hover { color: var(--gold); }
+  .history-panel {
+    display: none; background: var(--card); border: 1px solid var(--bdr);
+    padding: 0.8rem 0.9rem; max-height: 320px; overflow-y: auto;
+    scrollbar-width: thin; scrollbar-color: var(--gdim) transparent;
+  }
+  .history-panel.open { display: block; }
+  .history-panel::-webkit-scrollbar { width: 4px; }
+  .history-panel::-webkit-scrollbar-thumb { background: var(--gdim); }
+
+  .history-filters {
+    display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.7rem;
+  }
+  .hf-btn {
+    font-family: "Cormorant Garamond", serif; font-size: 0.68rem; font-weight: 500;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    background: rgba(255,255,255,0.03); border: 1px solid var(--bdr);
+    color: var(--dim); padding: 0.25rem 0.5rem; cursor: pointer; transition: all 0.25s;
+  }
+  .hf-btn.on { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.08); }
+  .hf-btn:hover { border-color: var(--gdim); color: var(--text); }
+
+  .history-table {
+    width: 100%; border-collapse: collapse;
+    font-family: "Newsreader", serif;
+  }
+  .history-table th {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 0.62rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--faint); text-align: left; padding: 0.2rem 0.4rem 0.35rem;
+    border-bottom: 1px solid var(--bdr); white-space: nowrap;
+  }
+  .history-table td {
+    font-size: 0.76rem; color: var(--dim);
+    padding: 0.35rem 0.4rem;
+    border-bottom: 1px solid rgba(255,255,255,0.025);
+    vertical-align: middle;
+  }
+  .history-table td:first-child { color: var(--text); }
+  .history-table td:last-child { color: var(--gold); font-size: 0.72rem; }
+  .history-empty {
+    font-family: "Newsreader", serif; font-size: 0.78rem; font-style: italic;
+    color: var(--faint); text-align: center; padding: 1rem 0;
+  }
+  .history-export {
+    font-family: "Newsreader", serif; font-size: 0.7rem; font-style: italic;
+    background: none; border: none; color: var(--faint); cursor: pointer;
+    text-decoration: underline; text-underline-offset: 2px; margin-top: 0.6rem;
+    display: block; transition: color 0.3s;
+  }
+  .history-export:hover { color: var(--gold); }
+
+
+  /* ── Heatmap ── */
+  .heatmap-section {
+    width: 100%;
+  }
+  .heatmap-title {
+    font-size: 0.68rem; font-weight: 600; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--dim); margin-bottom: 0.55rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .heatmap-year {
+    font-size: 0.65rem; color: var(--faint); letter-spacing: 0.08em;
+    font-weight: 400;
+  }
+  .heatmap-scroll {
+    overflow-x: auto; padding-bottom: 0.3rem;
+    scrollbar-width: thin; scrollbar-color: var(--gdim) transparent;
+  }
+  .heatmap-scroll::-webkit-scrollbar { height: 3px; }
+  .heatmap-scroll::-webkit-scrollbar-thumb { background: var(--gdim); }
+  .heatmap-grid {
+    display: flex; gap: 2px; align-items: flex-start;
+  }
+  .heatmap-month-col {
+    display: flex; flex-direction: column; gap: 0px;
+  }
+  .heatmap-month-label {
+    font-size: 0.58rem; color: var(--faint); letter-spacing: 0.05em;
+    text-transform: uppercase; height: 14px; line-height: 14px;
+    margin-bottom: 2px; white-space: nowrap;
+  }
+  .heatmap-week {
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .hm-day {
+    width: 11px; height: 11px; border-radius: 2px;
+    background: rgba(255,255,255,0.04);
+    position: relative; cursor: default; flex-shrink: 0;
+    transition: transform 0.15s;
+  }
+  .hm-day:hover { transform: scale(1.4); z-index: 10; }
+  /* Green intensity levels based on minutes */
+  .hm-empty { background: #000000; border: 1px solid rgba(255,255,255,0.04); } /* outside range */
+  .hm-0  { background: #000000; border: 1px solid rgba(255,255,255,0.08); }  /* rest day: pure black */
+  .hm-1  { background: #1a3d1a; border: none; }        /* 1–4 min: very dark green */
+  .hm-2  { background: #1f5c1f; border: none; }        /* 5–9 min */
+  .hm-3  { background: #278527; border: none; }        /* 10–14 min */
+  .hm-4  { background: #2eb02e; border: none; }        /* 15–29 min */
+  .hm-5  { background: #3ddd3d; border: none; }        /* 30+ min: bright green */
+
+  .heatmap-legend {
+    display: flex; align-items: center; gap: 0.35rem;
+    margin-top: 0.55rem; flex-wrap: wrap;
+  }
+  .heatmap-legend span {
+    font-size: 0.6rem; color: var(--faint); letter-spacing: 0.06em;
+  }
+  .hm-leg {
+    width: 10px; height: 10px; border-radius: 2px; display: inline-block;
+  }
+
+  /* Tooltip */
+  .hm-tooltip {
+    position: fixed; z-index: 999;
+    background: var(--bg-mid, #111320); border: 1px solid var(--bdr);
+    padding: 0.35rem 0.55rem; pointer-events: none;
+    font-family: "Newsreader", serif; font-size: 0.72rem; font-style: italic;
+    color: var(--text); white-space: nowrap; display: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  }
+
+    .fade { animation: fi 0.7s ease forwards; }
+  
+  /* ── Heatmap ── */
+  .heatmap-section {
+    width: 100%;
+  }
+  .heatmap-title {
+    font-size: 0.68rem; font-weight: 600; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--dim); margin-bottom: 0.55rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .heatmap-year {
+    font-size: 0.65rem; color: var(--faint); letter-spacing: 0.08em;
+    font-weight: 400;
+  }
+  .heatmap-scroll {
+    overflow-x: auto; padding-bottom: 0.3rem;
+    scrollbar-width: thin; scrollbar-color: var(--gdim) transparent;
+  }
+  .heatmap-scroll::-webkit-scrollbar { height: 3px; }
+  .heatmap-scroll::-webkit-scrollbar-thumb { background: var(--gdim); }
+  .heatmap-grid {
+    display: flex; gap: 2px; align-items: flex-start;
+  }
+  .heatmap-month-col {
+    display: flex; flex-direction: column; gap: 0px;
+  }
+  .heatmap-month-label {
+    font-size: 0.58rem; color: var(--faint); letter-spacing: 0.05em;
+    text-transform: uppercase; height: 14px; line-height: 14px;
+    margin-bottom: 2px; white-space: nowrap;
+  }
+  .heatmap-week {
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .hm-day {
+    width: 11px; height: 11px; border-radius: 2px;
+    background: rgba(255,255,255,0.04);
+    position: relative; cursor: default; flex-shrink: 0;
+    transition: transform 0.15s;
+  }
+  .hm-day:hover { transform: scale(1.4); z-index: 10; }
+  /* Green intensity levels based on minutes */
+  .hm-empty { background: #000000; border: 1px solid rgba(255,255,255,0.04); } /* outside range */
+  .hm-0  { background: #000000; border: 1px solid rgba(255,255,255,0.08); }  /* rest day: pure black */
+  .hm-1  { background: #1a3d1a; border: none; }        /* 1–4 min: very dark green */
+  .hm-2  { background: #1f5c1f; border: none; }        /* 5–9 min */
+  .hm-3  { background: #278527; border: none; }        /* 10–14 min */
+  .hm-4  { background: #2eb02e; border: none; }        /* 15–29 min */
+  .hm-5  { background: #3ddd3d; border: none; }        /* 30+ min: bright green */
+
+  .heatmap-legend {
+    display: flex; align-items: center; gap: 0.35rem;
+    margin-top: 0.55rem; flex-wrap: wrap;
+  }
+  .heatmap-legend span {
+    font-size: 0.6rem; color: var(--faint); letter-spacing: 0.06em;
+  }
+  .hm-leg {
+    width: 10px; height: 10px; border-radius: 2px; display: inline-block;
+  }
+
+  /* Tooltip */
+  .hm-tooltip {
+    position: fixed; z-index: 999;
+    background: var(--bg-mid, #111320); border: 1px solid var(--bdr);
+    padding: 0.35rem 0.55rem; pointer-events: none;
+    font-family: "Newsreader", serif; font-size: 0.72rem; font-style: italic;
+    color: var(--text); white-space: nowrap; display: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  }
+
+    .fade { animation: fi 0.7s ease forwards; }
+  @keyframes fi { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="glow glow-1"></div>
+<div class="glow glow-2"></div>
+
+<!-- ══════════════ PAGE 1 — GOAL SCREEN ══════════════ -->
+<div class="page" id="page1">
+  <div class="p1-wrap">
+    <div class="p1-title">Breathwork</div>
+    <p class="p1-sub">What do you need today?</p>
+
+    <div class="goal-grid">
+      <button class="goal-btn" onclick="showPicker('energy')">
+        <span class="goal-icon">🌅</span>
+        <span class="goal-label">Energy</span>
+        <span class="goal-sub">Wake up &amp; activate</span>
+      </button>
+      <button class="goal-btn" onclick="showPicker('focus')">
+        <span class="goal-icon">🎯</span>
+        <span class="goal-label">Focus</span>
+        <span class="goal-sub">Sharp &amp; present</span>
+      </button>
+      <button class="goal-btn" onclick="showPicker('adhd')">
+        <span class="goal-icon">👁️</span>
+        <span class="goal-label">ADHD / Blink</span>
+        <span class="goal-sub">Attention &amp; brain training</span>
+      </button>
+      <button class="goal-btn" onclick="showPicker('calm')">
+        <span class="goal-icon">🌊</span>
+        <span class="goal-label">Calm</span>
+        <span class="goal-sub">Anxiety &amp; stress relief</span>
+      </button>
+      <button class="goal-btn" onclick="showPicker('sleep')">
+        <span class="goal-icon">🌙</span>
+        <span class="goal-label">Sleep</span>
+        <span class="goal-sub">Wind down &amp; rest</span>
+      </button>
+      <button class="goal-btn" onclick="showPicker('spiritual')">
+        <span class="goal-icon">🕯️</span>
+        <span class="goal-label">Spiritual</span>
+        <span class="goal-sub">Meditation &amp; energy work</span>
+      </button>
+      <button class="goal-btn" onclick="showPicker('craving')">
+        <span class="goal-icon">🔥</span>
+        <span class="goal-label">Craving</span>
+        <span class="goal-sub">Break the urge now</span>
+      </button>
+      <button class="goal-btn" onclick="showPicker('anger')">
+        <span class="goal-icon">😤</span>
+        <span class="goal-label">Anger</span>
+        <span class="goal-sub">Reset &amp; release</span>
+      </button>
+      <button class="goal-btn" onclick="showPicker('performance')">
+        <span class="goal-icon">💪</span>
+        <span class="goal-label">Performance</span>
+        <span class="goal-sub">Physical &amp; endurance</span>
+      </button>
+      <button class="goal-btn" onclick="showPicker('health')">
+        <span class="goal-icon">🩺</span>
+        <span class="goal-label">Health</span>
+        <span class="goal-sub">Blood pressure &amp; immunity</span>
+      </button>
+      <button class="goal-btn" onclick="showPicker('trauma')">
+        <span class="goal-icon">🧬</span>
+        <span class="goal-label">Trauma</span>
+        <span class="goal-sub">Release &amp; heal</span>
+      </button>
+      <button class="goal-btn" onclick="showPicker('transmute')">
+        <span class="goal-icon">⚗️</span>
+        <span class="goal-label">Transmute</span>
+        <span class="goal-sub">Redirect vital energy</span>
+      </button>
+    </div>
+
+    <button class="p1-browse" onclick="goPage2(null)">Browse all techniques →</button>
+  </div>
+</div>
+
+<!-- ══════════════ PICKER OVERLAY ══════════════ -->
+<div class="picker-overlay" id="pickerOverlay" onclick="closePicker(event)">
+  <div class="picker-sheet">
+    <div class="picker-goal" id="pickerGoalLabel"></div>
+    <div class="picker-prompt">Choose your technique</div>
+    <div class="picker-choices" id="pickerChoices"></div>
+    <button class="picker-cancel" onclick="closePicker()">← Back</button>
+  </div>
+</div>
+
+<!-- ══════════════ PAGE 2 — PRACTICE ══════════════ -->
+<div class="page2-scroll" id="page2">
+<div class="wrap fade">
+  <h1><button id="backBtn" onclick="goPage1()" style="background:none;border:none;color:var(--faint);cursor:pointer;font-size:0.8rem;margin-right:0.6rem;vertical-align:middle;transition:color 0.3s;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--faint)'">←</button>Breathwork</h1>
+
+  <!-- ── Tabs ── -->
+  <div class="tabs">
+    <button class="tab on"  data-t="478">4-7-8</button>
+    <button class="tab"     data-t="box">Box</button>
+    <button class="tab"     data-t="wimhof">Wim Hof</button>
+    <button class="tab"     data-t="tummo">Tummo</button>
+    <button class="tab"     data-t="nadi">Nadi Shodhana</button>
+    <button class="tab"     data-t="surya">Surya Bhedana</button>
+    <button class="tab"     data-t="chandra">Chandra Bhedana</button>
+    <button class="tab"     data-t="ujjayi">Ujjayi</button>
+    <button class="tab"     data-t="kapalabhati">Kapalabhati</button>
+    <button class="tab"     data-t="bhastrika">Bhastrika</button>
+    <button class="tab"     data-t="bhramari">Bhramari</button>
+    <button class="tab"     data-t="sitali">Sitali</button>
+    <button class="tab"     data-t="murcha">Murcha</button>
+    <button class="tab"     data-t="ninepurification">9 Purification</button>
+    <button class="tab"     data-t="coherent">Coherent</button>
+    <button class="tab"     data-t="physiosigh">Physio Sigh</button>
+    <button class="tab"     data-t="blink">Blink</button>
+    <button class="tab"     data-t="rebirthing">Rebirthing</button>
+    <button class="tab"     data-t="transformational">Transform. Breath</button>
+    <button class="tab"     data-t="reversebreathing">Reverse Breath</button>
+    <button class="tab"     data-t="kumbhaka">Kumbhaka</button>
+    <button class="tab"     data-t="hamsah">Ham-Sah</button>
+    <button class="tab"     data-t="transmutation">Transmutation</button>
+    <button class="tab"     data-t="custom">Custom</button>
+  </div>
+
+  <!-- ── Options ── -->
+  <div class="options" id="optPanel">
+    <div class="opt-row" id="durRow">
+      <span class="opt-label">Duration</span>
+      <div class="dur-btns">
+        <button class="dur-btn" data-min="1">1</button>
+        <button class="dur-btn" data-min="2">2</button>
+        <button class="dur-btn" data-min="3">3</button>
+        <button class="dur-btn" data-min="5">5</button>
+        <button class="dur-btn" data-min="10">10</button>
+        <button class="dur-btn" data-min="20">20</button>
+      </div>
+      <div class="dur-custom">
+        <input type="number" id="durInput" min="1" max="60" value="5"/>
+        <span>min</span>
+      </div>
+    </div>
+    <div class="opt-row" id="whRoundsRow" style="display:none;">
+      <span class="opt-label">Rounds</span>
+      <div class="dur-btns">
+        <button class="dur-btn" data-rnd="2">2</button>
+        <button class="dur-btn on" data-rnd="3">3</button>
+        <button class="dur-btn" data-rnd="4">4</button>
+        <button class="dur-btn" data-rnd="5">5</button>
+      </div>
+    </div>
+    <div id="customGrid" style="display:none;">
+      <div style="font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--dim);margin-bottom:0.45rem;">Pattern (seconds per phase)</div>
+      <div class="custom-grid">
+        <div class="cg-item"><label>Inhale</label><input type="number" id="cgIn"  min="1" max="30" value="4"/><span class="cg-unit">seconds</span></div>
+        <div class="cg-item"><label>Hold In</label><input type="number" id="cgH1" min="0" max="30" value="4"/><span class="cg-unit">0 = skip</span></div>
+        <div class="cg-item"><label>Exhale</label><input type="number" id="cgOut" min="1" max="30" value="4"/><span class="cg-unit">seconds</span></div>
+        <div class="cg-item"><label>Hold Out</label><input type="number" id="cgH2" min="0" max="30" value="4"/><span class="cg-unit">0 = skip</span></div>
+      </div>
+    </div>
+    <div class="opt-yt-row" id="optYtRow">
+      <a class="opt-yt-link" id="optYtLink" href="#" target="_blank" rel="noopener">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="#ff4444"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+        <span id="optYtLabel">Watch tutorial on YouTube</span>
+      </a>
+    </div>
+    <div id="recLabel" style="font-family:'Newsreader',serif;font-size:0.72rem;font-style:italic;color:var(--gold);min-height:1rem;"></div>
+    <button class="info-link" id="infoBtn">How does this work?</button>
+  </div>
+
+  <!-- ════════════════════════════
+       INFO DRAWERS
+  ════════════════════════════ -->
+
+  <div class="info-drawer" id="info-478">
+    <h2>4-7-8 Relaxation Breath</h2>
+    <p>Dr. Andrew Weil's adaptation of ancient pranayama. The extended exhale activates the parasympathetic nervous system — your body's rest-and-digest mode.</p>
+    <h3>Pattern (repeats for your chosen duration)</h3>
+    <ul>
+      <li><strong>Inhale</strong> through nose — 4 seconds</li>
+      <li><strong>Hold</strong> — 7 seconds, body relaxed</li>
+      <li><strong>Exhale</strong> through mouth — 8 seconds, audible whoosh</li>
+    </ul>
+    <div class="tip"><p>Tip: Tongue tip behind upper front teeth throughout. Ratio matters more than exact pace — if 4-7-8 feels too long, slow your count.</p></div>
+        <div class="time-block">
+      <div class="time-row">
+        <span class="time-label">Feel it</span><span class="time-val">1 session</span>
+        <span class="time-label">See results</span><span class="time-val">1–2 weeks daily</span>
+      </div>
+      <p class="time-note">One session before bed shifts you within 90 seconds. Two weeks daily practice and your baseline anxiety drops measurably.</p>
+    </div>
+<a class="yt-link" href="https://www.youtube.com/results?search_query=andrew+weil+4-7-8+breathing+demonstration" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="#ff4444"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+      Watch: Dr. Andrew Weil demonstrates 4-7-8 Breath
+    </a>
+    <button class="btn-close" onclick="closeInfo()">Got it</button>
+  </div>
+
+  <div class="info-drawer" id="info-box">
+    <h2>Box Breathing</h2>
+    <p>Used by Navy SEALs for instant calm under pressure. Four equal sides.</p>
+    <h3>Pattern</h3>
+    <ul>
+      <li><strong>Inhale</strong> — 4s</li><li><strong>Hold full</strong> — 4s</li>
+      <li><strong>Exhale</strong> — 4s</li><li><strong>Hold empty</strong> — 4s</li>
+    </ul>
+            <div class="time-block">
+      <div class="time-row">
+        <span class="time-label">Feel it</span><span class="time-val">2–4 minutes</span>
+        <span class="time-label">See results</span><span class="time-val">1 week daily</span>
+      </div>
+      <p class="time-note">You will feel calmer within a single 4-minute session. One week of daily practice and your stress response visibly changes under pressure.</p>
+    </div>
+<a class="yt-link" href="https://www.youtube.com/results?search_query=box+breathing+tutorial+4+sides" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="#ff4444"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg> Watch: Box Breathing explained</a>
+    <button class="btn-close" onclick="closeInfo()">Got it</button>
+  </div>
+
+  <div class="info-drawer" id="info-wimhof">
+    <h2>Wim Hof Method</h2>
+    <p>Controlled hyperventilation → breath retention → recovery. Activates the sympathetic nervous system and gives voluntary influence over immune response.</p>
+    <h3>Each Round</h3>
+    <ul>
+      <li><strong>30 Power Breaths:</strong> Deep belly-to-chest inhale through nose, let exhale go without forcing. Continuous rhythm.</li>
+      <li><strong>Retention:</strong> After 30th breath, exhale fully and hold empty lungs. Timer runs — press when you need to breathe.</li>
+      <li><strong>Recovery:</strong> One deep inhale, hold 15 seconds, release.</li>
+    </ul>
+    <div class="warn"><p>Always seated or lying down. Never in water or while driving.</p></div>
+            <div class="time-block">
+      <div class="time-row">
+        <span class="time-label">Feel it</span><span class="time-val">1 session</span>
+        <span class="time-label">See results</span><span class="time-val">2–4 weeks</span>
+      </div>
+      <p class="time-note">The first session produces noticeable altered states. 2–4 weeks of daily practice and measurable immune and cold tolerance changes occur — documented in clinical studies.</p>
+    </div>
+<a class="yt-link" href="https://www.youtube.com/watch?v=tybOi4hjZFQ" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="#ff4444"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg> Watch: Official Wim Hof guided breathing — beginners (3 rounds)</a>
+    <button class="btn-close" onclick="closeInfo()">Got it</button>
+  </div>
+
+  <div class="info-drawer" id="info-tummo">
+    <h2>Tummo — Inner Fire</h2>
+    <p>Tibetan Buddhist vase breathing. Visualization + pelvic contraction + breath retention generates measurable internal heat. Harvard-documented in Himalayan monks.</p>
+    <h3>Each Cycle</h3>
+    <ul>
+      <li><strong>Visualize</strong> a flame at your navel. Hold the image throughout.</li>
+      <li><strong>Inhale (5s):</strong> Deep belly breath, imagine air feeding the flame.</li>
+      <li><strong>Vase Hold (10s):</strong> Swallow gently. Contract pelvic floor upward (sphincter included). Press lower belly inward. Two forces meet at the navel. Flame blazes up the spine.</li>
+      <li><strong>Power Exhale (5s):</strong> Release, exhale through rounded lips. Heat radiates out.</li>
+    </ul>
+    <div class="tip"><p>Visualization is not optional — studies show temperature effects are minimal without it.</p></div>
+            <div class="time-block">
+      <div class="time-row">
+        <span class="time-label">Feel it</span><span class="time-val">2–3 sessions</span>
+        <span class="time-label">See results</span><span class="time-val">4–6 weeks</span>
+      </div>
+      <p class="time-note">Warmth and energy sensations begin in the first few sessions. Consistent daily practice over 4–6 weeks develops real heat generation and a stable energized meditation state.</p>
+    </div>
+<a class="yt-link" href="https://www.youtube.com/results?search_query=tummo+inner+fire+breathing+meditation+tutorial" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="#ff4444"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg> Watch: Tummo Inner Fire breathing tutorial</a>
+    <button class="btn-close" onclick="closeInfo()">Got it</button>
+  </div>
+
+  <!-- NADI SHODHANA -->
+  <div class="info-drawer" id="info-nadi">
+    <h2>Nadi Shodhana — Alternate Nostril Breathing</h2>
+    <p>"Nadi" means energy channel. "Shodhana" means purification. This technique balances the solar (right/masculine/heating) and lunar (left/feminine/cooling) energy channels, called Pingala and Ida Nadi. When both are clear and equal, the central channel — Sushumna — opens. This is foundational to Kundalini yoga and Hatha yoga.</p>
+    <p style="margin-top:0.4rem;">Use your <strong>right hand</strong>. Thumb closes the right nostril. Ring finger (or ring + pinky) closes the left nostril. Index and middle fingers rest on the forehead or fold inward.</p>
+
+    <!-- Hand mudra diagram -->
+    <svg class="hand-diagram" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg" width="200" height="120">
+      <!-- Palm -->
+      <ellipse cx="100" cy="85" rx="30" ry="32" fill="none" stroke="#c9a84c" stroke-width="1" opacity="0.5"/>
+      <!-- Thumb (right) -->
+      <ellipse cx="64" cy="72" rx="8" ry="14" fill="none" stroke="#d4854a" stroke-width="1.5" opacity="0.8" transform="rotate(-25 64 72)"/>
+      <text x="40" y="58" fill="#d4854a" font-family="Newsreader,serif" font-size="9" font-style="italic">thumb → right nostril</text>
+      <!-- Index + middle fold -->
+      <line x1="88" y1="55" x2="88" y2="72" stroke="#4a4840" stroke-width="1.5" stroke-dasharray="3 2"/>
+      <line x1="98" y1="53" x2="98" y2="72" stroke="#4a4840" stroke-width="1.5" stroke-dasharray="3 2"/>
+      <!-- Ring finger -->
+      <line x1="108" y1="53" x2="108" y2="72" stroke="#6b8ab5" stroke-width="2"/>
+      <text x="118" y="48" fill="#6b8ab5" font-family="Newsreader,serif" font-size="9" font-style="italic">ring → left nostril</text>
+      <!-- Pinky -->
+      <line x1="117" y1="56" x2="117" y2="72" stroke="#6b8ab5" stroke-width="1.5" opacity="0.6"/>
+      <!-- Labels -->
+      <text x="100" y="115" text-anchor="middle" fill="#7a7668" font-family="Newsreader,serif" font-size="9" font-style="italic">Vishnu Mudra — right hand</text>
+    </svg>
+
+    <h3>The Sequence (one cycle)</h3>
+    <div class="nostril-guide">
+      <div class="nostril-step">
+        <svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="#6b8ab5" stroke-width="2"/><text x="28" y="33" text-anchor="middle" fill="#6b8ab5" font-family="Cormorant Garamond,serif" font-size="13" font-weight="600">L</text></svg>
+        <span>Inhale left nostril (right closed)</span>
+      </div>
+      <div class="nostril-step">
+        <svg viewBox="0 0 56 56">
+          <circle cx="20" cy="28" r="14" fill="none" stroke="#6b8ab5" stroke-width="2" opacity="0.3"/>
+          <circle cx="36" cy="28" r="14" fill="none" stroke="#d4854a" stroke-width="2" opacity="0.3"/>
+          <text x="28" y="33" text-anchor="middle" fill="#c9a84c" font-family="Cormorant Garamond,serif" font-size="10">HOLD</text>
+        </svg>
+        <span>Hold both closed</span>
+      </div>
+      <div class="nostril-step">
+        <svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="#d4854a" stroke-width="2"/><text x="28" y="33" text-anchor="middle" fill="#d4854a" font-family="Cormorant Garamond,serif" font-size="13" font-weight="600">R</text></svg>
+        <span>Exhale right nostril (left closed)</span>
+      </div>
+      <div class="nostril-step">
+        <svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="#d4854a" stroke-width="2"/><text x="28" y="33" text-anchor="middle" fill="#d4854a" font-family="Cormorant Garamond,serif" font-size="13" font-weight="600">R</text></svg>
+        <span>Inhale right nostril (left closed)</span>
+      </div>
+      <div class="nostril-step">
+        <svg viewBox="0 0 56 56">
+          <circle cx="20" cy="28" r="14" fill="none" stroke="#6b8ab5" stroke-width="2" opacity="0.3"/>
+          <circle cx="36" cy="28" r="14" fill="none" stroke="#d4854a" stroke-width="2" opacity="0.3"/>
+          <text x="28" y="33" text-anchor="middle" fill="#c9a84c" font-family="Cormorant Garamond,serif" font-size="10">HOLD</text>
+        </svg>
+        <span>Hold both closed</span>
+      </div>
+      <div class="nostril-step">
+        <svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="#6b8ab5" stroke-width="2"/><text x="28" y="33" text-anchor="middle" fill="#6b8ab5" font-family="Cormorant Garamond,serif" font-size="13" font-weight="600">L</text></svg>
+        <span>Exhale left nostril (right closed)</span>
+      </div>
+    </div>
+    <p>Pattern: <strong>4s inhale — 4s hold — 4s exhale</strong>, alternating sides. Repeats for your chosen duration.</p>
+    <div class="tip"><p>Benefits: Reduces anxiety, lowers blood pressure, balances the two hemispheres of the brain. Best practiced in the morning on an empty stomach. Never force — keep it gentle and silent.</p></div>
+            <div class="time-block">
+      <div class="time-row">
+        <span class="time-label">Feel it</span><span class="time-val">5 minutes</span>
+        <span class="time-label">See results</span><span class="time-val">2–3 weeks daily</span>
+      </div>
+      <p class="time-note">Five minutes produces immediate calm and mental balance. Two to three weeks of daily morning practice and sleep quality, HRV, and focus all improve.</p>
+    </div>
+<a class="yt-link" href="https://www.youtube.com/results?search_query=nadi+shodhana+alternate+nostril+breathing+tutorial+beginners" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="#ff4444"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg> Watch: Nadi Shodhana — alternate nostril breathing</a>
+    <button class="btn-close" onclick="closeInfo()">Got it</button>
+  </div>
+
+  <!-- SURYA BHEDANA -->
+  <div class="info-drawer" id="info-surya">
+    <h2>Surya Bhedana — Sun-Piercing Breath</h2>
+    <p>"Surya" = sun. "Bhedana" = piercing or passing through. You inhale exclusively through the <strong>right nostril</strong> (the solar/Pingala channel) and exhale through the <strong>left</strong> (lunar/Ida). This activates and sustains the solar, warming, masculine energy in the body.</p>
+
+    <div class="nostril-guide">
+      <div class="nostril-step">
+        <svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="rgba(212,133,74,0.15)" stroke="#d4854a" stroke-width="2.5"/><text x="28" y="33" text-anchor="middle" fill="#d4854a" font-family="Cormorant Garamond,serif" font-size="13" font-weight="600">R</text></svg>
+        <span>Inhale RIGHT only</span>
+      </div>
+      <div class="nostril-step">
+        <svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="#c9a84c" stroke-width="2" stroke-dasharray="4 3"/><text x="28" y="33" text-anchor="middle" fill="#c9a84c" font-family="Cormorant Garamond,serif" font-size="10">HOLD</text></svg>
+        <span>Hold (optional)</span>
+      </div>
+      <div class="nostril-step">
+        <svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="rgba(107,138,181,0.12)" stroke="#6b8ab5" stroke-width="2.5"/><text x="28" y="33" text-anchor="middle" fill="#6b8ab5" font-family="Cormorant Garamond,serif" font-size="13" font-weight="600">L</text></svg>
+        <span>Exhale LEFT only</span>
+      </div>
+    </div>
+
+    <h3>What it does</h3>
+    <p>Activates the sympathetic nervous system. Increases body temperature, raises energy, sharpens mental focus. The right nostril connects to the left brain hemisphere and the body's "heating" functions.</p>
+    <div class="sun-note"><p><strong>When to use:</strong> Morning to energize. Before physical exercise. When you feel sluggish, cold, or mentally dull. When you need focus and heat.</p></div>
+    <div class="warn"><p><strong>Avoid</strong> if you have high blood pressure, fever, or in hot weather. Do not practice at night — too activating.</p></div>
+            <div class="time-block">
+      <div class="time-row">
+        <span class="time-label">Feel it</span><span class="time-val">3–5 minutes</span>
+        <span class="time-label">See results</span><span class="time-val">1–2 weeks</span>
+      </div>
+      <p class="time-note">Energy and warmth are felt within one session. One to two weeks of morning practice and mental clarity and physical vitality increase noticeably.</p>
+    </div>
+<a class="yt-link" href="https://www.youtube.com/results?search_query=surya+bhedana+pranayama+right+nostril+breathing+tutorial" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="#ff4444"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg> Watch: Surya Bhedana — Sun breathing tutorial</a>
+    <button class="btn-close" onclick="closeInfo()">Got it</button>
+  </div>
+
+  <!-- CHANDRA BHEDANA -->
+  <div class="info-drawer" id="info-chandra">
+    <h2>Chandra Bhedana — Moon-Piercing Breath</h2>
+    <p>"Chandra" = moon. The exact mirror of Surya Bhedana. You inhale exclusively through the <strong>left nostril</strong> (the lunar/Ida channel) and exhale through the <strong>right</strong> (solar/Pingala). This activates and sustains the lunar, cooling, feminine energy.</p>
+
+    <div class="nostril-guide">
+      <div class="nostril-step">
+        <svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="rgba(107,138,181,0.15)" stroke="#6b8ab5" stroke-width="2.5"/><text x="28" y="33" text-anchor="middle" fill="#6b8ab5" font-family="Cormorant Garamond,serif" font-size="13" font-weight="600">L</text></svg>
+        <span>Inhale LEFT only</span>
+      </div>
+      <div class="nostril-step">
+        <svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="none" stroke="#c9a84c" stroke-width="2" stroke-dasharray="4 3"/><text x="28" y="33" text-anchor="middle" fill="#c9a84c" font-family="Cormorant Garamond,serif" font-size="10">HOLD</text></svg>
+        <span>Hold (optional)</span>
+      </div>
+      <div class="nostril-step">
+        <svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="25" fill="rgba(212,133,74,0.12)" stroke="#d4854a" stroke-width="2.5"/><text x="28" y="33" text-anchor="middle" fill="#d4854a" font-family="Cormorant Garamond,serif" font-size="13" font-weight="600">R</text></svg>
+        <span>Exhale RIGHT only</span>
+      </div>
+    </div>
+
+    <h3>What it does</h3>
+    <p>Activates the parasympathetic nervous system. Cools the body, calms the mind, reduces agitation. The left nostril connects to the right brain hemisphere and the body's "cooling" functions.</p>
+    <div class="moon-note"><p><strong>When to use:</strong> Evening to wind down. After intense exercise. When you feel overheated, anxious, angry, or overstimulated. Before sleep or meditation.</p></div>
+            <div class="time-block">
+      <div class="time-row">
+        <span class="time-label">Feel it</span><span class="time-val">3–5 minutes</span>
+        <span class="time-label">See results</span><span class="time-val">1–2 weeks</span>
+      </div>
+      <p class="time-note">Cooling and calming effects begin within a single session. One to two weeks of evening practice and sleep onset time drops significantly.</p>
+    </div>
+<a class="yt-link" href="https://www.youtube.com/results?search_query=chandra+bhedana+left+nostril+breathing+tutorial+cooling" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="#ff4444"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg> Watch: Chandra Bhedana — Moon breathing tutorial</a>
+    <button class="btn-close" onclick="closeInfo()">Got it</button>
+  </div>
+
+  <!-- UJJAYI -->
+  <div class="info-drawer" id="info-ujjayi">
+    <h2>Ujjayi — Victorious / Ocean Breath</h2>
+    <p>"Ujjayi" means victorious. Also called ocean breath because of the sound it produces — a soft, continuous sound like waves. It is the foundational breath of Ashtanga and Vinyasa yoga, but it can be practiced on its own as a meditation.</p>
+    <h3>How to create the Ujjayi sound</h3>
+    <ul>
+      <li>Open your mouth. Breathe out as if you are fogging up a mirror — constrict the back of your throat slightly (the glottis).</li>
+      <li>You should hear a soft "hhhhaaaa" sound, like Darth Vader breathing very gently.</li>
+      <li>Now close your mouth and continue with that same throat constriction — breathing through the nose. The sound continues, but softer.</li>
+      <li>Both inhale and exhale make the same oceanic sound.</li>
+    </ul>
+    <h3>What it does</h3>
+    <p>The slight constriction warms the air before it enters the lungs. It also creates internal pressure that massages the vagus nerve, directly stimulating the parasympathetic system. The audible rhythm anchors the mind — it becomes a moving meditation. Builds internal heat (tapas) without the intensity of Bhastrika.</p>
+    <div class="tip"><p>Use it during any physical practice or as a standalone breath meditation. The sound is your teacher — keep it even, unforced, and continuous on both inhale and exhale.</p></div>
+            <div class="time-block">
+      <div class="time-row">
+        <span class="time-label">Feel it</span><span class="time-val">1 session</span>
+        <span class="time-label">See results</span><span class="time-val">2–3 weeks</span>
+      </div>
+      <p class="time-note">The grounding effect is immediate — the ocean sound anchors the mind within minutes. Two to three weeks and it becomes your default stress-response breath.</p>
+    </div>
+<a class="yt-link" href="https://www.youtube.com/results?search_query=ujjayi+breath+ocean+breath+how+to+tutorial" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="#ff4444"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg> Watch: Ujjayi ocean breath — how to</a>
+    <button class="btn-close" onclick="closeInfo()">Got it</button>
+  </div>
+
+  <!-- KAPALABHATI -->
+  <div class="info-drawer" id="info-kapalabhati">
+    <h2>Kapalabhati — Skull-Shining Breath</h2>
+    <p>"Kapala" = skull. "Bhati" = light or shining. In yoga, it is classified as both a pranayama AND a kriya (purification technique). Ancient texts say it makes the face luminous by clearing the sinuses and energizing the brain. It is a rapid, rhythmic breathing exercise driven entirely by sharp abdominal contractions.</p>
+    <h3>The Technique</h3>
+    <ul>
+      <li><strong>The exhale is the action.</strong> A short, sharp, powerful exhale through the nose. Driven by contracting the lower abdomen — pulling your belly button sharply toward your spine.</li>
+      <li><strong>The inhale is passive.</strong> You do nothing. The belly releases and air rushes in automatically. Do not consciously inhale.</li>
+      <li><strong>Rhythm:</strong> About one breath per second. Pump, release, pump, release. Consistent and rhythmic like a bellows or a steam engine.</li>
+      <li><strong>Your hands:</strong> Rest on your knees, palms up. Some teachers have you place hands on the belly to feel the contractions. You can also raise both hands overhead on the inhale at the start of each round.</li>
+    </ul>
+    <h3>A Round</h3>
+    <p>Start with 20–30 pumps. After the last exhale, take a deep slow inhale and hold for a few seconds. Exhale slowly. Rest and breathe normally. That is one round. Build to 3 rounds of 50–100 pumps over time.</p>
+    <div class="tip"><p><strong>Benefits:</strong> Clears mucus and stagnant energy from the sinuses and lungs. Increases oxygen, stimulates digestion, fires up the metabolism, and creates mental clarity. Many practitioners report a buzzing, electric feeling in the skull — that is normal.</p></div>
+    <div class="warn"><p><strong>Caution:</strong> Do not practice if pregnant, during menstruation, with high blood pressure, heart disease, hernia, or epilepsy. Always on an empty stomach. If you feel dizzy, stop immediately and breathe normally.</p></div>
+            <div class="time-block">
+      <div class="time-row">
+        <span class="time-label">Feel it</span><span class="time-val">1 session</span>
+        <span class="time-label">See results</span><span class="time-val">2–4 weeks</span>
+      </div>
+      <p class="time-note">Mental clarity and a buzzing energy are felt immediately. Two to four weeks of daily practice and digestion, sinus health, and morning alertness improve substantially.</p>
+    </div>
+<a class="yt-link" href="https://www.youtube.com/results?search_query=kapalabhati+skull+shining+breath+of+fire+tutorial+yoga" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="#ff4444"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg> Watch: Kapalabhati — Breath of Fire tutorial</a>
+    <button class="btn-close" onclick="closeInfo()">Got it</button>
+  </div>
+
+  <!-- BHASTRIKA -->
+  <div class="info-drawer" id="info-bhastrika">
+    <h2>Bhastrika — Bellows Breath</h2>
+    <p>"Bhastrika" means bellows — the blacksmith's tool that fans fire. Often confused with Kapalabhati, but they are different. In Bhastrika, <strong>both the inhale and the exhale are forceful and equal</strong>. It is more intense than Kapalabhati and generates more heat.</p>
+    <h3>The Technique</h3>
+    <ul>
+      <li>Sit upright. Take a deep breath in to prepare.</li>
+      <li><strong>Forceful exhale</strong> through the nose — push the air out completely, belly contracts in.</li>
+      <li><strong>Forceful inhale</strong> through the nose — pull the air in powerfully, belly expands out.</li>
+      <li>Both are active, equal, and driven by the diaphragm and abdomen. Think of it like pumping a bellows — vigorous in both directions.</li>
+      <li><strong>Arms (optional but traditional):</strong> On the inhale, raise both arms above your head. On the exhale, bring them down sharply to shoulder height, elbows bent. This arm movement amplifies the breath and energy movement through the body.</li>
+      <li>Speed: Medium — about one full breath cycle per 1–2 seconds. Not as rapid as Kapalabhati.</li>
+    </ul>
+    <h3>A Round</h3>
+    <p>10–20 forceful breath cycles. After the last exhale, take one deep, slow inhale and hold briefly. Exhale completely. Rest for 30 seconds. Repeat for 3 rounds. Build intensity gradually.</p>
+    <div class="tip"><p><strong>Benefits:</strong> Generates significant internal heat, clears energy blockages, increases lung capacity, stimulates the nervous system, and builds enormous vitality (prana). Considered one of the most powerful pranayamas for energy and purification. Many advanced yogis use Bhastrika before meditation.</p></div>
+    <div class="warn"><p><strong>Caution:</strong> Not for beginners to do intensely. Do not practice if pregnant, with high blood pressure, heart conditions, hernia, vertigo, or epilepsy. Always on an empty stomach. Stop if you feel faint or nauseated.</p></div>
+            <div class="time-block">
+      <div class="time-row">
+        <span class="time-label">Feel it</span><span class="time-val">1 session</span>
+        <span class="time-label">See results</span><span class="time-val">3–4 weeks</span>
+      </div>
+      <p class="time-note">Heat and energy surge in the first session. Three to four weeks builds lung capacity, prana levels, and sustained physical energy throughout the day.</p>
+    </div>
+<a class="yt-link" href="https://www.youtube.com/results?search_query=bhastrika+pranayama+bellows+breath+tutorial" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="#ff4444"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg> Watch: Bhastrika — Bellows Breath tutorial</a>
+    <button class="btn-close" onclick="closeInfo()">Got it</button>
+  </div>
+
+  <!-- BHRAMARI -->
+  <div class="info-drawer" id="info-bhramari">
+    <h2>Bhramari — Bee Breath</h2>
+    <p>"Bhramari" means the Indian black bee. Named for the humming sound you make, which resembles a bee. It is one of the most immediately calming pranayamas and has the fastest effect on the nervous system of almost any breath technique.</p>
+    <h3>The Technique</h3>
+    <ul>
+      <li>Sit comfortably, eyes closed.</li>
+      <li>Optional (Shanmukhi Mudra): Close your ears with your thumbs, place index fingers above eyebrows, middle fingers on closed eyes, ring fingers below eyes/on cheeks, pinky fingers near lips. This seals you inward — highly recommended as it amplifies the effect dramatically.</li>
+      <li><strong>Inhale</strong> slowly and deeply through both nostrils.</li>
+      <li><strong>Exhale</strong> while making a steady, low-pitched <strong>humming sound — "hmmmmm"</strong> — like a bee. Keep the mouth closed. The vibration comes from the throat. Feel it resonate in your skull, forehead, and chest.</li>
+      <li>The exhale is slow and as long as comfortable. Keep the hum steady, not wavering.</li>
+    </ul>
+    <h3>What it does</h3>
+    <p>The vibration directly stimulates the vagus nerve and the parasympathetic nervous system. Research shows it reduces heart rate, lowers blood pressure, and quiets the amygdala (the brain's fear and stress center) within minutes. It also releases nitric oxide in the nasal passages, which dilates blood vessels and improves circulation.</p>
+    <div class="tip"><p><strong>Best for:</strong> Anxiety, anger, insomnia, grief, high blood pressure, migraine, and preparing for deep meditation. This is the fastest nervous system reset in the pranayama toolkit. 5 minutes before sleep and you will feel profoundly different.</p></div>
+            <div class="time-block">
+      <div class="time-row">
+        <span class="time-label">Feel it</span><span class="time-val">3–5 minutes</span>
+        <span class="time-label">See results</span><span class="time-val">1–2 weeks</span>
+      </div>
+      <p class="time-note">One of the fastest-acting techniques — heart rate drops within three minutes. One to two weeks before sleep and anxiety baseline, blood pressure, and sleep depth all improve.</p>
+    </div>
+<a class="yt-link" href="https://www.youtube.com/results?search_query=bhramari+pranayama+bee+breath+humming+tutorial" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="#ff4444"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg> Watch: Bhramari — Bee Breath tutorial</a>
+    <button class="btn-close" onclick="closeInfo()">Got it</button>
+  </div>
+
+  <div class="info-drawer" id="info-custom">
+    <h2>Custom Pattern</h2>
+    <p>Build your own breathing pattern. Set seconds for each phase. Set Hold to 0 to skip it.</p>
+    <h3>Examples</h3>
+    <ul>
+      <li><strong>Coherent (HRV max):</strong> In 5.5 / Hold 0 / Out 5.5 / Hold 0</li>
+      <li><strong>Extended exhale:</strong> In 4 / Hold 0 / Out 8 / Hold 0</li>
+      <li><strong>4-7-8:</strong> In 4 / Hold 7 / Out 8 / Hold 0</li>
+    </ul>
+    <button class="btn-close" onclick="closeInfo()">Got it</button>
+  </div>
+
+
+  <div class="info-drawer" id="info-sitali">
+    <h2>Sitali — Cooling Breath</h2>
+    <p>"Sitali" means cool or cold. One of the only pranayamas that inhales through the mouth. By drawing air over a curled, moist tongue — like sipping through a straw — the air is cooled before entering the body. Cooling, calming, and grounding.</p>
+    <h3>The Technique</h3>
+    <ul>
+      <li>Sit upright, eyes closed.</li>
+      <li>Open your mouth into an "O" shape. <strong>Curl your tongue lengthwise</strong> into a tube — like a rolled leaf or a straw. Stick it out slightly past your lips. (Not everyone can curl their tongue — it is genetic. If you can't, use Sitkari instead: gently press teeth together, part lips, inhale through the teeth with a soft hiss.)</li>
+      <li><strong>Inhale slowly and deeply through the curled tongue.</strong> Feel the cool, moist air rolling across it. Fill belly first, then chest.</li>
+      <li><strong>Retract your tongue, close your mouth.</strong></li>
+      <li><strong>Exhale slowly and completely through the nose.</strong></li>
+      <li>Repeat 5–15 times. Build to 5–10 minutes.</li>
+    </ul>
+    <h3>What It Does</h3>
+    <p>Activates the parasympathetic system. Literally lowers body temperature — documented and felt immediately. Reduces Pitta (fire energy) in Ayurveda. Also reduces hunger, thirst, anger, high blood pressure, and fever. Best practiced in hot weather, after heating practices like Bhastrika, or when you feel overstimulated.</p>
+    <div class="warn"><p><strong>Do not practice</strong> in cold weather or polluted air — the air bypasses the nose's natural filter and warmer. Avoid with low blood pressure or respiratory conditions.</p></div>
+    <div class="time-block">
+      <div class="time-row">
+        <span class="time-label">Feel it</span><span class="time-val">1 session</span>
+        <span class="time-label">See results</span><span class="time-val">1–2 weeks</span>
+      </div>
+      <p class="time-note">Temperature drop and calm are felt within minutes of the first session. Two weeks daily and it becomes a reliable tool for anger, overheating, and blood pressure.</p>
+    </div>
+        <a class="yt-link" href="https://www.youtube.com/results?search_query=sitali+pranayama+cooling+breath+tutorial" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="#ff4444"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg> Watch: Sitali — Cooling Breath tutorial</a>
+    <button class="btn-close" onclick="closeInfo()">Got it</button>
+  </div>
+  <div class="info-drawer" id="info-murcha">
+    <h2>Murcha — Swooning Breath</h2>
+    <p>"Murcha" means fainting or swooning. Mentioned in the Hatha Yoga Pradipika. This advanced technique uses breath retention with the chin lock (Jalandhara Bandha) to deliberately induce a state between conscious and unconscious — a controlled, blissful dissolution of the ego-mind. Not for beginners.</p>
+    <h3>The Technique</h3>
+    <ul>
+      <li>Sit in a comfortable meditative posture, spine straight. Take a few normal breaths.</li>
+      <li><strong>Inhale deeply and slowly through the nose</strong> — long, steady, at least 5–8 seconds. Fill the lungs completely.</li>
+      <li>At the top of the inhale, <strong>apply Jalandhara Bandha</strong>: lengthen the back of the neck and bring the chin slightly toward the chest — about 1–2 inches, not all the way. This creates a gentle lock at the throat that controls the energy.</li>
+      <li><strong>Hold the breath inside</strong> (Antara Kumbhaka) for as long as comfortable — 5, 10, 20 seconds. Some teachers also add: roll the eyes gently upward toward the third eye (Shambhavi Mudra). Focus awareness at the Ajna chakra (point between eyebrows).</li>
+      <li><strong>Release the chin lock</strong> first. Then <strong>exhale very slowly through the nose</strong> — gently at first, slightly more forcefully toward the end to fully empty the lungs.</li>
+      <li>Rest. Breathe normally. Observe the stillness. That is one round. Repeat 3–8 times.</li>
+    </ul>
+    <h3>What You'll Experience</h3>
+    <p>Light-headedness. A floating sensation. Mental stillness — the mind quiets in a way that is distinctly different from other practices. Warmth or tingling in the skull and third eye area. With longer practice, a state approaching trance. The Hatha Yoga Pradipika says it "causes the mind to swoon and gives comfort."</p>
+    <div class="warn"><p><strong>Advanced practice — required guidance for first sessions.</strong> Do not do if you have high blood pressure, heart conditions, epilepsy, neck injuries, or glaucoma. Never push to actual fainting. If dizzy, stop and breathe normally. Empty stomach only.</p></div>
+    <div class="time-block">
+      <div class="time-row">
+        <span class="time-label">Feel it</span><span class="time-val">2–3 sessions</span>
+        <span class="time-label">See results</span><span class="time-val">4–6 weeks</span>
+      </div>
+      <p class="time-note">The floating stillness is felt in early sessions. 4–6 weeks of regular practice and the depth of meditation that follows each round becomes profound and lasting.</p>
+    </div>
+        <a class="yt-link" href="https://www.youtube.com/results?search_query=murcha+pranayama+swooning+breath+tutorial" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="#ff4444"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg> Watch: Murcha — Swooning Breath tutorial</a>
+    <button class="btn-close" onclick="closeInfo()">Got it</button>
+  </div>
+  <div class="info-drawer" id="info-ninepurification">
+    <h2>Nine Purification Breaths</h2>
+    <p>From the Bön tradition of Tibet — the indigenous spiritual lineage that predates Buddhism and co-evolved with it. Called <em>Lung Ro Gu Chu Dupa</em>. This is the foundational preliminary practice done before any meditation or advanced Tibetan practice. Nine breaths, three sets of three, each clearing one of the three root obstacles: anger, attachment, and ignorance.</p>
+    <h3>Setup</h3>
+    <p>Sit upright — full lotus or cross-legged. Spine straight, shoulders open, hands in equipoise (palms up, left resting on right, thumbs touching). Chin slightly in. Visualize three channels in the body: <strong>right (white)</strong>, <strong>left (red)</strong>, and <strong>central (blue)</strong> — all meeting about four fingers below the navel, the central one rising to the crown of the head.</p>
+    <h3>Set 1 — Clearing Anger (Right/White Channel)</h3>
+    <ul>
+      <li>Right hand up: close <strong>right nostril</strong> with right ring finger.</li>
+      <li><strong>Inhale slowly through the left nostril.</strong> Visualize pure air as green light filling the left (red) channel all the way down to the navel junction.</li>
+      <li>Switch: close left nostril, open right.</li>
+      <li><strong>Exhale through the right nostril</strong> — gently at first, more forcefully at the end. Visualize anger leaving as dark smoke through the right channel, dissolving into space.</li>
+      <li>Repeat 3 times total.</li>
+    </ul>
+    <h3>Set 2 — Clearing Attachment (Left/Red Channel)</h3>
+    <ul>
+      <li>Left hand up: close <strong>left nostril</strong> with left ring finger.</li>
+      <li><strong>Inhale through the right nostril.</strong> Visualize pure light filling the white right channel to the navel.</li>
+      <li>Switch: close right nostril.</li>
+      <li><strong>Exhale through the left nostril.</strong> Attachment and desire leave as dark smoke, dissolve into space.</li>
+      <li>Repeat 3 times total.</li>
+    </ul>
+    <h3>Set 3 — Clearing Ignorance (Central/Blue Channel)</h3>
+    <ul>
+      <li>Both hands down. Breathe through <strong>both nostrils simultaneously.</strong></li>
+      <li><strong>Inhale through both nostrils.</strong> Visualize pure light filling the central blue channel from the navel upward.</li>
+      <li><strong>Exhale through both nostrils</strong> — gently, then more forcefully at the end. Ignorance, doubt, and lack of confidence leave through the crown of the head as dark smoke, dissolving into boundless space.</li>
+      <li>Repeat 3 times total.</li>
+    </ul>
+    <p><strong>After all nine breaths:</strong> Rest. Feel all three channels as clear, open, and luminous. Sit in the openness before continuing to meditation.</p>
+    <div class="tip"><p>This is applied neuroregulation as much as spiritual practice — each set activates different vagal pathways. The visualization is not decoration; it directs the nervous system's response. Do not skip it.</p></div>
+    <div class="time-block">
+      <div class="time-row">
+        <span class="time-label">Feel it</span><span class="time-val">1 session</span>
+        <span class="time-label">See results</span><span class="time-val">2–3 weeks</span>
+      </div>
+      <p class="time-note">The sense of clearing and spaciousness is immediate — most people notice it on their first attempt. Two to three weeks daily and it becomes an indispensable pre-meditation anchor.</p>
+    </div>
+        <a class="yt-link" href="https://www.youtube.com/results?search_query=nine+purification+breaths+Tibetan+Buddhist+meditation" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="#ff4444"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg> Watch: Nine Purification Breaths tutorial</a>
+    <button class="btn-close" onclick="closeInfo()">Got it</button>
+  </div>
+  <div class="info-drawer" id="info-coherent">
+    <h2>Coherent Breathing — 5.5 Breaths / Minute</h2>
+    <p>Developed by Dr. Stephen Elliott. The science is precise: when you breathe at exactly 4.5–6.5 breaths per minute — roughly 5.5 seconds in and 5.5 seconds out — your heart rate, blood pressure oscillations, and breath fall into harmonic resonance. This maximizes <strong>Heart Rate Variability (HRV)</strong>, the single most validated biomarker of nervous system health and stress resilience. Stanford research ranks it among the most effective breathing techniques for mood and long-term wellbeing.</p>
+    <h3>The Technique</h3>
+    <ul>
+      <li>Sit or lie comfortably. Close your eyes.</li>
+      <li><strong>Inhale through the nose — 5.5 seconds.</strong> Soft, smooth, quiet. Belly expands first.</li>
+      <li><strong>Exhale through the nose — 5.5 seconds.</strong> Soft, smooth, no pause. Let it fall out naturally.</li>
+      <li><strong>No holds.</strong> No pauses between inhale and exhale. Continuous, wave-like rhythm.</li>
+      <li>Keep the breath small and quiet — you should barely hear yourself. If you feel air-hungry, make the breaths even smaller, not faster.</li>
+      <li>Practice for 5–20 minutes. The app's Custom mode set to In: 6 / Hold: 0 / Out: 6 / Hold: 0 gives you a close approximation.</li>
+    </ul>
+    <h3>What It Does</h3>
+    <p>Immediate HRV increase. Within 5 minutes the cardiovascular and respiratory systems synchronize. Over 8–12 weeks of 20 minutes daily, research shows lasting improvements in blood pressure, anxiety, depression, PTSD symptoms, and emotional regulation. It is not flashy — it is foundational.</p>
+    <div class="tip"><p><strong>Use the Custom tab</strong> in this app: In 6 / Hold 0 / Out 6 / Hold 0, set duration to 5–20 minutes. This is the most science-backed daily practice in this entire app for long-term nervous system health.</p></div>
+    <div class="time-block">
+      <div class="time-row">
+        <span class="time-label">Feel it</span><span class="time-val">5 minutes</span>
+        <span class="time-label">See results</span><span class="time-val">8–12 weeks daily</span>
+      </div>
+      <p class="time-note">HRV increases within a single session. Lasting blood pressure and emotional regulation improvements require 8–12 weeks of 20 minutes daily — the most robustly researched breathing protocol in existence.</p>
+    </div>
+        <a class="yt-link" href="https://www.youtube.com/results?search_query=coherent+breathing+5+breaths+per+minute+HRV+tutorial" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="#ff4444"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg> Watch: Coherent Breathing — 5.5 breaths/min tutorial</a>
+    <button class="btn-close" onclick="closeInfo()">Got it</button>
+  </div>
+  <div class="info-drawer" id="info-physiosigh">
+    <h2>Physiological Sigh — Double Inhale</h2>
+    <p>Researched and popularized by Dr. Andrew Huberman and the Stanford Neuroscience lab. A 2023 randomized controlled trial found it was <strong>the single most effective breathing technique</strong> for reducing acute stress — outperforming mindfulness meditation, box breathing, and cyclic hyperventilation. It works in as little as one breath.</p>
+    <h3>The Technique</h3>
+    <ul>
+      <li><strong>First inhale:</strong> Breathe in deeply through the nose. Fill the lungs most of the way — about 80%.</li>
+      <li><strong>Second inhale:</strong> Without exhaling, take one more sharp sniff through the nose to <em>top off</em> the lungs completely. This re-inflates any collapsed alveoli (tiny air sacs that partially collapse under stress, causing that panicked "I can't breathe" feeling).</li>
+      <li><strong>Long, slow exhale:</strong> Release all the air through your mouth — slowly, completely, for as long as possible. This activates the vagus nerve and parasympathetic nervous system maximally.</li>
+      <li>That's it. One to three of these and you will feel a shift.</li>
+    </ul>
+    <h3>How to Use It</h3>
+    <p>This is your emergency tool. Not a timed session. Use it: the moment stress spikes, when a craving hits, when you feel overwhelmed, in traffic, before walking into a difficult situation, mid-panic attack. Because it is so simple, you can do it invisibly — no one around you will notice.</p>
+    <div class="tip"><p><strong>The science:</strong> The double inhale maximally inflates the alveoli and increases the surface area for CO₂ transfer. The long exhale then offloads maximum CO₂, which is the actual trigger for the calming response — not oxygen. Stanford found 5 minutes of cyclic sighing daily produced the largest mood improvements of any breathwork protocol tested.</p></div>
+    <div class="time-block">
+      <div class="time-row">
+        <span class="time-label">Feel it</span><span class="time-val">1 breath (30 sec)</span>
+        <span class="time-label">See results</span><span class="time-val">1 week daily</span>
+      </div>
+      <p class="time-note">One breath gives immediate relief. One week of daily 5-minute practice and baseline anxiety, mood, and respiration rate all improve measurably — the fastest-acting protocol in terms of daily results.</p>
+    </div>
+        <a class="yt-link" href="https://www.youtube.com/results?search_query=physiological+sigh+double+inhale+Huberman+Stanford+tutorial" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="#ff4444"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg> Watch: Physiological Sigh — Stanford tutorial</a>
+    <button class="btn-close" onclick="closeInfo()">Got it</button>
+  </div>
+  <div class="info-drawer" id="info-rebirthing">
+    <h2>Rebirthing Breathwork</h2>
+    <p>Developed by Leonard Orr in the 1970s — the grandfather of the modern Western breathwork movement. All major breathwork lineages trace back to him: Holotropic Breathwork (Stanislav Grof), Transformational Breath (Judith Kravitz), Liberation Breathing (Sondra Ray). Orr discovered the technique while breathing in his bathtub and experiencing what he described as re-living his own birth. The method uses <strong>circular connected breathing</strong> — no pause between inhale and exhale, ever — to access suppressed memories, release stored trauma, and reach states of expanded consciousness.</p>
+    <h3>The Core Technique — Circular Connected Breathing</h3>
+    <ul>
+      <li><strong>Full inhale:</strong> Deep belly-to-chest breath through the nose (or mouth). Belly expands fully.</li>
+      <li><strong>Relaxed exhale:</strong> Let the air fall out — gravity, not effort. No pushing. No pause after exhale.</li>
+      <li>Immediately begin the next inhale. <strong>The breath is one continuous connected loop.</strong> In… out… in… out… no stops, no gaps.</li>
+      <li>Maintain this rhythm for 45–90 minutes in a proper session. Speed and depth adjust intuitively.</li>
+    </ul>
+    <h3>What Happens</h3>
+    <p>Within 15–20 minutes, altered consciousness states emerge. Physical sensations — tingling, tetany (muscle contractions), warmth or cold. Emotional releases: tears, laughter, grief, joy. Sometimes visual phenomena or memories that surface. This is the material being released. A trained facilitator is present to guide and support.</p>
+    <div class="warn"><p><strong>This is not a solo beginner practice.</strong> The traditional method is done one-on-one with a trained Rebirther for a series of 10 sessions. The altered states can be intense. Not recommended for people with psychosis, severe trauma without therapeutic support, or cardiovascular conditions. Find a certified practitioner at rebirthingbreathwork.com</p></div>
+    <div class="tip"><p>Leonard Orr's most direct quote on the practice: <em>"Relaxation is the ultimate healer. Every breath induces relaxation. Therefore, breathing is the basic healer."</em></p></div>
+    <div class="time-block">
+      <div class="time-row">
+        <span class="time-label">Feel it</span><span class="time-val">First session</span>
+        <span class="time-label">See results</span><span class="time-val">10 sessions</span>
+      </div>
+      <p class="time-note">Effects are felt in the first session. The traditional protocol of 10 two-hour sessions with a trained facilitator produces the deepest clearing of suppressed emotions and trauma patterns.</p>
+    </div>
+        <a class="yt-link" href="https://www.youtube.com/results?search_query=rebirthing+breathwork+Leonard+Orr+circular+breathing+explained" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="#ff4444"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg> Watch: Rebirthing Breathwork — Leonard Orr method explained</a>
+    <button class="btn-close" onclick="closeInfo()">Got it</button>
+  </div>
+  <div class="info-drawer" id="info-transformational">
+    <h2>Transformational Breath® — Dr. Judith Kravitz</h2>
+    <p>Developed by Dr. Judith Kravitz, a student of Leonard Orr. Transformational Breath® evolved from Rebirthing but made key innovations: it emphasizes <strong>open-mouth abdominal breathing</strong> (not chest), combines breath with body mapping (acupressure-like touch on stuck areas), movement, sound, and music. Endorsed by Deepak Chopra and Christiane Northrup. Considered by many to be the most accessible and safest form of connected breathwork.</p>
+    <h3>What Makes It Different</h3>
+    <ul>
+      <li><strong>Open mouth, belly-focused inhale:</strong> Inhale deeply through the open mouth, expanding the lower abdomen fully. This ensures you are not chest-breathing, which keeps you grounded.</li>
+      <li><strong>Passive exhale:</strong> The exhale is a soft, relaxed release — like misting a mirror. No force.</li>
+      <li><strong>Connected circular rhythm:</strong> No pause between inhale and exhale. Continuous loop.</li>
+      <li><strong>Body mapping:</strong> A practitioner applies gentle pressure to areas of the body where the breath is restricted (often chest, belly, throat) to help the breath open those areas and release stored tension.</li>
+      <li><strong>Movement and sound:</strong> You may be encouraged to make sound during the exhale, or move your arms and legs in rhythm. The movement amplifies the energy release.</li>
+      <li><strong>Music:</strong> Sessions use carefully chosen music to guide the emotional journey.</li>
+    </ul>
+    <h3>What It Does</h3>
+    <p>Opens the full breathing system — most people use only 25–30% of their lung capacity habitually. Releases suppressed emotions stored in the body. Increases energy. Boosts immune function. Creates profound states of wellbeing, clarity, and joy. Practitioners describe it as one of the most transformative experiences of their lives.</p>
+    <div class="tip"><p><strong>Finding a practitioner:</strong> Visit transformationalbreath.com for certified facilitators worldwide. Sessions can be done in person or online.</p></div>
+    <div class="time-block">
+      <div class="time-row">
+        <span class="time-label">Feel it</span><span class="time-val">First session</span>
+        <span class="time-label">See results</span><span class="time-val">3–6 sessions</span>
+      </div>
+      <p class="time-note">Immediate shifts in energy, emotion, and mental clarity in the first session. Three to six sessions with a facilitator to access deeper layers of stored experience.</p>
+    </div>
+        <a class="yt-link" href="https://www.youtube.com/results?search_query=transformational+breath+Judith+Kravitz+breathwork+tutorial" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="#ff4444"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg> Watch: Transformational Breath® — Judith Kravitz method</a>
+    <button class="btn-close" onclick="closeInfo()">Got it</button>
+  </div>
+  <div class="info-drawer" id="info-reversebreathing">
+    <h2>Reverse Breathing — Taoist / Qigong</h2>
+    <p>Also called Taoist Breathing, Paradoxical Breathing, or Back-to-the-Womb Breathing. The exact opposite of natural diaphragmatic breathing. Where natural breathing expands the belly on the inhale, reverse breathing <strong>contracts it</strong>. This compresses the internal organs, builds internal pressure in the lower Dan Tian (energy center below the navel), and is said to powerfully concentrate and direct Qi (life force). Used in Tai Chi, Qigong, and traditional Chinese martial arts.</p>
+    <h3>The Technique</h3>
+    <ul>
+      <li>Sit or stand in a relaxed, upright position. Take a few natural breaths to settle.</li>
+      <li><strong>Inhale through the nose:</strong> Gently <strong>pull the lower abdomen inward and upward</strong> — draw the belly button toward the spine. Simultaneously, allow the chest and upper ribcage to expand. The perineum (pelvic floor) lightly contracts upward. This feels unnatural at first — practice slowly.</li>
+      <li><strong>Exhale through the nose:</strong> Release the belly — let it expand outward and downward. The chest and ribcage soften and release. Perineum relaxes.</li>
+      <li>Build the practice gradually. Start with 5–10 breaths. Increase to 10-minute sessions over weeks.</li>
+    </ul>
+    <h3>What It Does</h3>
+    <p>Creates a compression-and-release pump that massages the internal organs and builds internal energy pressure (Qi). In Chinese medicine, this is how Qi is "stored" and made powerful. Used before Tai Chi and martial arts practice to "charge" the body. Also builds core stability, improves digestion, and increases bodily awareness. The sensation of qi moving — warmth, tingling, fullness — is often reported.</p>
+    <div class="tip"><p><strong>Start very slowly.</strong> The tendency is to use too much effort. The contraction should be gentle, not forced. Over time it becomes natural and effortless. Combine with visualization of warm golden light filling the Dan Tian (three fingers below the navel) to amplify the effect.</p></div>
+    <div class="warn"><p>Not recommended for pregnant women. If you feel lightheaded, strain, or pressure in the head, stop immediately and return to natural breathing.</p></div>
+    <div class="time-block">
+      <div class="time-row">
+        <span class="time-label">Feel it</span><span class="time-val">2–3 sessions</span>
+        <span class="time-label">See results</span><span class="time-val">4–6 weeks</span>
+      </div>
+      <p class="time-note">The body begins adjusting in the first few sessions and energy sensations emerge. Four to six weeks of daily practice integrates it as a natural breathing pattern and builds measurable internal energy.</p>
+    </div>
+        <a class="yt-link" href="https://www.youtube.com/results?search_query=reverse+breathing+Taoist+Qigong+paradoxical+breathing+tutorial" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="#ff4444"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg> Watch: Reverse Breathing — Taoist Qigong tutorial</a>
+    <button class="btn-close" onclick="closeInfo()">Got it</button>
+  </div>
+  <div class="info-drawer" id="info-kumbhaka">
+    <h2>Kumbhaka — Breath Retention</h2>
+    <p>"Kumbha" means pot or vessel. Kumbhaka is the deliberate suspension of breath — either after full inhalation (<em>Antara Kumbhaka</em>, inner retention) or after full exhalation (<em>Bahya Kumbhaka</em>, outer retention). In ancient yogic texts, Kumbhaka is described as the most powerful practice of all pranayama — the moment when prana (life force) is "trapped" in the body and most powerfully directed. Most advanced pranayamas (Murcha, Tummo, advanced Nadi Shodhana) use Kumbhaka as their core mechanism.</p>
+    <h3>Antara Kumbhaka — Inner Retention (hold after inhale)</h3>
+    <ul>
+      <li>Inhale fully and deeply through the nose.</li>
+      <li>At the top of the breath, <strong>gently close the throat</strong> (not forcefully — just a soft seal, like stopping a yawn). Do not tense the neck or face.</li>
+      <li>Hold for a count that is comfortable — 4 seconds, then 8, then 16 as you build.</li>
+      <li>Exhale slowly and completely through the nose.</li>
+    </ul>
+    <h3>Bahya Kumbhaka — Outer Retention (hold after exhale)</h3>
+    <ul>
+      <li>Exhale fully and completely through the nose — empty the lungs as much as possible.</li>
+      <li>After the exhale, <strong>hold the empty lungs</strong>. This is where Uddiyana Bandha (abdominal lock — pull belly up and in) can be applied for deeper effect.</li>
+      <li>Hold for a comfortable count — start with 4 seconds.</li>
+      <li>Inhale slowly when the urge to breathe arises. Never force.</li>
+    </ul>
+    <h3>What It Does</h3>
+    <p>Inner retention builds prana, raises internal pressure, and is energizing. Outer retention releases and empties, deeply calms the nervous system, and increases CO₂ tolerance. Both improve lung capacity, focus, and the depth of meditation that follows. Kumbhaka is why Wim Hof's retention works — the same principle, taken to an extreme.</p>
+    <div class="warn"><p><strong>Never practice Bahya Kumbhaka if you have high blood pressure, heart disease, or are pregnant.</strong> Never force either form of retention — the hold ends when the first urge to breathe arises, not when you push past it. Practice seated.</p></div>
+    <div class="time-block">
+      <div class="time-row">
+        <span class="time-label">Feel it</span><span class="time-val">1 session</span>
+        <span class="time-label">See results</span><span class="time-val">3–4 weeks</span>
+      </div>
+      <p class="time-note">Depth and calm from the first session. Three to four weeks of daily practice and lung capacity, breath hold times, and meditative depth all improve substantially.</p>
+    </div>
+        <a class="yt-link" href="https://www.youtube.com/results?search_query=kumbhaka+pranayama+breath+retention+tutorial+yoga" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="#ff4444"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg> Watch: Kumbhaka — Breath Retention tutorial</a>
+    <button class="btn-close" onclick="closeInfo()">Got it</button>
+  </div>
+
+  <div class="info-drawer" id="info-transmutation">
+    <h2>Transmutation Breath — Redirecting Vital Energy</h2>
+    <p>One of the oldest and most powerful practices across traditions — Taoist, Tantric, Gnostic, and Hermetic. The core principle: sexual energy is the most potent creative force in the human body. Instead of releasing it outward, you learn to redirect it <em>upward</em> through the spine — transforming raw biological drive into creative power, spiritual vitality, and higher consciousness. Samael Aun Weor called this the foundation of all genuine inner work. The Taoists called it <em>Ching to Chi</em>. The yogis called it <em>Urdhva Retas</em> — upward-flowing seed.</p>
+
+    <h3>Why This Matters</h3>
+    <p>The body generates enormous vital energy continuously. Most people expel it habitually and unconsciously — through excessive release, pornography, fantasy, or compulsive behavior — and then wonder why they feel depleted, unfocused, and spiritually dull. Transmutation is the deliberate choice to retain that energy and redirect it as fuel. Athletes, artists, mystics, and warriors across every culture have used this. When the energy moves upward rather than outward, it feeds the brain, the heart, the creative centers, and the spine. You think more clearly. You feel more alive. Your work has power in it.</p>
+
+    <h3>The 4-2-8 Wheel — Core Transmutation Breath</h3>
+    <p>This specific pattern is designed for use when the urge arises — the biological wave hits and you use the breath as the redirect mechanism rather than suppressing through willpower alone.</p>
+    <ul>
+      <li><strong>Sit upright.</strong> Spine straight. Close your eyes.</li>
+      <li><strong>Inhale through the nose — 4 seconds.</strong> As you inhale, visualize the energy at the base of your spine. Draw it upward with the breath — imagine it rising through each vertebra like light moving up a column.</li>
+      <li><strong>Hold — 2 seconds.</strong> Energy pauses at the heart center. Feel warmth or pressure there.</li>
+      <li><strong>Exhale — 8 seconds</strong> while making a low, soft vibratory hum in your chest and solar plexus. Not loud — just enough to feel the vibration internally. As you exhale, visualize the energy radiating outward from your heart and crown, distributing through your whole body like light filling a room.</li>
+      <li>Repeat for 5–15 minutes. The urge does not disappear — it transforms. You will feel it shift from pressure in the lower body to warmth and clarity in the upper body and head.</li>
+    </ul>
+
+    <h3>The Upward Pull — Visualization</h3>
+    <p>During every inhale, actively visualize a wheel of energy: rising from the base of the spine, moving up through the belly, heart, throat, and crown — then cycling back down the front of the body and returning to the base. A continuous circuit. Not suppression. Not release. Circulation. The energy doesn't disappear — it feeds every level of your being.</p>
+
+    <h3>When to Use This</h3>
+    <ul>
+      <li>The moment a craving or compulsive urge arises — use this immediately, before any other action</li>
+      <li>During the 14-day biological wave peaks when intensity is highest</li>
+      <li>Morning practice to set the energetic tone for the day</li>
+      <li>Before creative work, business calls, or any high-performance task — you are literally redirecting fuel into your work</li>
+      <li>After physical exercise, when the body's energy is already circulating</li>
+    </ul>
+
+    <h3>The Daily Transmutation Engine</h3>
+    <p>Breathwork alone is not enough. The breath is the anchor — but the full practice includes: cold exposure in the morning to immediately lower primal physical arousal and reset the nervous system; physical exercise when the wave hits (lift weights, run — burn the fuel immediately in the body rather than the mind); journaling to process the emotional turbulence that arises when the brain is denied its usual dopamine pattern; and creative output as the ultimate destination for all that redirected energy — your app, your music, your teaching. That energy has to go somewhere. You decide where.</p>
+
+    <div class="tip"><p><strong>The Gnostic view:</strong> Samael Aun Weor taught that this energy — <em>Ens Seminis</em> — contains the entire creative power of the universe in miniature. Every genius, every saint, every person who built something real understood this at some level, whether they named it or not. The question is never whether the energy is present. It always is. The question is only where you direct it.</p></div>
+
+    <div class="time-block">
+      <div class="time-row">
+        <span class="time-label">Feel it</span><span class="time-val">First session</span>
+        <span class="time-label">See results</span><span class="time-val">2–4 weeks daily</span>
+      </div>
+      <p class="time-note">The shift from pressure to warmth is felt in the first real session. Two to four weeks of consistent practice and creative output, mental clarity, and emotional stability all increase measurably — because the fuel is going somewhere real.</p>
+    </div>
+    <a class="yt-link" href="https://www.youtube.com/results?search_query=sexual+energy+transmutation+breathwork+kundalini+upward+energy" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="#ff4444"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg> Watch: Sexual Energy Transmutation — breathwork and practice</a>
+    <button class="btn-close" onclick="closeInfo()">Got it</button>
+  </div>
+
+
+  <div class="info-drawer" id="info-blink">
+    <h2>Huberman Blink Protocols</h2>
+    <p>Dr. Andrew Huberman (Stanford Neuroscience) identified that blinking is not just eye lubrication — it is a neurological control switch. Each blink acts like a shutter that resets your brain's time perception and attention. You can deliberately use blink rate to shift your mental state in either direction: toward sharp focus or toward deep rest.</p>
+
+    <h3>Protocol 1 — Fast Blinks: Boost Alertness &amp; Focus</h3>
+    <p>Rapid blinking increases dopamine signaling and speeds up the brain's "frame rate" — how finely it slices time. More dopamine = more blinks = sharper attention.</p>
+    <ul>
+      <li>Sit upright. Relax your face.</li>
+      <li><strong>Blink rapidly</strong> — 1 blink per second or faster — for <strong>30–60 seconds.</strong></li>
+      <li>Your eyes may water slightly. That is normal and beneficial — it re-lubricates the eyes and resets the visual system.</li>
+      <li>After the rapid blinks, <strong>open your eyes wide</strong> and fix your gaze softly on a point in front of you for 30 seconds.</li>
+      <li>Notice the shift in mental clarity.</li>
+    </ul>
+    <div class="tip"><p><strong>Use when:</strong> You feel mentally foggy, drowsy, or unfocused. Before starting work, teaching, or any task requiring sharp attention. Takes under 2 minutes.</p></div>
+
+    <h3>Protocol 2 — Slow Blinks: Downshift to Rest &amp; Sleep</h3>
+    <p>Slow deliberate blinks mimic the brain's natural pre-sleep behavior. Each long blink reduces the flow of visual information to the brain — telling the nervous system it is safe to power down.</p>
+    <ul>
+      <li>Sit or lie down. Soften your body.</li>
+      <li><strong>Blink slowly and deliberately</strong> — close your eyes fully, hold for 1–2 seconds, open slowly. One blink every 3–5 seconds.</li>
+      <li>Continue for <strong>2–5 minutes.</strong></li>
+      <li>With each slow blink, consciously let your shoulders drop and your jaw unclench.</li>
+      <li>Combine with slow nasal breathing — in 4s, out 6s — for maximum effect.</li>
+    </ul>
+    <div class="tip"><p><strong>Use when:</strong> Preparing for sleep. After a stressful event. To transition out of screen time. Combine with Bhramari or Chandra Bhedana for a powerful pre-sleep stack.</p></div>
+
+    <h3>Protocol 3 — The 17-Minute Attentional Blink Training</h3>
+    <p>A more intensive protocol based on Huberman's discussion of attentional blink research. The goal is to <strong>permanently reduce attentional lapses</strong> — the small gaps in awareness where your brain misses things because it was momentarily offline.</p>
+    <ul>
+      <li>Sit quietly. No distractions. Set a timer for 17 minutes.</li>
+      <li>Pick a fixed point to look at — a dot on a wall, a word on a page.</li>
+      <li><strong>Maintain soft visual focus</strong> on that point. Do not stare intensely — soft gaze, relaxed face.</li>
+      <li>When your attention drifts (and it will), simply notice and return. Do not judge. The returning is the training.</li>
+      <li>Blink naturally throughout — do not suppress blinking. Let the blinks happen on their own rhythm.</li>
+      <li>The 17 minutes is not arbitrary — research suggests this is the minimum duration for the practice to begin rewiring attentional circuits.</li>
+    </ul>
+    <div class="tip"><p>Huberman notes that this practice compounds over weeks. Daily 17-minute sessions measurably reduce the frequency and duration of attentional blinks — meaning your brain misses less, catches more, and stays online longer under cognitively demanding conditions.</p></div>
+
+    <div class="time-block">
+      <div class="time-row">
+        <span class="time-label">Feel it</span><span class="time-val">First session</span>
+        <span class="time-label">See results</span><span class="time-val">2–4 weeks daily</span>
+      </div>
+      <p class="time-note">Fast blinks give alertness within 60 seconds. Slow blinks shift you toward rest within 2 minutes. The 17-minute attentional training produces measurable improvements in sustained focus after 2–4 weeks of daily practice.</p>
+    </div>
+    <a class="yt-link" href="https://www.youtube.com/watch?v=fH7N9YRxMYc" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="#ff4444"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg> Watch: Huberman — How to Boost Focus Permanently with Blinking (17-min protocol)</a>
+    <a class="yt-link" href="https://www.youtube.com/results?search_query=huberman+blinking+focus+attention+ADHD+blink+rate" target="_blank" rel="noopener" style="margin-top:0.3rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="#ff4444"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg> Watch: Huberman — Blinking, Dopamine & Attention Control</a>
+    <button class="btn-close" onclick="closeInfo()">Got it</button>
+  </div>
+
+
+  <div class="info-drawer" id="info-hamsah">
+    <h2>Ham-Sah Pranayama — Samael Aun Weor</h2>
+    <p>"Ham-Sah is the key." — Samael Aun Weor, <em>The Conquest of the Illuminating Void</em></p>
+    <p style="margin-top:0.5rem;">Ham-Sah (also written Hamsa) is the sacred mantra of the Third Logos — the creative force of the universe. In Sanskrit, Hamsa means "swan" — the symbol of the soul moving between the waters of life. Samael Aun Weor taught this as the fundamental pranayama for sexual energy transmutation and the awakening of consciousness. The creative energy that ordinarily flows outward centrifugally is deliberately reversed — made to flow centripetally, inward and upward through the spine to the brain.</p>
+
+    <h3>Preparation</h3>
+    <ul>
+      <li>Sit cross-legged on the floor (eastern style) or in a comfortable chair (western style). Face East if possible.</li>
+      <li>Spine straight and vertical — chest, neck, and head in one line. Do not lean forward, backward, or sideways.</li>
+      <li>Place the back of your right hand into the palm of your left hand. Rest both hands on your lap, relaxed.</li>
+      <li>Close your eyes completely. Relax every muscle — Samael said to relax "as children do."</li>
+      <li>Before beginning, pray briefly to your Divine Mother — ask her to guide the energy and awaken your consciousness. One sincere moment of devotion is sufficient.</li>
+    </ul>
+
+    <h3>The Technique</h3>
+    <div class="step"><span class="step-number">1</span>
+      <p><strong>Inhale — slowly and deeply through the nose.</strong> This inhale is long, smooth, and deep — much longer than the exhale. As you inhale, mentally chant the mantra <strong>HAM</strong> — vibrate it internally: <em>HAAAAAAAMM</em>. Do not say it aloud — it lives in the mind only during the inhale. Simultaneously, visualize the creative energy at the base of the spine beginning to rise upward through the spinal column — like a current of light moving vertebra by vertebra toward the brain.</p>
+    </div>
+    <div class="step"><span class="step-number">2</span>
+      <p><strong>At the top of the inhale — visualize the energy reaching the brain and the third eye.</strong> See it as light arriving at the point between your eyebrows — the Ajna chakra, the seat of the inner vision. Hold the visualization for a brief natural pause.</p>
+    </div>
+    <div class="step"><span class="step-number">3</span>
+      <p><strong>Exhale — short and quick through the mouth.</strong> This is the opposite of most pranayamas — the exhale is brief and forceful. As you exhale, pronounce the mantra <strong>SAH</strong> aloud with a short, definite sound: <em>SAAAAHH</em>. This sound seals the energy inward. The energy does not fall back down — it remains centripetal, circulating within.</p>
+    </div>
+    <div class="step"><span class="step-number">4</span>
+      <p>Begin the next cycle immediately. The rhythm is: <strong>long inhale (HAM internally) → brief pause at crown → short exhale (SAH aloud)</strong>. Continuous. No long pause between cycles.</p>
+    </div>
+
+    <h3>The Sphincter Contraction (Advanced)</h3>
+    <p>In the Egyptian-Christic Pranayama from <em>The Yellow Book</em>, Samael adds the pelvic floor contraction as an additional mechanism. At the moment of inhaling, gently contract the pelvic floor and sphincter muscles — drawing that energy upward from the base. This is the same Mula Bandha used in Yoga and Tummo. It acts as a physical lock that amplifies the upward movement of the creative energy. Hold the contraction gently through the inhale and release on the exhale. This is not required for the basic Ham-Sah practice but deepens it significantly when added.</p>
+
+    <h3>The Mind During Practice</h3>
+    <p>Samael was precise on this: <em>"During this practice, one must not think of absolutely anything. Only the Ham-Sah will vibrate in our mind, and nothing else."</em> The mantra is not decoration — it IS the practice. The moment a thought arises, return to HAM-SAH. The mantra and the visualization work together: HAM draws the energy up, SAH seals it inside. Over time the inhalation becomes deeper and the exhalation increasingly short and quick.</p>
+
+    <h3>Duration and Frequency</h3>
+    <p>Traditionally practiced morning and evening — ideally before meditation or prayer. Start with 10–15 minutes. Build to 30 minutes over weeks. Samael taught that daily consistent practice produces fundamental changes in "physical and psychological anatomy."</p>
+
+    <div class="tip"><p><strong>The deeper meaning:</strong> HAM is the masculine solar force — Shiva, the inhale, the fire. SAH is the feminine lunar force — Shakti, the exhale, the water. Together Ham-Sah is the union of opposites within the practitioner — the alchemical marriage happening in every breath. This is why Samael called it the key: not just a technique but a living symbol of the Great Work.</p></div>
+
+    <div class="time-block">
+      <div class="time-row">
+        <span class="time-label">Feel it</span><span class="time-val">First session</span>
+        <span class="time-label">See results</span><span class="time-val">3–4 weeks daily</span>
+      </div>
+      <p class="time-note">Warmth at the base of the spine and pressure at the third eye are felt in early sessions. Three to four weeks of daily morning and evening practice and significant changes in energy levels, mental clarity, and impulse control become apparent.</p>
+    </div>
+    <a class="yt-link" href="https://www.youtube.com/watch?v=g1Tx4NHrt3M" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="#ff4444"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg> Watch: Ham-Sah Pranayama Instructions — V.M. Samael Aun Weor</a>
+    <a class="yt-link" href="https://www.youtube.com/watch?v=FHx2LQxOorU" target="_blank" rel="noopener" style="margin-top:0.3rem;"><svg width="14" height="14" viewBox="0 0 24 24" fill="#ff4444"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg> Watch: Pranayama for Sexual Energy Transmutation — The Yellow Book</a>
+    <button class="btn-close" onclick="closeInfo()">Got it</button>
+  </div>
+
+  <!-- ════════════════════════════
+       RING
+  ════════════════════════════ -->
+  <div class="ring-wrap" id="ringWrap">
+    <svg class="rsv" viewBox="0 0 220 220">
+      <circle class="ring-bg"   cx="110" cy="110" r="95"/>
+      <circle class="ring-fill" id="ringFill" cx="110" cy="110" r="95"/>
+    </svg>
+    <div class="ring-center">
+      <div class="ring-phase" id="rPhase">Ready</div>
+      <div class="ring-count" id="rCount"></div>
+      <div class="ring-info"  id="rInfo"></div>
+      <!-- Nostril indicators for alternate nostril techniques -->
+      <div class="nostril-indicator" id="nostrilInd">
+        <div class="nos left"  id="nosL">L</div>
+        <div class="nos right" id="nosR">R</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WH retention prompt -->
+  <div class="wh-prompt" id="whPrompt">
+    <div class="wh-text">Hold empty lungs — press when you need to breathe</div>
+    <div id="whLiveTimer"></div>
+    <button class="btn-ice" id="whStopBtn">I Need to Breathe</button>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <button class="btn-begin" id="btnBegin">Begin</button>
+    <div class="vol-row">
+      <label>Volume</label>
+      <input type="range" id="volSlider" min="0" max="100" value="60"/>
+    </div>
+  </div>
+
+  <!-- ── Heatmap ── -->
+  <div class="heatmap-section" id="heatmapSection"></div>
+  <div class="hm-tooltip" id="hmTooltip"></div>
+
+  <!-- Tracker -->
+  <div class="tracker">
+    <div class="trk-head">
+      <span class="trk-title">Sessions</span>
+      <button class="trk-reset" onclick="doReset()">reset</button>
+    </div>
+    <div class="trk-stats">
+      <div class="trk-stat"><span class="trk-num" id="tTotal">0</span><span class="trk-lbl">Total</span></div>
+      <div class="trk-stat"><span class="trk-num" id="tStreak">0</span><span class="trk-lbl">Streak</span></div>
+      <div class="trk-stat"><span class="trk-num" id="tToday">0</span><span class="trk-lbl">Today</span></div>
+    </div>
+    <div class="trk-bars" id="tBars"></div>
+    <div class="trk-last"  id="tLast"></div>
+    <button class="trk-manual" onclick="manualLog()">+ log a session manually</button>
+    <div class="trk-note"  id="tNote"></div>
+  </div>
+
+  <!-- ── Session History Log ── -->
+  <div class="history-section">
+    <button class="history-toggle" onclick="toggleHistory()">▼ View full session history</button>
+    <div class="history-panel" id="historyPanel">
+      <div class="history-filters" id="historyFilters"></div>
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Technique</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Duration</th>
+          </tr>
+        </thead>
+        <tbody id="historyBody"></tbody>
+      </table>
+      <div class="history-empty" id="historyEmpty" style="display:none;">No sessions yet.</div>
+      <button class="history-export" onclick="exportCSV()">↓ Export as CSV</button>
+    </div>
+  </div>
+
+  <!-- ── Reference Table ── -->
+  <div class="ref-section">
+    <div class="ref-title">Quick Reference</div>
+    <table class="ref-table">
+      <thead>
+        <tr>
+          <th>Goal</th>
+          <th>#1 Choice</th>
+          <th>Also Good</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>🌅 Wake up / Energy</td>
+          <td><span class="ref-link" onclick="activateTech('kapalabhati')">Kapalabhati</span></td>
+          <td>Bhastrika · Surya Bhedana</td>
+        </tr>
+        <tr>
+          <td>🎯 Focus</td>
+          <td><span class="ref-link" onclick="activateTech('box')">Box Breathing</span></td>
+          <td>Surya Bhedana · Kapalabhati</td>
+        </tr>
+        <tr>
+          <td>👁️ Attention Training</td>
+          <td><span class="ref-link" onclick="activateTech('blink')">Blink Protocol</span></td>
+          <td>Coherent Breathing · Box</td>
+        </tr>
+        <tr>
+          <td>😰 Anxiety / Stress</td>
+          <td><span class="ref-link" onclick="activateTech('478')">4-7-8</span></td>
+          <td>Bhramari · Nadi Shodhana</td>
+        </tr>
+        <tr>
+          <td>😤 Anger Reset</td>
+          <td><span class="ref-link" onclick="activateTech('bhramari')">Bhramari</span></td>
+          <td>Chandra Bhedana · 4-7-8</td>
+        </tr>
+        <tr>
+          <td>😔 Grief / Sadness</td>
+          <td><span class="ref-link" onclick="activateTech('bhramari')">Bhramari</span></td>
+          <td>4-7-8 · Nadi Shodhana</td>
+        </tr>
+        <tr>
+          <td>🧘 Before Meditation</td>
+          <td><span class="ref-link" onclick="activateTech('nadi')">Nadi Shodhana</span></td>
+          <td>Bhramari · Tummo</td>
+        </tr>
+        <tr>
+          <td>🌙 Before Sleep</td>
+          <td><span class="ref-link" onclick="activateTech('bhramari')">Bhramari</span></td>
+          <td>Chandra Bhedana · 4-7-8</td>
+        </tr>
+        <tr>
+          <td>🔥 Craving / Urge</td>
+          <td><span class="ref-link" onclick="activateTech('transmutation')">Transmutation</span></td>
+          <td>Box Breathing · 4-7-8</td>
+        </tr>
+        <tr>
+          <td>⚗️ Energy Transmutation</td>
+          <td><span class="ref-link" onclick="activateTech('hamsah')">Ham-Sah</span></td>
+          <td>Transmutation · Tummo</td>
+        </tr>
+        <tr>
+          <td>💪 Performance</td>
+          <td><span class="ref-link" onclick="activateTech('wimhof')">Wim Hof</span></td>
+          <td>Bhastrika · Box Breathing</td>
+        </tr>
+        <tr>
+          <td>🥶 Cold Exposure</td>
+          <td><span class="ref-link" onclick="activateTech('wimhof')">Wim Hof</span></td>
+          <td>Bhastrika · Tummo</td>
+        </tr>
+        <tr>
+          <td>🩸 Blood Pressure</td>
+          <td><span class="ref-link" onclick="activateTech('bhramari')">Bhramari</span></td>
+          <td>Chandra Bhedana · Nadi Shodhana</td>
+        </tr>
+        <tr>
+          <td>🧠 Brain Fog</td>
+          <td><span class="ref-link" onclick="activateTech('kapalabhati')">Kapalabhati</span></td>
+          <td>Bhastrika · Surya Bhedana</td>
+        </tr>
+        <tr>
+          <td>🌀 Spiritual / Energy</td>
+          <td><span class="ref-link" onclick="activateTech('tummo')">Tummo</span></td>
+          <td>Nadi Shodhana · Ujjayi</td>
+        </tr>
+        <tr>
+          <td>🫀 Immune System</td>
+          <td><span class="ref-link" onclick="activateTech('wimhof')">Wim Hof</span></td>
+          <td>Bhastrika · Nadi Shodhana</td>
+        </tr>
+        <tr>
+          <td>❄️ Overheating / Fever</td>
+          <td><span class="ref-link" onclick="activateTech('sitali')">Sitali</span></td>
+          <td>Chandra Bhedana · 4-7-8</td>
+        </tr>
+        <tr>
+          <td>💓 HRV / Long-term Health</td>
+          <td><span class="ref-link" onclick="activateTech('coherent')">Coherent Breathing</span></td>
+          <td>Nadi Shodhana · Box Breathing</td>
+        </tr>
+        <tr>
+          <td>⚡ Emergency Calm</td>
+          <td><span class="ref-link" onclick="activateTech('physiosigh')">Physiological Sigh</span></td>
+          <td>4-7-8 · Box Breathing</td>
+        </tr>
+        <tr>
+          <td>🧬 Trauma Release</td>
+          <td><span class="ref-link" onclick="activateTech('rebirthing')">Rebirthing</span></td>
+          <td>Transform. Breath · Wim Hof</td>
+        </tr>
+        <tr>
+          <td>🥋 Martial Arts / Qi</td>
+          <td><span class="ref-link" onclick="activateTech('reversebreathing')">Reverse Breathing</span></td>
+          <td>Kumbhaka · Bhastrika</td>
+        </tr>
+        <tr>
+          <td>🪷 Pre-meditation Clearing</td>
+          <td><span class="ref-link" onclick="activateTech('ninepurification')">9 Purification</span></td>
+          <td>Nadi Shodhana · Bhramari</td>
+        </tr>
+        <tr>
+          <td>🔬 Deep Consciousness</td>
+          <td><span class="ref-link" onclick="activateTech('murcha')">Murcha</span></td>
+          <td>Tummo · Kumbhaka</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="ref-note">Tap the #1 choice to switch to that technique instantly.</p>
+  </div>
+
+</div><!-- end .wrap -->
+</div><!-- end #page2 -->
+
+<script>
+(function(){
+
+// ══════════════════════════════════
+// PAGE NAVIGATION
+// ══════════════════════════════════
+const GOALS = {
+  energy: {
+    label: '🌅 Energy — Wake up & Activate',
+    choices: [
+      { tech:'kapalabhati',  name:'Kapalabhati',        desc:'Skull-shining pump breath — instant alertness and metabolic fire' },
+      { tech:'bhastrika',    name:'Bhastrika',           desc:'Bellows breath — full-force inhale + exhale, surges vitality' },
+      { tech:'surya',        name:'Surya Bhedana',       desc:'Right-nostril sun breath — activates solar heating energy' },
+    ]
+  },
+  focus: {
+    label: '🎯 Focus — Sharp & Present',
+    choices: [
+      { tech:'box',          name:'Box Breathing',       desc:'Equal 4-4-4-4 — Navy SEAL protocol for alert calm under pressure' },
+      { tech:'coherent',     name:'Coherent Breathing',  desc:'5.5 breaths/min — maximizes HRV and sustained mental clarity' },
+      { tech:'kapalabhati',  name:'Kapalabhati',         desc:'Skull-shining breath — increases cerebral blood flow fast' },
+    ]
+  },
+  adhd: {
+    label: '👁️ ADHD / Blink — Attention & Brain Training',
+    choices: [
+      { tech:'blink',        name:'Blink Protocol',      desc:'Huberman fast-blink reset — dopamine surge and attentional blink reduction in 60 seconds' },
+      { tech:'coherent',     name:'Coherent Breathing',  desc:'5.5 breaths/min — HRV entrainment calms ADHD nervous system dysregulation' },
+      { tech:'box',          name:'Box Breathing',       desc:'Rhythmic 4-4-4-4 — anchors scattered attention through controlled breath timing' },
+    ]
+  },
+  calm: {
+    label: '🌊 Calm — Anxiety & Stress Relief',
+    choices: [
+      { tech:'physiosigh',   name:'Physiological Sigh',  desc:'Stanford #1 — double inhale + long exhale, works in one breath' },
+      { tech:'478',          name:'4-7-8 Breath',        desc:'Dr. Andrew Weil — anxiety drops within 90 seconds' },
+      { tech:'bhramari',     name:'Bhramari',            desc:'Bee hum — quiets the amygdala in under 3 minutes' },
+    ]
+  },
+  sleep: {
+    label: '🌙 Sleep — Wind Down & Rest',
+    choices: [
+      { tech:'bhramari',     name:'Bhramari',            desc:'Bee hum — fastest nervous system off-switch before sleep' },
+      { tech:'chandra',      name:'Chandra Bhedana',     desc:'Left-nostril moon breath — cools and prepares for deep rest' },
+      { tech:'478',          name:'4-7-8 Breath',        desc:'Relaxation breath — one of the best-known sleep onset aids' },
+    ]
+  },
+  spiritual: {
+    label: '🕯️ Spiritual — Meditation & Energy',
+    choices: [
+      { tech:'hamsah',       name:'Ham-Sah',             desc:'Samael Aun Weor — the key mantra-breath for transmutation and awakening consciousness' },
+      { tech:'ninepurification', name:'9 Purification',  desc:'Tibetan Bön — clears anger, attachment, ignorance before meditation' },
+      { tech:'tummo',        name:'Tummo',               desc:'Inner Fire — vase breathing, kundalini and heat generation' },
+    ]
+  },
+  craving: {
+    label: '🔥 Craving — Break the Urge Now',
+    choices: [
+      { tech:'transmutation',name:'Transmutation Breath',desc:'4-2-8 Wheel — redirects the energy upward at the moment of the urge' },
+      { tech:'physiosigh',   name:'Physiological Sigh',  desc:'Fastest physiological reset — one breath interrupts the impulse circuit' },
+      { tech:'box',          name:'Box Breathing',       desc:'19-second gap between impulse and action — clinically validated' },
+    ]
+  },
+  anger: {
+    label: '😤 Anger — Reset & Release',
+    choices: [
+      { tech:'bhramari',     name:'Bhramari',            desc:'Bee hum — directly quiets the brain\'s anger and fear center' },
+      { tech:'chandra',      name:'Chandra Bhedana',     desc:'Left-nostril cooling breath — reduces fire and heat energy' },
+      { tech:'ninepurification', name:'9 Purification', desc:'Tibetan — first three breaths specifically clear anger through the right channel' },
+    ]
+  },
+  performance: {
+    label: '💪 Performance — Physical & Endurance',
+    choices: [
+      { tech:'wimhof',       name:'Wim Hof',             desc:'Supercharge oxygen, flush CO₂, voluntary immune control' },
+      { tech:'bhastrika',    name:'Bhastrika',           desc:'Bellows breath — generates maximum prana and physical vitality' },
+      { tech:'box',          name:'Box Breathing',       desc:'Pre-performance nervous system calibration — alert and calm' },
+    ]
+  },
+  health: {
+    label: '🩺 Health — Blood Pressure & Immunity',
+    choices: [
+      { tech:'bhramari',     name:'Bhramari',            desc:'Most researched breath for blood pressure — measurable drop in 10 minutes' },
+      { tech:'coherent',     name:'Coherent Breathing',  desc:'20 min daily — largest long-term BP and HRV improvements in research' },
+      { tech:'wimhof',       name:'Wim Hof',             desc:'Clinically documented immune system activation and inflammation reduction' },
+    ]
+  },
+  trauma: {
+    label: '🧬 Trauma — Release & Heal',
+    choices: [
+      { tech:'rebirthing',   name:'Rebirthing Breathwork', desc:'Leonard Orr\'s circular breath — accesses and releases stored emotional material' },
+      { tech:'transformational', name:'Transformational Breath', desc:'Judith Kravitz — open-mouth belly breath + body mapping for trauma layers' },
+      { tech:'bhramari',     name:'Bhramari',            desc:'Vagus nerve stimulation — calms the trauma-activated nervous system' },
+    ]
+  },
+  transmute: {
+    label: '⚗️ Transmute — Redirect Vital Energy',
+    choices: [
+      { tech:'hamsah',       name:'Ham-Sah',             desc:'Samael Aun Weor — the foundational Gnostic mantra-breath for energy transmutation' },
+      { tech:'transmutation',name:'Transmutation Breath',desc:'4-2-8 Wheel — redirects the energy upward at the moment of the urge' },
+      { tech:'tummo',        name:'Tummo',               desc:'Inner Fire — vase breath moves energy from base to crown of spine' },
+    ]
+  },
+};
+
+function showPicker(goalKey) {
+  const goal = GOALS[goalKey];
+  if(!goal) return;
+  document.getElementById('pickerGoalLabel').textContent = goal.label;
+  const cont = document.getElementById('pickerChoices');
+  cont.innerHTML = '';
+  goal.choices.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'picker-choice';
+    btn.innerHTML = `<span class="pc-num">${i+1}</span><div><div class="pc-name">${c.name}</div><div class="pc-desc">${c.desc}</div></div>`;
+    btn.addEventListener('click', () => { closePicker(); goPage2(c.tech); });
+    cont.appendChild(btn);
+  });
+  document.getElementById('pickerOverlay').classList.add('open');
+}
+
+window.showPicker = showPicker;
+
+window.closePicker = function(e) {
+  if(e && e.target !== document.getElementById('pickerOverlay')) return;
+  document.getElementById('pickerOverlay').classList.remove('open');
+};
+
+function goPage2(techKey) {
+  document.getElementById('page1').classList.add('hidden');
+  const p2 = document.getElementById('page2');
+  p2.classList.add('visible');
+  if(techKey) setTimeout(() => activateTech(techKey), 50);
+  window.scrollTo(0,0);
+}
+
+window.goPage2 = goPage2;
+
+window.goPage1 = function() {
+  if(running) stopSession();
+  document.getElementById('page1').classList.remove('hidden');
+  const p2 = document.getElementById('page2');
+  p2.classList.remove('visible');
+  window.scrollTo(0,0);
+};
+
+// ── Audio ──────────────────────────────────────────
+let ac=null;
+function ensureAC(){ if(!ac) ac=new(window.AudioContext||window.webkitAudioContext)(); if(ac.state==='suspended') ac.resume(); }
+function vol(){ return parseInt(document.getElementById('volSlider').value)/100; }
+
+function tone(freq,dur,v=1){
+  ensureAC(); const g=vol()*v; if(g<0.001) return;
+  const now=ac.currentTime;
+  const gn=ac.createGain(); gn.connect(ac.destination);
+  gn.gain.setValueAtTime(0,now); gn.gain.linearRampToValueAtTime(g*0.18,now+0.08); gn.gain.exponentialRampToValueAtTime(0.001,now+dur);
+  const o=ac.createOscillator(); o.type='sine'; o.frequency.value=freq; o.connect(gn); o.start(now); o.stop(now+dur);
+  const gn2=ac.createGain(); gn2.connect(ac.destination);
+  gn2.gain.setValueAtTime(0,now); gn2.gain.linearRampToValueAtTime(g*0.05,now+0.06); gn2.gain.exponentialRampToValueAtTime(0.001,now+dur*0.55);
+  const o2=ac.createOscillator(); o2.type='sine'; o2.frequency.value=freq*2.01; o2.connect(gn2); o2.start(now); o2.stop(now+dur*0.55);
+}
+function tick(){
+  ensureAC(); const g=vol(); if(g<0.001) return;
+  const now=ac.currentTime;
+  const gn=ac.createGain(); gn.connect(ac.destination);
+  gn.gain.setValueAtTime(g*0.03,now); gn.gain.exponentialRampToValueAtTime(0.001,now+0.1);
+  const o=ac.createOscillator(); o.type='sine'; o.frequency.value=820; o.connect(gn); o.start(now); o.stop(now+0.1);
+}
+function hum(dur){
+  // Bhramari hum — modulated low tone
+  ensureAC(); const g=vol(); if(g<0.001) return;
+  const now=ac.currentTime;
+  const gn=ac.createGain(); gn.connect(ac.destination);
+  gn.gain.setValueAtTime(g*0.15,now); gn.gain.linearRampToValueAtTime(g*0.18,now+0.3); gn.gain.exponentialRampToValueAtTime(0.001,now+dur);
+  const o=ac.createOscillator(); o.type='sawtooth'; o.frequency.value=120; o.connect(gn); o.start(now); o.stop(now+dur);
+  // tremolo for bee effect
+  const lfo=ac.createOscillator(); lfo.frequency.value=6;
+  const lfog=ac.createGain(); lfog.gain.value=0.06;
+  lfo.connect(lfog); lfog.connect(gn.gain); lfo.start(now); lfo.stop(now+dur);
+}
+function pumpTone(){
+  // Kapalabhati / Bhastrika pump sound
+  ensureAC(); const g=vol(); if(g<0.001) return;
+  const now=ac.currentTime;
+  const gn=ac.createGain(); gn.connect(ac.destination);
+  gn.gain.setValueAtTime(g*0.12,now); gn.gain.exponentialRampToValueAtTime(0.001,now+0.18);
+  const o=ac.createOscillator(); o.type='triangle'; o.frequency.setValueAtTime(280,now); o.frequency.exponentialRampToValueAtTime(160,now+0.18);
+  o.connect(gn); o.start(now); o.stop(now+0.18);
+}
+function doneTone(){ tone(528,2.5); setTimeout(()=>tone(396,2),400); setTimeout(()=>tone(639,1.8),800); }
+function powerBreathTone(){
+  ensureAC(); const g=vol(); if(g<0.001) return;
+  const now=ac.currentTime;
+  const gn=ac.createGain(); gn.connect(ac.destination);
+  gn.gain.setValueAtTime(g*0.09,now); gn.gain.linearRampToValueAtTime(g*0.13,now+0.12); gn.gain.exponentialRampToValueAtTime(0.001,now+0.4);
+  const o=ac.createOscillator(); o.type='triangle';
+  o.frequency.setValueAtTime(220,now); o.frequency.linearRampToValueAtTime(320,now+0.12); o.frequency.linearRampToValueAtTime(180,now+0.4);
+  o.connect(gn); o.start(now); o.stop(now+0.4);
+}
+const S={
+  inhale:()=>tone(396,2.5), hold:()=>tone(528,1.8), exhale:()=>tone(285,3),
+  fire:()=>tone(432,1.5,1.2), ret:()=>tone(174,4), recov:()=>tone(639,2),
+  sun:()=>tone(417,2), moon:()=>tone(285,2.5),
+};
+
+// ── DOM ────────────────────────────────────────────
+const ringWrap=document.getElementById('ringWrap');
+const ringFill=document.getElementById('ringFill');
+const rPhase=document.getElementById('rPhase');
+const rCount=document.getElementById('rCount');
+const rInfo=document.getElementById('rInfo');
+const btnBegin=document.getElementById('btnBegin');
+const whPrompt=document.getElementById('whPrompt');
+const whLive=document.getElementById('whLiveTimer');
+const whStop=document.getElementById('whStopBtn');
+const infoBtn=document.getElementById('infoBtn');
+const nostrilInd=document.getElementById('nostrilInd');
+const nosL=document.getElementById('nosL');
+const nosR=document.getElementById('nosR');
+
+const CIRC=2*Math.PI*95;
+ringFill.style.strokeDasharray=CIRC; ringFill.style.strokeDashoffset=CIRC;
+
+function setFill(f){ ringFill.style.strokeDashoffset=CIRC*(1-Math.min(1,Math.max(0,f))); }
+function setPC(cls){
+  ringWrap.classList.remove('p-inhale','p-hold','p-exhale','p-hold2','p-fire','p-ret','p-sun','p-moon');
+  if(cls) ringWrap.classList.add(cls);
+}
+function showNostrils(show){ nostrilInd.classList.toggle('show',show); }
+function setNostrils(left,right){
+  // left/right = 'active','closed','idle'
+  nosL.className='nos left'+(left==='active'?' active-l':left==='closed'?' closed':'');
+  nosR.className='nos right'+(right==='active'?' active-r':right==='closed'?' closed':'');
+}
+
+// ── State ──────────────────────────────────────────
+let running=false, raf=null, tech='478';
+let phaseStart=0, lastTick=-1, totalSecs=120, elapsedTotal=0;
+let whRounds=3, whRound=0, whBreath=0, whRetStart=0, whRetTime=0, whWaiting=false, whRaf=null;
+
+const NOSTRIL_TECHS=['nadi','surya','chandra','ninepurification'];
+const PUMP_TECHS=['kapalabhati','bhastrika'];
+
+// ── Tabs ──────────────────────────────────────────
+document.querySelectorAll('.tab').forEach(b=>{
+  b.addEventListener('click',()=>{
+    if(running) stopSession();
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); tech=b.dataset.t;
+    updateUI(); closeInfo(); updateYtLink(tech); setRecommendedDuration(tech);
+  });
+});
+
+function updateUI(){
+  document.getElementById('durRow').style.display=(tech==='wimhof')?'none':'';
+  document.getElementById('whRoundsRow').style.display=(tech==='wimhof')?'':'none';
+  document.getElementById('customGrid').style.display=(tech==='custom')?'':'none';
+}
+
+// Duration presets
+document.querySelectorAll('.dur-btn[data-min]').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.dur-btn[data-min]').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); document.getElementById('durInput').value=b.dataset.min;
+  });
+});
+document.getElementById('durInput').addEventListener('input',e=>{
+  document.querySelectorAll('.dur-btn[data-min]').forEach(x=>x.classList.toggle('on',x.dataset.min===e.target.value));
+});
+// WH round presets
+document.querySelectorAll('.dur-btn[data-rnd]').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.dur-btn[data-rnd]').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); whRounds=parseInt(b.dataset.rnd);
+  });
+});
+
+// Info
+infoBtn.addEventListener('click',()=>{
+  const d=document.getElementById('info-'+tech);
+  if(!d) return;
+  d.classList.contains('open') ? d.classList.remove('open') : (closeInfo(), d.classList.add('open'));
+});
+window.closeInfo=function(){ document.querySelectorAll('.info-drawer').forEach(d=>d.classList.remove('open')); };
+
+// ── Helpers ───────────────────────────────────────
+function fmtTime(s){ const m=Math.floor(s/60),sc=Math.floor(s%60); return m>0?m+':'+(String(sc).padStart(2,'0')):String(sc); }
+function getDur(){ return (parseFloat(document.getElementById('durInput').value)||2)*60; }
+
+function getPhases(){
+  if(tech==='478') return [{name:'Inhale',s:4,cls:'p-inhale',snd:'inhale'},{name:'Hold',s:7,cls:'p-hold',snd:'hold'},{name:'Exhale',s:8,cls:'p-exhale',snd:'exhale'}];
+  if(tech==='box') return [{name:'Inhale',s:4,cls:'p-inhale',snd:'inhale'},{name:'Hold',s:4,cls:'p-hold',snd:'hold'},{name:'Exhale',s:4,cls:'p-exhale',snd:'exhale'},{name:'Hold',s:4,cls:'p-hold2',snd:'hold'}];
+  if(tech==='tummo') return [{name:'Deep Inhale',s:5,cls:'p-fire',snd:'fire'},{name:'Vase Hold — Contract',s:10,cls:'p-hold',snd:'hold'},{name:'Power Exhale',s:5,cls:'p-exhale',snd:'exhale'},{name:'Rest',s:3,cls:'p-inhale',snd:'inhale'}];
+  if(tech==='ujjayi') return [{name:'Inhale — Ocean Sound',s:5,cls:'p-inhale',snd:'inhale'},{name:'Exhale — Ocean Sound',s:5,cls:'p-exhale',snd:'exhale'}];
+  // Nostril techniques
+  if(tech==='nadi') return [
+    {name:'Inhale — Left',  s:4,cls:'p-moon',  snd:'moon', nos:{l:'active',r:'closed'}},
+    {name:'Hold',           s:4,cls:'p-hold',  snd:'hold', nos:{l:'closed',r:'closed'}},
+    {name:'Exhale — Right', s:4,cls:'p-sun',   snd:'sun',  nos:{l:'closed',r:'active'}},
+    {name:'Inhale — Right', s:4,cls:'p-sun',   snd:'sun',  nos:{l:'closed',r:'active'}},
+    {name:'Hold',           s:4,cls:'p-hold',  snd:'hold', nos:{l:'closed',r:'closed'}},
+    {name:'Exhale — Left',  s:4,cls:'p-moon',  snd:'moon', nos:{l:'active',r:'closed'}},
+  ];
+  if(tech==='surya') return [
+    {name:'Inhale — Right', s:4,cls:'p-sun',  snd:'sun',  nos:{l:'closed',r:'active'}},
+    {name:'Hold',           s:4,cls:'p-hold', snd:'hold', nos:{l:'closed',r:'closed'}},
+    {name:'Exhale — Left',  s:4,cls:'p-moon', snd:'moon', nos:{l:'active',r:'closed'}},
+  ];
+  if(tech==='chandra') return [
+    {name:'Inhale — Left',  s:4,cls:'p-moon', snd:'moon', nos:{l:'active',r:'closed'}},
+    {name:'Hold',           s:4,cls:'p-hold', snd:'hold', nos:{l:'closed',r:'closed'}},
+    {name:'Exhale — Right', s:4,cls:'p-sun',  snd:'sun',  nos:{l:'closed',r:'active'}},
+  ];
+  // New techniques — duration based cyclic patterns
+  if(tech==='sitali') return [
+    {name:'Inhale — Curl Tongue (Straw)',s:5,cls:'p-moon',snd:'moon'},
+    {name:'Exhale — Through Nose',       s:6,cls:'p-exhale',snd:'exhale'},
+  ];
+  if(tech==='murcha') return [
+    {name:'Deep Inhale',                  s:8, cls:'p-inhale',snd:'inhale'},
+    {name:'Hold + Chin Lock',             s:12,cls:'p-hold',  snd:'hold'},
+    {name:'Slow Exhale',                  s:8, cls:'p-exhale',snd:'exhale'},
+    {name:'Rest',                         s:4, cls:'p-inhale',snd:'inhale'},
+  ];
+  if(tech==='ninepurification') return [
+    {name:'Set 1 — Anger: Inhale Left',  s:5, cls:'p-moon',  snd:'moon',  nos:{l:'active',r:'closed'}},
+    {name:'Set 1 — Exhale Right',         s:6, cls:'p-sun',   snd:'sun',   nos:{l:'closed',r:'active'}},
+    {name:'Set 2 — Attach: Inhale Right',s:5, cls:'p-sun',   snd:'sun',   nos:{l:'closed',r:'active'}},
+    {name:'Set 2 — Exhale Left',          s:6, cls:'p-moon',  snd:'moon',  nos:{l:'active',r:'closed'}},
+    {name:'Set 3 — Both Nostrils',        s:5, cls:'p-inhale',snd:'inhale',nos:{l:'active',r:'active'}},
+    {name:'Set 3 — Exhale Both',          s:6, cls:'p-exhale',snd:'exhale',nos:{l:'active',r:'active'}},
+  ];
+  if(tech==='coherent') return [
+    {name:'Inhale — Nose',  s:6,cls:'p-inhale',snd:'inhale'},
+    {name:'Exhale — Nose',  s:6,cls:'p-exhale',snd:'exhale'},
+  ];
+  if(tech==='physiosigh') return [
+    {name:'First Inhale — Deep',    s:3, cls:'p-inhale',snd:'inhale'},
+    {name:'Second Inhale — Top Off',s:2, cls:'p-inhale',snd:'hold'},
+    {name:'Long Slow Exhale',       s:8, cls:'p-exhale',snd:'exhale'},
+    {name:'Rest',                   s:2, cls:'p-inhale',snd:'inhale'},
+  ];
+  if(tech==='rebirthing' || tech==='transformational') return [
+    {name:'Inhale — Full',    s:3,cls:'p-inhale',snd:'inhale'},
+    {name:'Exhale — Release', s:3,cls:'p-exhale',snd:'exhale'},
+  ];
+  if(tech==='reversebreathing') return [
+    {name:'Inhale — Pull Belly In', s:5,cls:'p-hold',  snd:'inhale'},
+    {name:'Exhale — Release Belly', s:5,cls:'p-exhale',snd:'exhale'},
+  ];
+  if(tech==='kumbhaka') return [
+    {name:'Inhale',           s:4, cls:'p-inhale',snd:'inhale'},
+    {name:'Hold Full Lungs',  s:8, cls:'p-hold',  snd:'hold'},
+    {name:'Exhale',           s:4, cls:'p-exhale',snd:'exhale'},
+    {name:'Hold Empty Lungs', s:4, cls:'p-hold2', snd:'hold'},
+  ];
+  if(tech==='hamsah') return [
+    {name:'Inhale — HAM (mentally)', s:8,  cls:'p-fire',   snd:'fire'},
+    {name:'Hold — Energy at Crown',  s:2,  cls:'p-hold',   snd:'hold'},
+    {name:'Exhale — SAH (aloud)',     s:3,  cls:'p-exhale', snd:'exhale'},
+  ];
+  if(tech==='transmutation') return [
+    {name:'Inhale — Draw Energy Up',   s:4, cls:'p-fire',   snd:'fire'},
+    {name:'Hold — Heart Center',       s:2, cls:'p-hold',   snd:'hold'},
+    {name:'Exhale — Hum & Radiate',    s:8, cls:'p-exhale', snd:'exhale', hum:true},
+  ];
+  if(tech==='blink') return [
+    {name:'Fast Blinks — Alert',    s:45, cls:'p-fire',   snd:'fire'},
+    {name:'Open Gaze — Fix &amp; Hold', s:30, cls:'p-hold',  snd:'hold'},
+    {name:'Slow Blinks — Rest',     s:60, cls:'p-moon',   snd:'moon'},
+    {name:'Rest &amp; Notice',          s:15, cls:'p-exhale', snd:'exhale'},
+  ];
+  if(tech==='custom'){
+    const iS=parseInt(document.getElementById('cgIn').value)||4;
+    const h1S=parseInt(document.getElementById('cgH1').value)||0;
+    const oS=parseInt(document.getElementById('cgOut').value)||4;
+    const h2S=parseInt(document.getElementById('cgH2').value)||0;
+    const p=[{name:'Inhale',s:iS,cls:'p-inhale',snd:'inhale'}];
+    if(h1S>0) p.push({name:'Hold',s:h1S,cls:'p-hold',snd:'hold'});
+    p.push({name:'Exhale',s:oS,cls:'p-exhale',snd:'exhale'});
+    if(h2S>0) p.push({name:'Hold',s:h2S,cls:'p-hold2',snd:'hold'});
+    return p;
+  }
+  return [];
+}
+
+// ── Stop ──────────────────────────────────────────
+function stopSession(){
+  running=false; whWaiting=false;
+  if(raf) cancelAnimationFrame(raf);
+  if(whRaf) cancelAnimationFrame(whRaf);
+  whPrompt.classList.remove('show');
+  showNostrils(false);
+  btnBegin.textContent='Begin';
+  rPhase.textContent='Ready'; rCount.textContent=''; rInfo.textContent='';
+  setFill(0); setPC(null);
+}
+
+// ── Pump engine (Kapalabhati / Bhastrika) ─────────
+function startPump(){
+  ensureAC(); closeInfo();
+  totalSecs=getDur(); elapsedTotal=0; running=true; btnBegin.textContent='Stop';
+  const isBhastrika=(tech==='bhastrika');
+  const pumpInterval=isBhastrika ? 1500 : 700; // ms per breath
+  let pumpCount=0;
+  const startTime=performance.now();
+  setPC('p-fire');
+
+  function loop(){
+    if(!running) return;
+    const now=performance.now();
+    elapsedTotal=(now-startTime)/1000;
+    const totalRemain=Math.max(0,totalSecs-elapsedTotal);
+
+    if(elapsedTotal>=totalSecs){
+      rPhase.textContent='Complete'; rCount.textContent=''; rInfo.textContent='';
+      setFill(1); setPC(null); doneTone(); recordSession(tech, Math.round(totalSecs));
+      running=false; btnBegin.textContent='Begin'; return;
+    }
+
+    const cycleT=pumpInterval/1000;
+    const cyclePos=(elapsedTotal%cycleT)/cycleT;
+    const isExhale=cyclePos<0.5;
+
+    if(isExhale){
+      rPhase.textContent=isBhastrika?'Force Out':'Sharp Out';
+      setPC('p-fire');
+    } else {
+      rPhase.textContent=isBhastrika?'Force In':'Passive In';
+      setPC('p-inhale');
+    }
+
+    // Count pumps
+    const newCount=Math.floor(elapsedTotal/(cycleT));
+    if(newCount>pumpCount){ pumpCount=newCount; pumpTone(); }
+
+    rCount.textContent=pumpCount+1;
+    rInfo.textContent=fmtTime(totalRemain)+' left';
+    setFill(cyclePos);
+
+    raf=requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+// ── Bhramari engine ───────────────────────────────
+function startBhramari(){
+  ensureAC(); closeInfo();
+  totalSecs=getDur(); elapsedTotal=0; running=true; btnBegin.textContent='Stop';
+  // Phases: inhale 4s, exhale-hum variable (6s)
+  const phases=[
+    {name:'Inhale',s:4,cls:'p-inhale',snd:'inhale'},
+    {name:'Exhale — Hmmmmm',s:6,cls:'p-exhale',snd:null,hum:true},
+  ];
+  let pi=0; phaseStart=performance.now(); lastTick=-1;
+  S.inhale();
+  setPC(phases[0].cls); rPhase.textContent=phases[0].name;
+
+  function loop(){
+    if(!running) return;
+    const now=performance.now();
+    const pe=(now-phaseStart)/1000;
+    const phase=phases[pi];
+    elapsedTotal+=(now-(loop._last||now))/1000; loop._last=now;
+    const totalRemain=Math.max(0,totalSecs-elapsedTotal);
+    rCount.textContent=Math.ceil(Math.max(0,phase.s-pe));
+    rInfo.textContent=fmtTime(totalRemain)+' left';
+    setFill(Math.min(1,pe/phase.s));
+
+    if(pe>=phase.s){
+      pi=(pi+1)%phases.length;
+      phaseStart=performance.now(); lastTick=-1;
+      const np=phases[pi];
+      if(np.hum) hum(np.s); else if(np.snd) S[np.snd]();
+      setPC(np.cls); rPhase.textContent=np.name;
+    }
+    if(elapsedTotal>=totalSecs){
+      rPhase.textContent='Complete'; rCount.textContent=''; rInfo.textContent='';
+      setFill(1); setPC(null); doneTone(); recordSession(tech, 0);
+      running=false; btnBegin.textContent='Begin'; return;
+    }
+    raf=requestAnimationFrame(loop);
+  }
+  loop._last=performance.now();
+  raf=requestAnimationFrame(loop);
+}
+
+// ── Duration-based engine ─────────────────────────
+function startDuration(){
+  ensureAC(); closeInfo();
+  totalSecs=getDur(); elapsedTotal=0; running=true; btnBegin.textContent='Stop';
+  const phases=getPhases(); let pi=0;
+  phaseStart=performance.now(); lastTick=-1;
+
+  const useNostrils=NOSTRIL_TECHS.includes(tech);
+  showNostrils(useNostrils);
+
+  if(phases[0].snd) S[phases[0].snd]();
+  setPC(phases[0].cls); rPhase.textContent=phases[0].name;
+  if(useNostrils&&phases[0].nos) setNostrils(phases[0].nos.l,phases[0].nos.r);
+
+  function loop(){
+    if(!running) return;
+    const now=performance.now();
+    const pe=(now-phaseStart)/1000;
+    const phase=phases[pi];
+    elapsedTotal+=(now-(loop._last||now))/1000; loop._last=now;
+    const totalRemain=Math.max(0,totalSecs-elapsedTotal);
+
+    rCount.textContent=Math.ceil(Math.max(0,phase.s-pe));
+    rInfo.textContent=fmtTime(totalRemain)+' left';
+    setFill(Math.min(1,pe/phase.s));
+
+    const isHold=phase.cls==='p-hold'||phase.cls==='p-hold2';
+    const secL=Math.ceil(Math.max(0,phase.s-pe));
+    if(isHold&&secL!==lastTick&&secL>0&&secL<phase.s){ tick(); lastTick=secL; }
+    else if(!isHold) lastTick=-1;
+
+    if(pe>=phase.s){
+      pi=(pi+1)%phases.length;
+      phaseStart=performance.now(); lastTick=-1;
+      const np=phases[pi];
+      if(np.hum) hum(np.s); else if(np.snd) S[np.snd]();
+      setPC(np.cls); rPhase.textContent=np.name;
+      if(useNostrils&&np.nos) setNostrils(np.nos.l,np.nos.r);
+    }
+    if(elapsedTotal>=totalSecs){
+      rPhase.textContent='Complete'; rCount.textContent=''; rInfo.textContent='';
+      setFill(1); setPC(null); showNostrils(false); doneTone(); recordSession(tech, Math.round(totalSecs));
+      running=false; btnBegin.textContent='Begin'; return;
+    }
+    raf=requestAnimationFrame(loop);
+  }
+  loop._last=performance.now();
+  raf=requestAnimationFrame(loop);
+}
+
+// ── Wim Hof engine ─────────────────────────────────
+function startWimHof(){
+  ensureAC(); closeInfo();
+  whRound=0; running=true; btnBegin.textContent='Stop'; whNextRound();
+}
+function whNextRound(){
+  if(!running) return;
+  whRound++;
+  if(whRound>whRounds){ rPhase.textContent='Complete'; rCount.textContent=''; rInfo.textContent=''; setFill(1); setPC(null); doneTone(); recordSession(tech, 0); running=false; btnBegin.textContent='Begin'; return; }
+  rInfo.textContent='Round '+whRound+' / '+whRounds;
+  whBreath=0; whPowerBreath();
+}
+function whPowerBreath(){
+  if(!running) return;
+  whBreath++; const total=30;
+  if(whBreath>total){ whStartRetention(); return; }
+  powerBreathTone(); setPC('p-fire');
+  const start=performance.now();
+  const inT=1.5, outT=1.0, cycleT=inT+outT;
+  function loop(){
+    if(!running) return;
+    const e=(performance.now()-start)/1000;
+    setFill(Math.min(1,e/cycleT));
+    rPhase.textContent=e<inT?'Breathe In':'Let Go';
+    rCount.textContent=whBreath+' / '+total;
+    if(e<inT) setPC('p-fire'); else setPC('p-exhale');
+    if(e>=cycleT){ whPowerBreath(); return; }
+    raf=requestAnimationFrame(loop);
+  }
+  raf=requestAnimationFrame(loop);
+}
+function whStartRetention(){
+  if(!running) return;
+  S.ret(); setPC('p-ret');
+  rPhase.textContent='Exhale & Hold'; rCount.textContent=''; setFill(0.1);
+  whRetStart=performance.now(); lastTick=-1; whWaiting=true;
+  whPrompt.classList.add('show');
+  function loop(){
+    if(!running||!whWaiting) return;
+    const e=(performance.now()-whRetStart)/1000;
+    whLive.textContent=e.toFixed(1)+'s'; rCount.textContent=Math.floor(e);
+    setFill((Math.sin(e*0.5)+1)/2*0.3+0.1);
+    const s=Math.floor(e); if(s!==lastTick&&s>0&&s%5===0){ tick(); lastTick=s; }
+    whRaf=requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+}
+whStop.addEventListener('click',()=>{
+  if(!whWaiting) return;
+  whWaiting=false; whRetTime=(performance.now()-whRetStart)/1000;
+  whPrompt.classList.remove('show'); whStartRecovery();
+});
+function whStartRecovery(){
+  if(!running) return;
+  S.recov(); setPC('p-inhale');
+  rPhase.textContent='Deep Breath — Hold 15s';
+  rInfo.textContent='held '+whRetTime.toFixed(1)+'s';
+  const rS=15; phaseStart=performance.now(); lastTick=-1;
+  function loop(){
+    if(!running) return;
+    const e=(performance.now()-phaseStart)/1000, rem=Math.max(0,rS-e);
+    rCount.textContent=Math.ceil(rem); setFill(e/rS);
+    const s=Math.ceil(rem); if(s!==lastTick&&s>0&&s<rS){ tick(); lastTick=s; }
+    if(e>=rS){ whNextRound(); return; }
+    raf=requestAnimationFrame(loop);
+  }
+  raf=requestAnimationFrame(loop);
+}
+
+// ── Main button ───────────────────────────────────
+btnBegin.addEventListener('click',()=>{
+  ensureAC();
+  if(running){ stopSession(); return; }
+  if(tech==='wimhof') startWimHof();
+  else if(PUMP_TECHS.includes(tech)) startPump();
+  else if(tech==='bhramari') startBhramari();
+  else startDuration();
+});
+
+document.addEventListener('keydown',e=>{
+  if(e.code==='Space'){ e.preventDefault(); if(whWaiting){ whStop.click(); return; } btnBegin.click(); }
+});
+
+// ── Tracker ───────────────────────────────────────
+const SK='breathwork_v4';
+const TL={'478':'4-7-8','box':'Box','wimhof':'Wim Hof','tummo':'Tummo','nadi':'Nadi Shodhana','surya':'Surya Bhedana','chandra':'Chandra Bhedana','ujjayi':'Ujjayi','kapalabhati':'Kapalabhati','bhastrika':'Bhastrika','bhramari':'Bhramari','custom':'Custom','sitali':'Sitali','murcha':'Murcha','ninepurification':'9 Purification Breaths','coherent':'Coherent Breathing','physiosigh':'Physiological Sigh','rebirthing':'Rebirthing','transformational':'Transform. Breath','reversebreathing':'Reverse Breathing','kumbhaka':'Kumbhaka','hamsah':'Ham-Sah','transmutation':'Transmutation','blink':'Blink Protocol'};
+let stOK=false;
+try{ localStorage.setItem('__t__','1'); localStorage.removeItem('__t__'); stOK=true; }catch(e){}
+let memS=[];
+const tNote=document.getElementById('tNote');
+if(!stOK) tNote.textContent='⚠ Save file locally and open in browser for sessions to persist.';
+function loadS(){ if(!stOK) return memS; try{ return JSON.parse(localStorage.getItem(SK))||[]; }catch(e){ return []; } }
+function saveS(s){ if(!stOK){ memS=s; return; } try{ localStorage.setItem(SK,JSON.stringify(s)); }catch(e){} }
+function todayS(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function recordSession(t, durSecs){
+  const s=loadS();
+  const now=new Date();
+  const timeStr=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+  s.push({date:todayS(), tech:t, ts:Date.now(), time:timeStr, dur:durSecs||0});
+  saveS(s); renderT(); renderHeatmap();
+  if(document.getElementById('historyPanel').classList.contains('open')) renderHistory();
+}
+window.manualLog=function(){ recordSession(tech, 0); const b=document.querySelector('.trk-manual'); b.textContent='✓ Logged '+(TL[tech]||tech)+'!'; setTimeout(()=>{ b.textContent='+ log a session manually'; },1800); };
+function streak(sess){ if(!sess.length) return 0; const days=[...new Set(sess.map(s=>s.date))].sort(); let n=0,chk=todayS(); for(let i=days.length-1;i>=0;i--){ if(days[i]===chk){ n++; const d=new Date(chk+'T12:00:00'); d.setDate(d.getDate()-1); chk=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); } else break; } return n; }
+// ── Heatmap ────────────────────────────────────────
+function renderHeatmap() {
+  const section = document.getElementById('heatmapSection');
+  if (!section) return;
+  const sess = loadS();
+
+  // Build date -> total minutes map
+  const dayMap = {};
+  sess.forEach(function(s) {
+    if (!dayMap[s.date]) dayMap[s.date] = 0;
+    var mins = s.dur > 0 ? s.dur / 60 : 5;
+    dayMap[s.date] += mins;
+  });
+
+  // 90 days back from today
+  var today = new Date();
+  var todayStr = todayS();
+  var days = [];
+  for (var i = 89; i >= 0; i--) {
+    var d = new Date(today);
+    d.setDate(d.getDate() - i);
+    var dateStr = d.getFullYear() + '-' +
+      String(d.getMonth()+1).padStart(2,'0') + '-' +
+      String(d.getDate()).padStart(2,'0');
+    var mins = dayMap[dateStr] || 0;
+    var level = 0;
+    if (mins > 0 && mins < 5)   level = 1;
+    else if (mins < 10)          level = 2;
+    else if (mins < 15)          level = 3;
+    else if (mins < 30)          level = 4;
+    else if (mins >= 30)         level = 5;
+    days.push({ date: dateStr, mins: Math.round(mins), level,
+      isToday: dateStr === todayStr,
+      month: d.getMonth(), dow: d.getDay() });
+  }
+
+  // Group into weeks
+  var weeks = [];
+  var week = new Array(days[0].dow).fill(null);
+  days.forEach(function(day) {
+    week.push(day);
+    if (week.length === 7) { weeks.push(week); week = []; }
+  });
+  if (week.length > 0) {
+    while (week.length < 7) week.push(null);
+    weeks.push(week);
+  }
+
+  var monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var monthLabels = new Array(weeks.length).fill('');
+  var lastMonth = -1;
+  weeks.forEach(function(wk, wi) {
+    var firstReal = wk.find(function(d) { return d; });
+    if (!firstReal) return;
+    if (firstReal.month !== lastMonth) {
+      monthLabels[wi] = monthNames[firstReal.month];
+      lastMonth = firstReal.month;
+    }
+  });
+
+  var html2 = '<div class="heatmap-title"><span>Activity &mdash; 3 months</span></div>';
+  html2 += '<div class="heatmap-scroll"><div class="heatmap-grid">';
+
+  weeks.forEach(function(wk, wi) {
+    html2 += '<div class="heatmap-month-col">';
+    html2 += '<div class="heatmap-month-label">' + (monthLabels[wi] || '') + '</div>';
+    html2 += '<div class="heatmap-week">';
+    wk.forEach(function(day) {
+      if (!day) {
+        html2 += '<div class="hm-day hm-empty"></div>';
+      } else {
+        var ring = day.isToday ? ' style="box-shadow:0 0 0 1.5px var(--gold);"' : '';
+        var tip = day.mins > 0 ? day.date + ': ' + day.mins + ' min' : day.date + ': rest day';
+        html2 += '<div class="hm-day hm-' + day.level + '"' + ring +
+          ' data-tip="' + tip + '"' +
+          ' onmouseenter="showTip(event,this.dataset.tip)"' +
+          ' onmouseleave="hideTip()"></div>';
+      }
+    });
+    html2 += '</div></div>';
+  });
+
+  html2 += '</div></div>';
+
+  var labels = ['1-4 min','5-9 min','10-14 min','15-29 min','30+ min'];
+  html2 += '<div class="heatmap-legend"><span>0</span>';
+  for (var l = 1; l <= 5; l++) {
+    html2 += '<div class="hm-leg hm-' + l + '" title="' + labels[l-1] + '"></div>';
+  }
+  html2 += '<span>30+ min</span></div>';
+
+  section.innerHTML = html2;
+}
+
+window.showTip = function(e, text) {
+  const t = document.getElementById('hmTooltip');
+  t.textContent = text;
+  t.style.display = 'block';
+  t.style.left = (e.clientX + 12) + 'px';
+  t.style.top  = (e.clientY - 28) + 'px';
+};
+window.hideTip = function() {
+  document.getElementById('hmTooltip').style.display = 'none';
+};
+
+// ── Session History ────────────────────────────────
+let historyFilter = 'all';
+
+window.toggleHistory = function() {
+  const panel = document.getElementById('historyPanel');
+  const btn = document.querySelector('.history-toggle');
+  const isOpen = panel.classList.contains('open');
+  panel.classList.toggle('open', !isOpen);
+  btn.textContent = isOpen ? '▼ View full session history' : '▲ Hide session history';
+  if (!isOpen) renderHistory();
+};
+
+function renderHistory() {
+  const sess = loadS();
+  const body = document.getElementById('historyBody');
+  const empty = document.getElementById('historyEmpty');
+  const filtersEl = document.getElementById('historyFilters');
+
+  // Build filter buttons from unique techniques used
+  const techs = [...new Set(sess.map(s => s.tech))];
+  filtersEl.innerHTML = '';
+  const allBtn = document.createElement('button');
+  allBtn.className = 'hf-btn' + (historyFilter === 'all' ? ' on' : '');
+  allBtn.textContent = 'All';
+  allBtn.onclick = () => { historyFilter = 'all'; renderHistory(); };
+  filtersEl.appendChild(allBtn);
+  techs.forEach(t => {
+    const b = document.createElement('button');
+    b.className = 'hf-btn' + (historyFilter === t ? ' on' : '');
+    b.textContent = TL[t] || t;
+    b.onclick = () => { historyFilter = t; renderHistory(); };
+    filtersEl.appendChild(b);
+  });
+
+  // Filter sessions
+  const filtered = historyFilter === 'all' ? sess : sess.filter(s => s.tech === historyFilter);
+  const sorted = [...filtered].reverse(); // most recent first
+
+  body.innerHTML = '';
+  if (sorted.length === 0) {
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  sorted.forEach(s => {
+    const tr = document.createElement('tr');
+    const durStr = s.dur > 0
+      ? (s.dur >= 60 ? Math.round(s.dur/60) + ' min' : s.dur + ' sec')
+      : '—';
+    tr.innerHTML =
+      '<td>' + (TL[s.tech] || s.tech) + '</td>' +
+      '<td>' + s.date + '</td>' +
+      '<td>' + (s.time || '—') + '</td>' +
+      '<td>' + durStr + '</td>';
+    body.appendChild(tr);
+  });
+}
+
+window.exportCSV = function() {
+  const sess = loadS();
+  if (!sess.length) return;
+  const header = 'Technique,Date,Time,Duration (min)';
+  const rows = sess.map(s => {
+    const dur = s.dur > 0 ? (s.dur/60).toFixed(1) : '0';
+    return (TL[s.tech]||s.tech) + ',' + s.date + ',' + (s.time||'') + ',' + dur;
+  });
+  const csv = [header, ...rows].join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'breathwork_sessions.csv';
+  a.click(); URL.revokeObjectURL(url);
+};
+
+function renderT(){
+  const sess=loadS(), td=todayS();
+  document.getElementById('tTotal').textContent=sess.length;
+  document.getElementById('tToday').textContent=sess.filter(s=>s.date===td).length;
+  document.getElementById('tStreak').textContent=streak(sess);
+  const bars=document.getElementById('tBars'); bars.innerHTML='';
+  const days=[]; for(let i=6;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); days.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')); }
+  const cnts=days.map(d=>sess.filter(s=>s.date===d).length), mx=Math.max(...cnts,1);
+  const dn=['Su','Mo','Tu','We','Th','Fr','Sa'];
+  days.forEach((d,i)=>{ const isT=d===td, c=cnts[i]; const bw=document.createElement('div'); bw.className='trk-bw'; const b=document.createElement('div'); b.className='trk-b'; const bf=document.createElement('div'); bf.className='trk-bf'; bf.style.height=c>0?Math.round(c/mx*100)+'%':'0'; if(isT) bf.style.opacity='1'; if(c===0) bf.style.background='transparent'; b.appendChild(bf); const bl=document.createElement('div'); bl.className='trk-bl'; const dd=new Date(d+'T12:00:00'); bl.textContent=isT?'·':dn[dd.getDay()]; if(isT) bl.style.color='var(--gold)'; bw.appendChild(b); bw.appendChild(bl); bars.appendChild(bw); });
+  const last=document.getElementById('tLast'); if(sess.length){ const l=sess[sess.length-1]; last.textContent='Last: '+(TL[l.tech]||l.tech)+' — '+(l.date===td?'today':l.date); } else last.textContent='No sessions yet. Begin your first.';
+}
+window.doReset=function(){ if(!confirm('Reset all session history?')) return; if(stOK) localStorage.removeItem(SK); memS=[]; renderT(); };
+
+// ── Always-visible YouTube link ─────────────────────
+const YT_LINKS = {
+  '478':         { url: 'https://www.youtube.com/results?search_query=andrew+weil+4-7-8+breathing+demonstration',        label: 'Watch: Dr. Andrew Weil — 4-7-8 Breath' },
+  'box':         { url: 'https://www.youtube.com/results?search_query=box+breathing+tutorial+navy+seal',                  label: 'Watch: Box Breathing tutorial' },
+  'wimhof':      { url: 'https://www.youtube.com/watch?v=tybOi4hjZFQ',                                                    label: 'Watch: Official Wim Hof guided breathing (3 rounds)' },
+  'tummo':       { url: 'https://www.youtube.com/results?search_query=tummo+inner+fire+breathing+meditation+tutorial',    label: 'Watch: Tummo Inner Fire tutorial' },
+  'nadi':        { url: 'https://www.youtube.com/results?search_query=nadi+shodhana+alternate+nostril+breathing+tutorial',label: 'Watch: Nadi Shodhana — alternate nostril' },
+  'surya':       { url: 'https://www.youtube.com/results?search_query=surya+bhedana+right+nostril+breathing+tutorial',    label: 'Watch: Surya Bhedana — Sun breath' },
+  'chandra':     { url: 'https://www.youtube.com/results?search_query=chandra+bhedana+left+nostril+breathing+tutorial',   label: 'Watch: Chandra Bhedana — Moon breath' },
+  'ujjayi':      { url: 'https://www.youtube.com/results?search_query=ujjayi+ocean+breath+pranayama+how+to',              label: 'Watch: Ujjayi — Ocean Breath tutorial' },
+  'kapalabhati': { url: 'https://www.youtube.com/results?search_query=kapalabhati+breath+of+fire+tutorial',               label: 'Watch: Kapalabhati — Skull Shining Breath' },
+  'bhastrika':   { url: 'https://www.youtube.com/results?search_query=bhastrika+pranayama+bellows+breath+tutorial',       label: 'Watch: Bhastrika — Bellows Breath' },
+  'bhramari':    { url: 'https://www.youtube.com/results?search_query=bhramari+pranayama+bee+breath+humming',             label: 'Watch: Bhramari — Bee Breath tutorial' },
+  'sitali':        { url: 'https://www.youtube.com/results?search_query=sitali+pranayama+cooling+breath+tutorial',                   label: 'Watch: Sitali — Cooling Breath tutorial' },
+  'murcha':        { url: 'https://www.youtube.com/results?search_query=murcha+pranayama+swooning+breath+tutorial',               label: 'Watch: Murcha — Swooning Breath tutorial' },
+  'ninepurification': { url: 'https://www.youtube.com/results?search_query=nine+purification+breaths+tibetan+meditation+tutorial', label: 'Watch: Nine Purification Breaths tutorial' },
+  'coherent':      { url: 'https://www.youtube.com/results?search_query=coherent+breathing+5+breaths+per+minute+HRV',             label: 'Watch: Coherent Breathing — 5.5 breaths/min' },
+  'physiosigh':    { url: 'https://www.youtube.com/results?search_query=physiological+sigh+double+inhale+Huberman',               label: 'Watch: Physiological Sigh — Stanford research' },
+  'blink':         { url: 'https://www.youtube.com/watch?v=fH7N9YRxMYc',                                                          label: 'Watch: Huberman — Boost Focus with Blinking' },
+  'rebirthing':    { url: 'https://www.youtube.com/results?search_query=rebirthing+breathwork+circular+breathing+tutorial',       label: 'Watch: Rebirthing Breathwork — Leonard Orr method' },
+  'transformational': { url: 'https://www.youtube.com/results?search_query=transformational+breath+Judith+Kravitz+tutorial',     label: 'Watch: Transformational Breath® — Judith Kravitz' },
+  'reversebreathing': { url: 'https://www.youtube.com/results?search_query=reverse+breathing+taoist+qigong+tutorial',           label: 'Watch: Reverse Breathing — Taoist Qigong' },
+  'kumbhaka':      { url: 'https://www.youtube.com/results?search_query=kumbhaka+pranayama+breath+retention+yoga+tutorial',      label: 'Watch: Kumbhaka — Breath Retention tutorial' },
+  'hamsah':        { url: 'https://www.youtube.com/watch?v=g1Tx4NHrt3M', label: 'Watch: Ham-Sah Pranayama — Samael Aun Weor' },
+  'transmutation': { url: 'https://www.youtube.com/results?search_query=sexual+energy+transmutation+breathwork+kundalini', label: 'Watch: Sexual Energy Transmutation practice' },
+  'custom':        { url: null, label: null },
+};
+
+// ── Per-technique recommended durations ─────────────
+const TECH_DURATIONS = {
+  '478': 5,
+  'box': 5,
+  'wimhof': 0,
+  'tummo': 10,
+  'nadi': 10,
+  'surya': 5,
+  'chandra': 5,
+  'ujjayi': 10,
+  'kapalabhati': 5,
+  'bhastrika': 5,
+  'bhramari': 10,
+  'sitali': 5,
+  'murcha': 10,
+  'ninepurification': 5,
+  'coherent': 20,
+  'physiosigh': 5,
+  'rebirthing': 0,
+  'transformational': 0,
+  'reversebreathing': 10,
+  'kumbhaka': 10,
+  'hamsah':         15,   // Samael: morning and evening 15-30 min practice
+  'transmutation': 10,
+  'blink': 5,
+  'custom': 5,
+};
+const TECH_REC_LABELS = {
+  '478': "5 min — Dr. Weil's recommended minimum",
+  'box': '5 min — standard Navy SEAL protocol',
+  'tummo': '10 min — Tibetan traditional minimum',
+  'nadi': '10 min — minimum for nervous system balance',
+  'surya': '5 min — short energizing practice',
+  'chandra': '5 min — short cooling practice',
+  'ujjayi': '10 min — needs time to settle into rhythm',
+  'kapalabhati': '5 min — standard purification round',
+  'bhastrika': '5 min — optimal for beginners',
+  'bhramari': '10 min — research threshold for BP/HRV change',
+  'sitali': '5 min — effective cooling window',
+  'murcha': '10 min — allows depth to develop',
+  'ninepurification': '5 min — full 9-breath sequence fits here',
+  'coherent': '20 min — HRV entrainment threshold (Elliott protocol)',
+  'physiosigh': '5 min — Stanford optimal for mood improvement',
+  'reversebreathing': '10 min — enough time to feel qi movement',
+  'kumbhaka': '10 min — retention capacity builds through the session',
+  'hamsah':        '15 min — Samael recommended morning & evening sessions',
+  'transmutation': '10 min — urge fully converts within this window',
+  'blink': '5 min — covers fast + slow blink cycles',
+  'custom': '5 min — adjust to your pattern',
+};
+
+function setRecommendedDuration(t) {
+  const mins = TECH_DURATIONS[t];
+  if(!mins || mins === 0) return; // round-based or facilitator techniques
+  // Update input
+  document.getElementById('durInput').value = mins;
+  // Update preset highlight
+  document.querySelectorAll('.dur-btn[data-min]').forEach(b => {
+    b.classList.toggle('on', parseInt(b.dataset.min) === mins);
+  });
+  // Update recommended label
+  const label = TECH_REC_LABELS[t] || '';
+  const el = document.getElementById('recLabel');
+  if(el) el.textContent = label ? '★ Recommended: ' + label : '';
+}
+
+function updateYtLink(t) {
+  const yt = YT_LINKS[t];
+  const row = document.getElementById('optYtRow');
+  const link = document.getElementById('optYtLink');
+  const label = document.getElementById('optYtLabel');
+  if(!yt || !yt.url) { row.style.display = 'none'; return; }
+  row.style.display = '';
+  link.href = yt.url;
+  label.textContent = yt.label;
+}
+
+// ── Always-visible YouTube link ─────────────────────
+window.activateTech = function(t) {
+  if(running) stopSession();
+  document.querySelectorAll('.tab').forEach(b => {
+    b.classList.toggle('on', b.dataset.t === t);
+  });
+  tech = t;
+  updateUI(); closeInfo(); updateYtLink(t);
+  document.querySelector('.wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const btn = document.getElementById('btnBegin');
+  btn.style.borderColor = 'var(--gold)';
+  btn.style.color = 'var(--text)';
+  setTimeout(() => { btn.style.borderColor = ''; btn.style.color = ''; }, 1200);
+};
+
+// Init
+renderT(); renderHeatmap(); updateUI(); updateYtLink(tech); setRecommendedDuration(tech);
+})();
+</script>
+</body>
+</html>

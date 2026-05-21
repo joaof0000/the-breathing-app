@@ -1,0 +1,165 @@
+.ring-wrap {
+  position: relative;
+  width: min(240px, 62vw);
+  height: min(240px, 62vw);
+  margin: 1.2rem auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ring-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.ring-track {
+  fill: none;
+  stroke: rgba(255,255,255,0.05);
+  stroke-width: 7;
+}
+
+.ring-fill {
+  fill: none;
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke: var(--gold);
+  filter: drop-shadow(0 0 6px rgba(201,168,76,0.5));
+}
+
+/* Phase color overrides */
+.p-inhale  .ring-fill { stroke: #5b8a72; filter: drop-shadow(0 0 6px rgba(91,138,114,0.5)); }
+.p-hold    .ring-fill { stroke: #7b6b8a; filter: drop-shadow(0 0 6px rgba(123,107,138,0.5)); }
+.p-hold2   .ring-fill { stroke: #6b6070; filter: drop-shadow(0 0 6px rgba(107,96,112,0.5)); }
+.p-exhale  .ring-fill { stroke: #4a9ab5; filter: drop-shadow(0 0 6px rgba(74,154,181,0.5)); }
+.p-fire    .ring-fill { stroke: #c45c3e; filter: drop-shadow(0 0 6px rgba(196,92,62,0.5)); }
+.p-ret     .ring-fill { stroke: #3a5a8a; filter: drop-shadow(0 0 6px rgba(58,90,138,0.5)); }
+.p-sun     .ring-fill { stroke: #d4854a; filter: drop-shadow(0 0 6px rgba(212,133,74,0.5)); }
+.p-moon    .ring-fill { stroke: #6b8ab5; filter: drop-shadow(0 0 6px rgba(107,138,181,0.5)); }
+
+/* Phase label color */
+.p-inhale  .r-phase { color: #5b8a72; }
+.p-hold    .r-phase { color: #7b6b8a; }
+.p-hold2   .r-phase { color: #6b6070; }
+.p-exhale  .r-phase { color: #4a9ab5; }
+.p-fire    .r-phase { color: #c45c3e; }
+.p-ret     .r-phase { color: #3a5a8a; }
+.p-sun     .r-phase { color: #d4854a; }
+.p-moon    .r-phase { color: #6b8ab5; }
+
+.ring-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  text-align: center;
+  padding: 0 1.2rem;
+}
+
+.btn-begin {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  color: var(--gold);
+  background: none;
+  border: 1px solid var(--gdim);
+  border-radius: 4px;
+  padding: 0.45rem 1.4rem;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+
+.btn-begin:hover {
+  border-color: var(--gold);
+  background: rgba(201,168,76,0.08);
+  color: #e0c070;
+}
+
+.r-phase {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.82rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.r-count {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 8vw, 3rem);
+  font-weight: 300;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.r-info {
+  font-family: 'Newsreader', serif;
+  font-size: 0.7rem;
+  font-style: italic;
+  color: var(--dim);
+  max-width: 130px;
+  line-height: 1.3;
+}
+
+.btn-stop {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--faint);
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-top: 0.2rem;
+  transition: color 0.2s;
+}
+
+.btn-stop:hover { color: var(--dim); }
+
+/* Wim Hof prompt */
+.wh-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0 0.5rem;
+}
+
+.wh-prompt-text {
+  font-family: 'Newsreader', serif;
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--text);
+  text-align: center;
+  line-height: 1.4;
+}
+
+.wh-live-timer {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.4rem;
+  font-weight: 300;
+  color: #4a9ab5;
+  letter-spacing: -0.02em;
+}
+
+.wh-stop-btn {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  color: var(--gold);
+  background: none;
+  border: 1px solid var(--gdim);
+  border-radius: 4px;
+  padding: 0.35rem 1rem;
+  cursor: pointer;
+  margin-top: 0.3rem;
+  transition: border-color 0.2s;
+}
+
+.wh-stop-btn:hover { border-color: var(--gold); }

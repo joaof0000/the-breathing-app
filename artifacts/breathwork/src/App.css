@@ -1,0 +1,42 @@
+.app {
+  min-height: 100dvh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Grain overlay ── */
+.grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.022;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* ── Ambient glow ── */
+.glow {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.glow-1 {
+  width: 500px;
+  height: 500px;
+  top: -150px;
+  right: -100px;
+  background: radial-gradient(ellipse at center, rgba(201,168,76,0.06) 0%, transparent 70%);
+}
+
+.glow-2 {
+  width: 400px;
+  height: 400px;
+  bottom: -100px;
+  left: -80px;
+  background: radial-gradient(ellipse at center, rgba(74,154,181,0.05) 0%, transparent 70%);
+}

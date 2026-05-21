@@ -1,0 +1,61 @@
+.nostril-ind {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  margin: 0.3rem 0;
+}
+
+.nos {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid var(--faint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+
+.nos-center svg { display: block; }
+
+.nos-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--faint);
+  transition: color 0.3s;
+}
+
+/* Active left = moon blue */
+.nos.nos-active.left {
+  border-color: #6b8ab5;
+  background: rgba(107,138,181,0.18);
+  box-shadow: 0 0 8px rgba(107,138,181,0.35);
+}
+.nos.nos-active.left .nos-label { color: #6b8ab5; }
+
+/* Active right = sun orange */
+.nos.nos-active.right {
+  border-color: #d4854a;
+  background: rgba(212,133,74,0.18);
+  box-shadow: 0 0 8px rgba(212,133,74,0.35);
+}
+.nos.nos-active.right .nos-label { color: #d4854a; }
+
+/* Both active */
+.nos.nos-active.left.both,
+.nos.nos-active.right.both {
+  border-color: var(--gold);
+  background: rgba(201,168,76,0.12);
+  box-shadow: 0 0 8px rgba(201,168,76,0.3);
+}
+
+/* Closed */
+.nos.nos-closed {
+  border-color: var(--faint);
+  background: rgba(255,255,255,0.03);
+  opacity: 0.45;
+}
+.nos.nos-closed .nos-label { color: var(--faint); }

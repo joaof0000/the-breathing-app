@@ -16,6 +16,6 @@
 }
 
 @keyframes geo-breathe {
-  0%, 100% { opacity: 0.03; }
+  0%, 100% { opacity: 0.035; }
   50%       { opacity: 0.048; }
 }

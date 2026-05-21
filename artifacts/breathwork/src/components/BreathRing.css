@@ -15,13 +15,13 @@
   inset: -4px;
   border-radius: 50%;
   background: conic-gradient(
-    #F2EFE9 0%,
+    #F5F0E8 0%,
     #E5A93C 28%,
     #D48C70 55%,
     #E5A93C 75%,
-    #F2EFE9 100%
+    #F5F0E8 100%
   );
-  opacity: 0.22;
+  opacity: 0.28;
   z-index: 0;
   pointer-events: none;
   animation: haloRotate 18s linear infinite;
@@ -32,10 +32,10 @@
   to   { transform: rotate(360deg); }
 }
 
-/* ── The Living Pulse — permanent heartbeat when idle ── */
+/* ── The Living Pulse — heartbeat when idle ── */
 @keyframes heartPulse {
   0%   { transform: scale(1);    opacity: 0.9; }
-  50%  { transform: scale(1.05); opacity: 1;   filter: drop-shadow(0 0 12px rgba(229,169,60,0.18)); }
+  50%  { transform: scale(1.05); opacity: 1;   filter: drop-shadow(0 0 16px rgba(229,169,60,0.28)); }
   100% { transform: scale(1);    opacity: 0.9; }
 }
 
@@ -55,7 +55,7 @@
 
 .ring-track {
   fill: none;
-  stroke: rgba(242,239,233,0.055);
+  stroke: rgba(245,240,232,0.08);
   stroke-width: 7;
 }
 
@@ -64,18 +64,18 @@
   stroke-width: 7;
   stroke-linecap: round;
   stroke: var(--gold);
-  filter: drop-shadow(0 0 7px rgba(229,169,60,0.45));
+  filter: drop-shadow(0 0 7px rgba(229,169,60,0.5));
 }
 
 /* Phase color overrides */
-.p-inhale  .ring-fill { stroke: #6A9E7F; filter: drop-shadow(0 0 7px rgba(106,158,127,0.45)); }
-.p-hold    .ring-fill { stroke: #8E7A9C; filter: drop-shadow(0 0 7px rgba(142,122,156,0.45)); }
-.p-hold2   .ring-fill { stroke: #7A6E7A; filter: drop-shadow(0 0 7px rgba(122,110,122,0.45)); }
-.p-exhale  .ring-fill { stroke: #5AAABF; filter: drop-shadow(0 0 7px rgba(90,170,191,0.45)); }
-.p-fire    .ring-fill { stroke: #D4663A; filter: drop-shadow(0 0 7px rgba(212,102,58,0.45)); }
-.p-ret     .ring-fill { stroke: #4A6A9A; filter: drop-shadow(0 0 7px rgba(74,106,154,0.45)); }
-.p-sun     .ring-fill { stroke: #D4854A; filter: drop-shadow(0 0 7px rgba(212,133,74,0.45)); }
-.p-moon    .ring-fill { stroke: #7A8FC2; filter: drop-shadow(0 0 7px rgba(122,143,194,0.45)); }
+.p-inhale  .ring-fill { stroke: #6A9E7F; filter: drop-shadow(0 0 7px rgba(106,158,127,0.5)); }
+.p-hold    .ring-fill { stroke: #8E7A9C; filter: drop-shadow(0 0 7px rgba(142,122,156,0.5)); }
+.p-hold2   .ring-fill { stroke: #7A6E7A; filter: drop-shadow(0 0 7px rgba(122,110,122,0.5)); }
+.p-exhale  .ring-fill { stroke: #5AAABF; filter: drop-shadow(0 0 7px rgba(90,170,191,0.5)); }
+.p-fire    .ring-fill { stroke: #D4663A; filter: drop-shadow(0 0 7px rgba(212,102,58,0.5)); }
+.p-ret     .ring-fill { stroke: #4A6A9A; filter: drop-shadow(0 0 7px rgba(74,106,154,0.5)); }
+.p-sun     .ring-fill { stroke: #D4854A; filter: drop-shadow(0 0 7px rgba(212,133,74,0.5)); }
+.p-moon    .ring-fill { stroke: #7A8FC2; filter: drop-shadow(0 0 7px rgba(122,143,194,0.5)); }
 
 /* Phase label color */
 .p-inhale  .r-phase { color: #6A9E7F; }
@@ -121,26 +121,26 @@
   margin-bottom: 0.35rem;
 }
 
-/* ── Begin — Poppins capsule ── */
+/* ── Begin button ── */
 .btn-begin {
   font-family: 'Poppins', sans-serif;
   font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #120F0D;
+  color: #2C1F14;
   background: #E5A93C;
   border: none;
   border-radius: 9999px;
   padding: 0.55rem 1.9rem;
   cursor: pointer;
-  box-shadow: 0 0 20px rgba(229,169,60,0.35);
+  box-shadow: 0 0 24px rgba(229,169,60,0.45);
   transition: box-shadow 0.2s, transform 0.12s, background 0.2s;
 }
 
 .btn-begin:hover {
   background: #EDB94A;
-  box-shadow: 0 0 28px rgba(229,169,60,0.5);
+  box-shadow: 0 0 32px rgba(229,169,60,0.6);
 }
 
 .btn-begin:active {
@@ -148,7 +148,7 @@
   box-shadow: 0 0 22px rgba(229,169,60,0.45);
 }
 
-/* ── Phase label — Poppins ── */
+/* ── Phase label ── */
 .r-phase {
   font-family: 'Poppins', sans-serif;
   font-size: 0.65rem;
@@ -158,7 +158,7 @@
   color: var(--gold);
 }
 
-/* ── Countdown — Poppins, bold, clean ── */
+/* ── Countdown ── */
 .r-count {
   font-family: 'Poppins', sans-serif;
   font-size: clamp(1.9rem, 8vw, 2.8rem);
@@ -301,16 +301,16 @@
   font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.06em;
-  color: #120F0D;
+  color: #2C1F14;
   background: #E5A93C;
   border: none;
   border-radius: 9999px;
   padding: 0.42rem 1.3rem;
   cursor: pointer;
   margin-top: 0.3rem;
-  box-shadow: 0 0 16px rgba(229,169,60,0.35);
+  box-shadow: 0 0 16px rgba(229,169,60,0.4);
   transition: box-shadow 0.2s, transform 0.12s;
 }
 
-.wh-stop-btn:hover { box-shadow: 0 0 22px rgba(229,169,60,0.5); }
+.wh-stop-btn:hover { box-shadow: 0 0 26px rgba(229,169,60,0.55); }
 .wh-stop-btn:active { transform: scale(0.95); }

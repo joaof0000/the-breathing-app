@@ -2,8 +2,8 @@
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.4s ease;
-  background: rgba(255,255,255,0.02);
-  border-radius: 8px;
+  background: rgba(229,169,60,0.04);
+  border-radius: 20px;
   margin-bottom: 0;
 }
 
@@ -14,9 +14,7 @@
 
 .info-drawer-content {
   padding: 1.2rem 1rem;
-  border: none;
-  border-radius: 16px;
-  background: rgba(255,255,255,0.015);
+  border-radius: 20px;
 }
 
 .info-drawer h2 {
@@ -71,19 +69,17 @@
 .info-drawer em { font-style: italic; color: var(--dim); }
 
 .tip, .warn {
-  border-radius: 6px;
+  border-radius: 12px;
   padding: 0.6rem 0.8rem;
   margin: 0.6rem 0;
 }
 
 .tip {
-  background: rgba(201,168,76,0.06);
-  border-left: 2px solid var(--gdim);
+  background: rgba(201,168,76,0.09);
 }
 
 .warn {
-  background: rgba(196,92,62,0.06);
-  border-left: 2px solid var(--fire);
+  background: rgba(196,92,62,0.09);
 }
 
 .tip p, .warn p {
@@ -92,7 +88,7 @@
 }
 
 .time-block {
-  background: rgba(255,255,255,0.03);
+  background: rgba(229,169,60,0.06);
   border: none;
   border-radius: 14px;
   padding: 0.65rem 0.8rem;

@@ -3,16 +3,15 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-  /* ── Sanctuary Colorway ── */
-  --bg:    #120F0D;
-  --card:  #1C1815;
+  --bg:    #2C1F14;
+  --card:  #3A2A1C;
   --gold:  #E5A93C;
-  --gdim:  #B8893A;
+  --gdim:  #C8922A;
   --rose:  #D48C70;
-  --text:  #F2EFE9;
-  --dim:   #9A8F82;
-  --faint: #5A5248;
-  --bdr:   rgba(229,169,60,0.1);
+  --text:  #F5F0E8;
+  --dim:   #C4A882;
+  --faint: #8A7560;
+  --bdr:   rgba(229,169,60,0.18);
 
   /* ── Breath phase colors ── */
   --grn:   #6A9E7F;
@@ -24,12 +23,11 @@
 }
 
 html {
-  background: linear-gradient(160deg, #120F0D 0%, #1A1412 60%, #150E0C 100%) fixed;
-  background-color: #120F0D;
+  background: linear-gradient(160deg, #2C1F14 0%, #3A2618 60%, #2A1C10 100%) fixed;
+  background-color: #2C1F14;
 }
 
 body {
-  /* Poppins as the global body font */
   font-family: 'Poppins', sans-serif;
   background: transparent;
   color: var(--text);

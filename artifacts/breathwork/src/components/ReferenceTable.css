@@ -1,9 +1,11 @@
 .ref-section {
-  background: var(--card);
-  border: 1px solid var(--bdr);
-  border-radius: 10px;
-  padding: 1rem;
-  margin-bottom: 1.5rem;
+  background: rgba(58,42,28,0.7);
+  border: none;
+  border-radius: 20px;
+  padding: 1rem 1rem 0.8rem;
+  margin-bottom: 0.8rem;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 .ref-title {
@@ -23,25 +25,32 @@
 }
 
 .ref-table th {
-  font-size: 0.62rem;
-  letter-spacing: 0.1em;
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--faint);
   font-weight: 400;
   text-align: left;
-  padding: 0.3rem 0.4rem;
-  border-bottom: 1px solid var(--bdr);
+  padding: 0.25rem 0.3rem;
+  border-bottom: 1px solid rgba(229,169,60,0.1);
 }
 
 .ref-table td {
   color: var(--dim);
-  padding: 0.32rem 0.4rem;
-  border-bottom: 1px solid rgba(255,255,255,0.025);
+  padding: 0.28rem 0.3rem;
+  border-bottom: 1px solid rgba(229,169,60,0.04);
   vertical-align: top;
   line-height: 1.4;
 }
 
-.ref-table td:first-child { color: var(--text); }
+.ref-table td:first-child {
+  color: var(--text);
+  font-style: italic;
+}
+
+.ref-table tr:last-child td {
+  border-bottom: none;
+}
 
 .ref-link {
   color: var(--gold);

@@ -1,5 +1,5 @@
 .history-section {
-  background: rgba(28,24,21,0.55);
+  background: rgba(58,42,28,0.7);
   border: none;
   border-radius: 20px;
   margin-bottom: 0.8rem;
@@ -45,7 +45,7 @@
 }
 
 .hf-btn {
-  background: rgba(255,255,255,0.03);
+  background: rgba(229,169,60,0.06);
   border: none;
   border-radius: 9999px;
   font-family: 'Newsreader', serif;
@@ -58,9 +58,9 @@
 }
 
 .hf-btn:hover, .hf-btn.on {
-  background: rgba(229,169,60,0.08);
+  background: rgba(229,169,60,0.14);
   color: var(--gold);
-  box-shadow: 0 0 14px rgba(229,169,60,0.12);
+  box-shadow: 0 0 14px rgba(229,169,60,0.14);
 }
 
 .history-table {
@@ -78,13 +78,13 @@
   font-weight: 400;
   text-align: left;
   padding: 0.25rem 0.3rem;
-  border-bottom: 1px solid rgba(229,169,60,0.06);
+  border-bottom: 1px solid rgba(229,169,60,0.1);
 }
 
 .history-table td {
   color: var(--dim);
   padding: 0.28rem 0.3rem;
-  border-bottom: 1px solid rgba(255,255,255,0.02);
+  border-bottom: 1px solid rgba(229,169,60,0.04);
 }
 
 .history-table td:first-child { color: var(--text); }

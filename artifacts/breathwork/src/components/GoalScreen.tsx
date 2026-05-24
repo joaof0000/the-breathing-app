@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { GOAL_BUTTONS, GOALS } from '../data/goals';
 import { useLang } from '../i18n/LangContext';
 import heroImg from '../assets/hero.png';
-import { matchIntentionToGoal, timeOfDayGreeting } from '../hooks/useProfile';
+import { matchIntentionToGoal, timeOfDayGreeting, saveProfile } from '../hooks/useProfile';
 import { TECH_LABELS } from '../data/techniques';
 import './GoalScreen.css';
 
@@ -12,6 +12,7 @@ interface Props {
   intention?: string;
   onBack?: () => void;
   lastTech?: string | null;
+  onProfileUpdate?: () => void;
 }
 
 const TECH_ICONS: Record<string, string> = {
@@ -60,9 +61,13 @@ const TECH_COLORS: Record<string, string> = {
   custom:           'rgba(200,180,100,0.16)',
 };
 
-export default function GoalScreen({ onSelectTech, name, intention, onBack, lastTech }: Props) {
+export default function GoalScreen({ onSelectTech, name, intention, onBack, lastTech, onProfileUpdate }: Props) {
   const { t } = useLang();
   const [activePicker, setActivePicker] = useState<string | null>(null);
+  const [editOpen, setEditOpen] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [editIntention, setEditIntention] = useState('');
+  const nameInputRef = useRef<HTMLInputElement>(null);
 
   const goal    = activePicker ? GOALS[activePicker] : null;
   const goalBtn = activePicker ? GOAL_BUTTONS.find(b => b.key === activePicker) : null;
@@ -72,6 +77,24 @@ export default function GoalScreen({ onSelectTech, name, intention, onBack, last
   const highlightKey = intention ? matchIntentionToGoal(intention) : null;
   const greeting = name ? `${timeOfDayGreeting()}, ${name}` : null;
   const lastTechName = lastTech ? (TECH_LABELS[lastTech] ?? lastTech) : null;
+
+  const openEdit = () => {
+    setEditName(name ?? '');
+    setEditIntention(intention ?? '');
+    setEditOpen(true);
+  };
+
+  useEffect(() => {
+    if (!editOpen) return;
+    const t = setTimeout(() => nameInputRef.current?.focus(), 80);
+    return () => clearTimeout(t);
+  }, [editOpen]);
+
+  const handleEditSave = () => {
+    saveProfile({ name: editName.trim(), intention: editIntention.trim() });
+    setEditOpen(false);
+    onProfileUpdate?.();
+  };
 
   return (
     <div className="page1">
@@ -84,8 +107,23 @@ export default function GoalScreen({ onSelectTech, name, intention, onBack, last
         <div className="p1-title">Breathwork</div>
 
         {greeting ? (
-          <p className="p1-greeting">{greeting}</p>
-        ) : null}
+          <p className="p1-greeting">
+            {greeting}
+            <button
+              className="p1-edit-btn"
+              onClick={openEdit}
+              aria-label="Edit profile"
+              title="Edit name &amp; intention"
+            >✎</button>
+          </p>
+        ) : (
+          <button
+            className="p1-edit-btn p1-edit-btn--standalone"
+            onClick={openEdit}
+            aria-label="Edit profile"
+            title="Edit name &amp; intention"
+          >✎</button>
+        )}
 
         <p className="p1-sub">{t.goal.subtitle}</p>
 
@@ -185,6 +223,48 @@ export default function GoalScreen({ onSelectTech, name, intention, onBack, last
             )}
 
             <button className="picker-cancel" onClick={() => setActivePicker(null)}>{t.goal.back}</button>
+          </div>
+        </div>
+      )}
+
+      {editOpen && (
+        <div
+          className="edit-overlay open"
+          onClick={e => { if (e.target === e.currentTarget) setEditOpen(false); }}
+        >
+          <div className="edit-sheet">
+            <div className="edit-title">Edit profile</div>
+
+            <label className="edit-label" htmlFor="edit-name">Your name</label>
+            <input
+              id="edit-name"
+              ref={nameInputRef}
+              className="edit-input"
+              type="text"
+              placeholder="Name (optional)"
+              value={editName}
+              onChange={e => setEditName(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') handleEditSave(); if (e.key === 'Escape') setEditOpen(false); }}
+              maxLength={40}
+              autoComplete="given-name"
+            />
+
+            <label className="edit-label" htmlFor="edit-intention">Your intention</label>
+            <input
+              id="edit-intention"
+              className="edit-input"
+              type="text"
+              placeholder="e.g. I want to feel calmer (optional)"
+              value={editIntention}
+              onChange={e => setEditIntention(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') handleEditSave(); if (e.key === 'Escape') setEditOpen(false); }}
+              maxLength={120}
+            />
+
+            <div className="edit-actions">
+              <button className="edit-save" onClick={handleEditSave}>Save</button>
+              <button className="edit-cancel" onClick={() => setEditOpen(false)}>Cancel</button>
+            </div>
           </div>
         </div>
       )}

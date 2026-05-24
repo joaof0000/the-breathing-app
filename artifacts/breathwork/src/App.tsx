@@ -81,6 +81,7 @@ function AppInner() {
           intention={profile.intention}
           onBack={handleGoalBack}
           lastTech={lastTech}
+          onProfileUpdate={() => setProfile(loadProfile())}
         />
       ) : (
         <SessionScreen

@@ -30,7 +30,10 @@ function LangToggle() {
 type Page = 'welcome' | 'goal' | 'session';
 
 function AppInner() {
-  const [page, setPage]               = useState<Page>('welcome');
+  const [page, setPage]               = useState<Page>(() => {
+    const p = loadProfile();
+    return p.name ? 'goal' : 'welcome';
+  });
   const [selectedTech, setSelectedTech] = useState<string | null>(null);
   const [selectedGoal, setSelectedGoal] = useState<string | null>(null);
   const [gratitude,    setGratitude]    = useState('');

@@ -112,7 +112,7 @@ export default function GoalScreen({ onSelectTech, name, intention, onBack }: Pr
         </button>
 
         {onBack && (
-          <button className="p1-back" onClick={onBack}>← Back</button>
+          <button className="p1-back" onClick={onBack}>← Revisit intro</button>
         )}
 
       </div>

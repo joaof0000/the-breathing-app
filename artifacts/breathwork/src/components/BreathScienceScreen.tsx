@@ -370,6 +370,43 @@ export default function BreathScienceScreen({ onBack, onContinue }: Props) {
           <h2 className="bsci-section-title">{c.diaphTitle}</h2>
           <p className="bsci-diaphr-intro">{c.diaphIntro}</p>
 
+          {/* Anatomy comparison diagram */}
+          <div className="bsci-anatomy" aria-hidden="true">
+            <svg viewBox="0 0 288 172" fill="none" xmlns="http://www.w3.org/2000/svg" className="bsci-anat-svg">
+              {/* ─── EXHALE (left) ─── */}
+              <ellipse cx="72" cy="80" rx="50" ry="66" className="bsci-anat-body" />
+              <ellipse cx="55" cy="66" rx="16" ry="26" className="bsci-anat-lung" />
+              <ellipse cx="89" cy="66" rx="16" ry="26" className="bsci-anat-lung" />
+              <line x1="72" y1="44" x2="72" y2="92" className="bsci-anat-sternum" />
+              {/* Diaphragm dome-up (exhale) */}
+              <path d="M 28 88 Q 72 68 116 88" className="bsci-anat-diaph" strokeWidth="2" strokeLinecap="round" />
+              {/* Belly flat */}
+              <ellipse cx="72" cy="110" rx="36" ry="10" className="bsci-anat-belly bsci-anat-belly-flat" />
+              <text x="72" y="135" className="bsci-anat-phase-lbl bsci-anat-exhale-lbl">EXHALE</text>
+              <text x="72" y="146" className="bsci-anat-sub-lbl">diaphragm rises</text>
+              {/* Up arrow */}
+              <path d="M 72 100 L 72 88 M 67 93 L 72 87 L 77 93" className="bsci-anat-arrow-up" strokeLinecap="round" strokeLinejoin="round" />
+
+              {/* Divider */}
+              <line x1="144" y1="8" x2="144" y2="162" className="bsci-anat-divider" />
+
+              {/* ─── INHALE (right) ─── */}
+              <ellipse cx="216" cy="80" rx="50" ry="66" className="bsci-anat-body" />
+              <ellipse cx="199" cy="66" rx="16" ry="32" className="bsci-anat-lung bsci-anat-lung-full" />
+              <ellipse cx="233" cy="66" rx="16" ry="32" className="bsci-anat-lung bsci-anat-lung-full" />
+              <line x1="216" y1="44" x2="216" y2="98" className="bsci-anat-sternum" />
+              {/* Diaphragm flat-down (inhale) */}
+              <path d="M 172 100 Q 216 114 260 100" className="bsci-anat-diaph bsci-anat-diaph-down" strokeWidth="2" strokeLinecap="round" />
+              {/* Belly expanded */}
+              <ellipse cx="216" cy="128" rx="42" ry="18" className="bsci-anat-belly bsci-anat-belly-full" />
+              <text x="216" y="152" className="bsci-anat-phase-lbl bsci-anat-inhale-lbl">INHALE</text>
+              <text x="216" y="163" className="bsci-anat-sub-lbl">diaphragm descends</text>
+              {/* Down arrow */}
+              <path d="M 216 108 L 216 120 M 211 115 L 216 121 L 221 115" className="bsci-anat-arrow-down" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <p className="bsci-anat-caption">The diaphragm is a muscle. It contracts downward to draw air in, and relaxes upward to push air out.</p>
+          </div>
+
           <div className="bsci-card">
             <h3 className="bsci-card-title">{c.diaphWhatTitle}</h3>
             <p className="bsci-card-body">{c.diaphWhat}</p>
@@ -409,6 +446,61 @@ export default function BreathScienceScreen({ onBack, onContinue }: Props) {
             <p className="bsci-card-body">{c.diaphPractice}</p>
           </div>
         </section>
+
+        {/* Video resources */}
+        <div className="bsci-videos">
+          <h2 className="bsci-videos-title">Watch &amp; Learn</h2>
+          <div className="bsci-video-grid">
+            <a
+              className="bsci-video-card"
+              href="https://www.youtube.com/results?search_query=breathing+science+nervous+system+vagus+nerve+explained"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className="bsci-video-play">▶</span>
+              <div className="bsci-video-info">
+                <strong>Breathing &amp; the nervous system</strong>
+                <span>How breath directly controls stress &amp; calm</span>
+              </div>
+            </a>
+            <a
+              className="bsci-video-card"
+              href="https://www.youtube.com/results?search_query=nasal+breathing+benefits+nitric+oxide+James+Nestor+science"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className="bsci-video-play">▶</span>
+              <div className="bsci-video-info">
+                <strong>Why nasal breathing matters</strong>
+                <span>Nitric oxide, oxygen uptake &amp; brain function</span>
+              </div>
+            </a>
+            <a
+              className="bsci-video-card"
+              href="https://www.youtube.com/results?search_query=heart+rate+variability+HRV+breathing+explained"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className="bsci-video-play">▶</span>
+              <div className="bsci-video-info">
+                <strong>Heart rate variability explained</strong>
+                <span>Why HRV predicts health &amp; how breathing improves it</span>
+              </div>
+            </a>
+            <a
+              className="bsci-video-card"
+              href="https://www.youtube.com/results?search_query=Wim+Hof+breathing+science+immune+system+Radboud"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className="bsci-video-play">▶</span>
+              <div className="bsci-video-info">
+                <strong>Breathing &amp; the immune system</strong>
+                <span>Wim Hof study: conscious breath controls immunity</span>
+              </div>
+            </a>
+          </div>
+        </div>
 
         <div className="bsci-science-note">{c.scienceNote}</div>
 

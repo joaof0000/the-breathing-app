@@ -162,6 +162,20 @@ export default function GoalScreen({ onSelectTech, gratitude, onGratitudeChange,
                 );
               })}
             </div>
+
+            {goal.music && (
+              <div className="picker-music">
+                <div className="pm-label">
+                  <span className="pm-note">♩</span>
+                  {t.goal.suggestedListening}
+                </div>
+                <div className="pm-composer">{goal.music.composer}</div>
+                <div className="pm-title">{goal.music.title}</div>
+                <div className="pm-detail">{goal.music.detail}</div>
+                <p className="pm-why">{goal.music.why}</p>
+              </div>
+            )}
+
             <button className="picker-cancel" onClick={() => setActivePicker(null)}>{t.goal.back}</button>
           </div>
         </div>

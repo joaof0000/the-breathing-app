@@ -9,6 +9,7 @@ export interface SessionRecord {
   time: string;
   dur: number;
   insight?: string;
+  mood?: number;
 }
 
 function todayStr() {
@@ -42,6 +43,19 @@ export function addInsight(ts: number, insight: string) {
   const idx = sessions.findIndex(s => s.ts === ts);
   if (idx !== -1) {
     sessions[idx] = { ...sessions[idx], insight: insight.trim() };
+    saveSessions(sessions);
+  }
+}
+
+export function addJournal(ts: number, mood: number, note: string) {
+  const sessions = loadSessions();
+  const idx = sessions.findIndex(s => s.ts === ts);
+  if (idx !== -1) {
+    sessions[idx] = {
+      ...sessions[idx],
+      ...(mood > 0 ? { mood } : {}),
+      ...(note.trim() ? { insight: note.trim() } : {}),
+    };
     saveSessions(sessions);
   }
 }

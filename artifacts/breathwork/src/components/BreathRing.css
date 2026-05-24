@@ -295,6 +295,37 @@
 }
 .journal-skip-btn:hover { color: var(--dim); }
 
+.journal-mood-row {
+  display: flex;
+  gap: 0.35rem;
+  justify-content: center;
+  margin: 0.1rem 0 0.2rem;
+}
+
+.journal-mood-btn {
+  background: none;
+  border: 1.5px solid transparent;
+  border-radius: 50%;
+  font-size: 1.4rem;
+  line-height: 1;
+  padding: 0.18rem 0.22rem;
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s, background 0.15s;
+  opacity: 0.55;
+}
+
+.journal-mood-btn:hover {
+  transform: scale(1.18);
+  opacity: 0.9;
+}
+
+.journal-mood-btn.selected {
+  border-color: var(--gold);
+  background: rgba(229,169,60,0.1);
+  opacity: 1;
+  transform: scale(1.22);
+}
+
 /* Wim Hof prompt */
 .wh-prompt {
   display: flex;

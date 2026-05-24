@@ -9,7 +9,7 @@ import ReferenceTable from './ReferenceTable';
 import { TABS, NOSTRIL_TECHS, PUMP_TECHS, YT_LINKS, YT_LABELS, REC_DURATION, TECH_LABELS, getPhases } from '../data/techniques';
 import { useAudio } from '../hooks/useAudio';
 import { useSessionMusic } from '../hooks/useSessionMusic';
-import { useSessionStorage, addInsight } from '../hooks/useSessionStorage';
+import { useSessionStorage, addJournal } from '../hooks/useSessionStorage';
 import { useLang } from '../i18n/LangContext';
 import type { Translations } from '../i18n/lang';
 import './SessionScreen.css';
@@ -65,6 +65,7 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
 
   const [journalMode, setJournalMode] = useState(false);
   const [journalText, setJournalText] = useState('');
+  const [journalMood, setJournalMood] = useState(0);
   const lastSessionTsRef = useRef<number>(0);
 
   const [fill, setFill] = useState(0);
@@ -125,6 +126,7 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
     stopAllEngines();
     setJournalMode(true);
     setJournalText('');
+    setJournalMood(0);
   }, [record, audio, music, stopAllEngines]);
 
   const stopSession = useCallback(() => {
@@ -415,17 +417,19 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
   }, [stopSession]);
 
   const handleSaveInsight = useCallback(() => {
-    if (journalText.trim() && lastSessionTsRef.current) {
-      addInsight(lastSessionTsRef.current, journalText.trim());
+    if ((journalMood > 0 || journalText.trim()) && lastSessionTsRef.current) {
+      addJournal(lastSessionTsRef.current, journalMood, journalText.trim());
       setRefreshKey(k => k + 1);
     }
     setJournalMode(false);
     setJournalText('');
-  }, [journalText]);
+    setJournalMood(0);
+  }, [journalMood, journalText]);
 
   const handleSkipInsight = useCallback(() => {
     setJournalMode(false);
     setJournalText('');
+    setJournalMood(0);
   }, []);
 
   const handleInspireMe = useCallback(() => {
@@ -557,6 +561,8 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
             showJournal={journalMode}
             journalText={journalText}
             onJournalChange={setJournalText}
+            journalMood={journalMood}
+            onJournalMoodChange={setJournalMood}
             onSaveInsight={handleSaveInsight}
             onSkipInsight={handleSkipInsight}
             idleIntention={isIdle ? intention : ''}

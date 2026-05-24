@@ -32,15 +32,19 @@ export default function HistoryPanel({ refreshKey, onRefresh }: Props) {
     return sessions.filter(s => s.tech === filter);
   }, [sessions, filter]);
 
-  const hasInsights = useMemo(() => sessions.some(s => s.insight), [sessions]);
+  const hasInsights = useMemo(() => sessions.some(s => s.insight || s.mood), [sessions]);
+  const MOOD_EMOJIS = ['😔', '😐', '🙂', '😊', '🌟'];
 
   const exportCSV = () => {
     const headers = [t.history.date, t.history.time, t.history.technique, t.history.duration];
-    if (hasInsights) headers.push(t.history.insight);
+    if (hasInsights) { headers.push('Mood'); headers.push(t.history.insight); }
     const rows = [headers];
     sessions.forEach(s => {
       const row = [s.date, s.time, TECH_LABELS[s.tech] || s.tech, fmtDur(s.dur)];
-      if (hasInsights) row.push(s.insight ? `"${s.insight.replace(/"/g, '""')}"` : '');
+      if (hasInsights) {
+        row.push(s.mood ? String(s.mood) : '');
+        row.push(s.insight ? `"${s.insight.replace(/"/g, '""')}"` : '');
+      }
       rows.push(row);
     });
     const csv = rows.map(r => r.join(',')).join('\n');
@@ -86,7 +90,7 @@ export default function HistoryPanel({ refreshKey, onRefresh }: Props) {
                   <th>{t.history.technique}</th>
                   <th>{t.history.duration}</th>
                   <th>{t.history.time}</th>
-                  {hasInsights && <th>{t.history.insight}</th>}
+                  {hasInsights && <th>Mood &amp; Note</th>}
                 </tr>
               </thead>
               <tbody>
@@ -97,7 +101,11 @@ export default function HistoryPanel({ refreshKey, onRefresh }: Props) {
                     <td>{fmtDur(s.dur)}</td>
                     <td>{s.time}</td>
                     {hasInsights && (
-                      <td className="history-insight">{s.insight || '—'}</td>
+                      <td className="history-insight">
+                        {s.mood ? <span className="history-mood-emoji">{MOOD_EMOJIS[s.mood - 1]}</span> : null}
+                        {s.insight ? <span>{s.insight}</span> : null}
+                        {!s.mood && !s.insight ? '—' : null}
+                      </td>
                     )}
                   </tr>
                 ))}

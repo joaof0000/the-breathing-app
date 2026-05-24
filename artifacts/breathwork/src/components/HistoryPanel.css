@@ -99,6 +99,14 @@
   font-size: 0.7rem;
 }
 
+.history-mood-emoji {
+  display: inline-block;
+  margin-right: 0.3rem;
+  font-style: normal;
+  font-size: 0.85rem;
+  vertical-align: middle;
+}
+
 .history-empty {
   font-family: 'Newsreader', serif;
   font-size: 0.78rem;

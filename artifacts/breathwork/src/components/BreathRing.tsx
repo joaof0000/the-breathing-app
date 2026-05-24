@@ -17,6 +17,8 @@ interface Props {
   showJournal?: boolean;
   journalText?: string;
   onJournalChange?: (t: string) => void;
+  journalMood?: number;
+  onJournalMoodChange?: (m: number) => void;
   onSaveInsight?: () => void;
   onSkipInsight?: () => void;
   idleIntention?: string;
@@ -25,6 +27,8 @@ interface Props {
 }
 
 const CIRC = 2 * Math.PI * 95;
+
+const MOOD_EMOJIS = ['😔', '😐', '🙂', '😊', '🌟'];
 
 export default function BreathRing({
   fill,
@@ -42,6 +46,8 @@ export default function BreathRing({
   showJournal,
   journalText,
   onJournalChange,
+  journalMood,
+  onJournalMoodChange,
   onSaveInsight,
   onSkipInsight,
   idleIntention,
@@ -110,13 +116,29 @@ export default function BreathRing({
 
         {showJournal && (
           <div className="journal-prompt">
-            <div className="journal-label">{t.ring.journalLabel}</div>
+            <div className="journal-label">How do you feel now?</div>
+            <div className="journal-mood-row">
+              {MOOD_EMOJIS.map((emoji, i) => {
+                const rating = i + 1;
+                return (
+                  <button
+                    key={rating}
+                    className={`journal-mood-btn${journalMood === rating ? ' selected' : ''}`}
+                    onClick={() => onJournalMoodChange?.(journalMood === rating ? 0 : rating)}
+                    title={String(rating)}
+                  >
+                    {emoji}
+                  </button>
+                );
+              })}
+            </div>
             <textarea
               className="journal-textarea"
               placeholder={t.ring.journalPlaceholder}
               value={journalText}
               onChange={e => onJournalChange?.(e.target.value)}
-              rows={3}
+              rows={2}
+              maxLength={200}
             />
             <button className="journal-save-btn" onClick={onSaveInsight}>
               {t.ring.saveInsight}

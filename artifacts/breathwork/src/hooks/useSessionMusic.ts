@@ -15,17 +15,25 @@ export const MUSIC_URLS: Record<string, string> = {
   transmute:   'https://upload.wikimedia.org/wikipedia/commons/4/49/Johann_Sebastian_Bach_-_Chaconne_for_violin_alone.ogg',
 };
 
-export function useSessionMusic(goalKey: string | null, getVolume: () => number) {
-  const audioRef   = useRef<HTMLAudioElement | null>(null);
-  const [enabled, setEnabled] = useState(true);
-  const enabledRef  = useRef(true);
-  useEffect(() => { enabledRef.current = enabled; }, [enabled]);
+export function useSessionMusic(goalKey: string | null) {
+  const audioRef    = useRef<HTMLAudioElement | null>(null);
+  const isActiveRef = useRef(false);          // true once play() has been called
+  const [enabled, setEnabled]         = useState(true);
+  const [musicVolume, setMusicVolume] = useState(45); // 0-100, independent slider
 
-  const goalKeyRef = useRef(goalKey);
-  useEffect(() => { goalKeyRef.current = goalKey; }, [goalKey]);
+  const enabledRef     = useRef(true);
+  const musicVolumeRef = useRef(45);
+  const goalKeyRef     = useRef(goalKey);
 
-  const getVolRef  = useRef(getVolume);
-  useEffect(() => { getVolRef.current = getVolume; }, [getVolume]);
+  useEffect(() => { enabledRef.current     = enabled;     }, [enabled]);
+  useEffect(() => { musicVolumeRef.current = musicVolume; }, [musicVolume]);
+  useEffect(() => { goalKeyRef.current     = goalKey;     }, [goalKey]);
+
+  const applyVolume = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = Math.min(1, musicVolumeRef.current / 100);
+    }
+  }, []);
 
   const getOrCreateAudio = useCallback((): HTMLAudioElement | null => {
     const key = goalKeyRef.current;
@@ -35,8 +43,8 @@ export function useSessionMusic(goalKey: string | null, getVolume: () => number)
     if (!audioRef.current || audioRef.current.getAttribute('data-goal') !== key) {
       audioRef.current?.pause();
       const el = new Audio(url);
-      el.loop  = true;
-      el.volume = Math.min(1, getVolRef.current() * 0.38);
+      el.loop   = true;
+      el.volume = Math.min(1, musicVolumeRef.current / 100);
       el.setAttribute('data-goal', key);
       el.addEventListener('error', () => {
         console.warn('[music] failed to load:', url);
@@ -46,33 +54,46 @@ export function useSessionMusic(goalKey: string | null, getVolume: () => number)
     return audioRef.current;
   }, []);
 
-  const play = useCallback(() => {
-    if (!enabledRef.current) return;
+  const doPlay = useCallback(() => {
     const el = getOrCreateAudio();
     if (!el) return;
+    applyVolume();
     const p = el.play();
     if (p) p.catch((err) => { console.warn('[music] play blocked:', err?.message); });
-  }, [getOrCreateAudio]);
+  }, [getOrCreateAudio, applyVolume]);
 
+  /** Called when the breathing session begins */
+  const play = useCallback(() => {
+    isActiveRef.current = true;
+    if (!enabledRef.current) return;
+    doPlay();
+  }, [doPlay]);
+
+  /** Called when the breathing session ends */
   const stop = useCallback(() => {
+    isActiveRef.current = false;
     if (!audioRef.current) return;
     audioRef.current.pause();
     audioRef.current.currentTime = 0;
   }, []);
 
-  const updateVolume = useCallback((fraction: number) => {
-    if (audioRef.current) {
-      audioRef.current.volume = Math.min(1, fraction * 0.38);
-    }
-  }, []);
-
+  // When re-enabled mid-session, resume immediately
   useEffect(() => {
-    if (!enabled) audioRef.current?.pause();
-  }, [enabled]);
+    if (enabled && isActiveRef.current) {
+      doPlay();
+    } else if (!enabled) {
+      audioRef.current?.pause();
+    }
+  }, [enabled, doPlay]);
+
+  // Keep volume in sync when slider moves
+  useEffect(() => {
+    applyVolume();
+  }, [musicVolume, applyVolume]);
 
   useEffect(() => {
     return () => { audioRef.current?.pause(); };
   }, []);
 
-  return { play, stop, updateVolume, enabled, setEnabled };
+  return { play, stop, enabled, setEnabled, musicVolume, setMusicVolume };
 }

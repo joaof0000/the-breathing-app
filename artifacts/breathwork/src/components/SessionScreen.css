@@ -251,10 +251,18 @@ h1 {
   text-align: right;
 }
 
-/* Music toggle row */
+/* Music block */
+.opt-music-block {
+  background: rgba(229, 169, 60, 0.03);
+  border: 1px solid rgba(229, 169, 60, 0.1);
+  border-radius: 10px;
+  padding: 0.5rem 0.65rem 0.4rem;
+  margin-bottom: 0.65rem;
+}
+
 .opt-music-row {
   align-items: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.35rem;
 }
 
 .opt-music-label {
@@ -265,7 +273,7 @@ h1 {
   background: none;
   border: 1px solid rgba(229, 169, 60, 0.3);
   border-radius: 8px;
-  padding: 0.2rem 0.6rem;
+  padding: 0.15rem 0.55rem;
   font-size: 1rem;
   cursor: pointer;
   transition: border-color 0.2s, opacity 0.2s;
@@ -273,7 +281,20 @@ h1 {
 }
 
 .music-toggle:hover { border-color: var(--gold); }
-.music-off { opacity: 0.4; }
+.music-off { opacity: 0.45; }
+
+.opt-music-vol-row {
+  align-items: center;
+  margin-bottom: 0;
+  transition: opacity 0.2s;
+}
+
+.music-vol-dim { opacity: 0.3; pointer-events: none; }
+
+.opt-music-vol-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+}
 
 /* YouTube row */
 .opt-yt-row {

@@ -85,10 +85,8 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
 
   const getVolume = useCallback(() => volRef.current / 100, []);
   const audio = useAudio(getVolume);
-  const music = useSessionMusic(goalKey ?? null, getVolume);
+  const music = useSessionMusic(goalKey ?? null);
   const { record } = useSessionStorage();
-
-  useEffect(() => { music.updateVolume(volume / 100); }, [volume, music]);
 
   const runningRef = useRef(false);
   const rafRef = useRef<number | null>(null);
@@ -635,15 +633,27 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
             </div>
 
             {goalKey && (
-              <div className="opt-row opt-music-row">
-                <span className="opt-label opt-music-label">♪ {t.session.music}</span>
-                <button
-                  className={`music-toggle ${music.enabled ? 'music-on' : 'music-off'}`}
-                  onClick={() => music.setEnabled(e => !e)}
-                  title={music.enabled ? 'Mute background music' : 'Play background music'}
-                >
-                  {music.enabled ? '🔊' : '🔇'}
-                </button>
+              <div className="opt-music-block">
+                <div className="opt-row opt-music-row">
+                  <span className="opt-label opt-music-label">♪ {t.session.music}</span>
+                  <button
+                    className={`music-toggle ${music.enabled ? 'music-on' : 'music-off'}`}
+                    onClick={() => music.setEnabled(e => !e)}
+                    title={music.enabled ? 'Mute music' : 'Unmute music'}
+                  >
+                    {music.enabled ? '🔊' : '🔇'}
+                  </button>
+                </div>
+                <div className={`opt-row opt-music-vol-row${music.enabled ? '' : ' music-vol-dim'}`}>
+                  <span className="opt-label opt-music-vol-label">{t.session.musicVol}</span>
+                  <input
+                    type="range" min={0} max={100}
+                    value={music.musicVolume}
+                    className="vol-slider music-vol-slider"
+                    onChange={e => music.setMusicVolume(+e.target.value)}
+                  />
+                  <span className="vol-val">{music.musicVolume}%</span>
+                </div>
               </div>
             )}
 

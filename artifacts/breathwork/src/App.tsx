@@ -44,9 +44,7 @@ function LangToggle() {
 type Page = 'welcome' | 'belly-basics' | 'goal' | 'session' | 'breathscience';
 
 function AppInner() {
-  const [page, setPage] = useState<Page>(
-    hasSeenWelcome() ? 'goal' : 'welcome'
-  );
+  const [page, setPage] = useState<Page>('welcome');
   const [selectedTech, setSelectedTech]   = useState<string | null>(null);
   const [selectedGoal, setSelectedGoal]   = useState<string | null>(null);
   const [gratitude,    setGratitude]      = useState('');

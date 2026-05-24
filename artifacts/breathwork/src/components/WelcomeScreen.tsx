@@ -8,14 +8,18 @@ interface Props {
 }
 
 export default function WelcomeScreen({ onNew, onExperienced }: Props) {
-  const [step, setStep] = useState<'name' | 'choice'>('name');
+  const existingName = loadProfile().name;
+  const [step, setStep] = useState<'name' | 'choice'>(
+    existingName ? 'choice' : 'name'
+  );
   const [name, setName] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    if (step !== 'name') return;
     const t = setTimeout(() => inputRef.current?.focus(), 600);
     return () => clearTimeout(t);
-  }, []);
+  }, [step]);
 
   const saveName = (nameVal: string) => {
     const existing = loadProfile();

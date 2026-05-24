@@ -1,3 +1,4 @@
+import { useLang } from '../i18n/LangContext';
 import './BreathRing.css';
 
 interface Props {
@@ -47,8 +48,13 @@ export default function BreathRing({
   idleTechLabel,
   idleGratitude,
 }: Props) {
+  const { t } = useLang();
+  const phases = t.phases as Record<string, string>;
+
   const offset = CIRC * (1 - Math.min(1, Math.max(0, fill)));
   const isIdle = !running && !showWimHofPrompt && !showJournal;
+
+  const displayPhase = phases[phaseName] ?? phaseName;
 
   return (
     <div className={`ring-wrap ${phaseClass}${isIdle ? ' ring-idle' : ''}`}>
@@ -70,23 +76,23 @@ export default function BreathRing({
               <div className="ring-idle-tech">{idleTechLabel}</div>
             )}
             {idleGratitude && (
-              <div className="ring-idle-grateful">Grateful for<br />
+              <div className="ring-idle-grateful">{t.ring.gratefulFor}<br />
                 <span className="ring-idle-grateful-text">{idleGratitude}</span>
               </div>
             )}
             {idleIntention && (
               <div className="ring-idle-intention">"{idleIntention}"</div>
             )}
-            <button className="btn-begin" onClick={onBegin}>Begin</button>
+            <button className="btn-begin" onClick={onBegin}>{t.ring.begin}</button>
           </>
         )}
 
         {running && !showWimHofPrompt && !showJournal && (
           <>
-            <div className="r-phase">{phaseName}</div>
+            <div className="r-phase">{displayPhase}</div>
             <div className="r-count">{countdown}</div>
             {info && <div className="r-info">{info}</div>}
-            <button className="btn-stop" onClick={onStop}>■ Stop</button>
+            <button className="btn-stop" onClick={onStop}>{t.ring.stop}</button>
           </>
         )}
 
@@ -96,7 +102,7 @@ export default function BreathRing({
             {wimHofLiveTimer && <div className="wh-live-timer">{wimHofLiveTimer}</div>}
             {onWimHofStop && (
               <button className="wh-stop-btn" onClick={onWimHofStop}>
-                {wimHofPromptText?.includes('Breathe') ? '■ Stop' : 'Breathe now →'}
+                {t.session.wimhofBreatheNow}
               </button>
             )}
           </div>
@@ -104,19 +110,19 @@ export default function BreathRing({
 
         {showJournal && (
           <div className="journal-prompt">
-            <div className="journal-label">Capture Your Insight</div>
+            <div className="journal-label">{t.ring.journalLabel}</div>
             <textarea
               className="journal-textarea"
-              placeholder="What shifted during this practice?"
+              placeholder={t.ring.journalPlaceholder}
               value={journalText}
               onChange={e => onJournalChange?.(e.target.value)}
               rows={3}
             />
             <button className="journal-save-btn" onClick={onSaveInsight}>
-              Save Insight
+              {t.ring.saveInsight}
             </button>
             <button className="journal-skip-btn" onClick={onSkipInsight}>
-              skip
+              {t.ring.skipInsight}
             </button>
           </div>
         )}

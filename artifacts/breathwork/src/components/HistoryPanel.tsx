@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { loadSessions, saveSessions } from '../hooks/useSessionStorage';
 import { TECH_LABELS } from '../data/techniques';
+import { useLang } from '../i18n/LangContext';
 import './HistoryPanel.css';
 
 interface Props {
@@ -16,6 +17,7 @@ function fmtDur(secs: number) {
 }
 
 export default function HistoryPanel({ refreshKey, onRefresh }: Props) {
+  const { t } = useLang();
   const [filter, setFilter] = useState('all');
   const [open, setOpen] = useState(false);
 
@@ -33,8 +35,8 @@ export default function HistoryPanel({ refreshKey, onRefresh }: Props) {
   const hasInsights = useMemo(() => sessions.some(s => s.insight), [sessions]);
 
   const exportCSV = () => {
-    const headers = ['Date', 'Time', 'Technique', 'Duration'];
-    if (hasInsights) headers.push('Insight');
+    const headers = [t.history.date, t.history.time, t.history.technique, t.history.duration];
+    if (hasInsights) headers.push(t.history.insight);
     const rows = [headers];
     sessions.forEach(s => {
       const row = [s.date, s.time, TECH_LABELS[s.tech] || s.tech, fmtDur(s.dur)];
@@ -49,7 +51,7 @@ export default function HistoryPanel({ refreshKey, onRefresh }: Props) {
   };
 
   const clearHistory = () => {
-    if (!confirm('Clear all session history? This cannot be undone.')) return;
+    if (!confirm(t.session.clearConfirm)) return;
     saveSessions([]);
     onRefresh();
   };
@@ -57,7 +59,7 @@ export default function HistoryPanel({ refreshKey, onRefresh }: Props) {
   return (
     <div className="history-section">
       <button className="history-toggle" onClick={() => setOpen(o => !o)}>
-        <span>Session History ({sessions.length})</span>
+        <span>{t.history.title(sessions.length)}</span>
         <span className="history-caret">{open ? '▲' : '▼'}</span>
       </button>
 
@@ -65,26 +67,26 @@ export default function HistoryPanel({ refreshKey, onRefresh }: Props) {
         <div className="history-body">
           {techs.length > 1 && (
             <div className="history-filters">
-              <button className={`hf-btn ${filter === 'all' ? 'on' : ''}`} onClick={() => setFilter('all')}>All</button>
-              {techs.map(t => (
-                <button key={t} className={`hf-btn ${filter === t ? 'on' : ''}`} onClick={() => setFilter(t)}>
-                  {TECH_LABELS[t] || t}
+              <button className={`hf-btn ${filter === 'all' ? 'on' : ''}`} onClick={() => setFilter('all')}>{t.history.all}</button>
+              {techs.map(tc => (
+                <button key={tc} className={`hf-btn ${filter === tc ? 'on' : ''}`} onClick={() => setFilter(tc)}>
+                  {TECH_LABELS[tc] || tc}
                 </button>
               ))}
             </div>
           )}
 
           {filtered.length === 0 ? (
-            <div className="history-empty">No sessions recorded yet</div>
+            <div className="history-empty">{t.history.empty}</div>
           ) : (
             <table className="history-table">
               <thead>
                 <tr>
-                  <th>Date</th>
-                  <th>Technique</th>
-                  <th>Duration</th>
-                  <th>Time</th>
-                  {hasInsights && <th>Insight</th>}
+                  <th>{t.history.date}</th>
+                  <th>{t.history.technique}</th>
+                  <th>{t.history.duration}</th>
+                  <th>{t.history.time}</th>
+                  {hasInsights && <th>{t.history.insight}</th>}
                 </tr>
               </thead>
               <tbody>
@@ -106,8 +108,8 @@ export default function HistoryPanel({ refreshKey, onRefresh }: Props) {
           <div className="history-actions">
             {sessions.length > 0 && (
               <>
-                <button className="history-export" onClick={exportCSV}>Export CSV ↓</button>
-                <button className="history-export" onClick={clearHistory} style={{ color: 'var(--fire)' }}>Clear history</button>
+                <button className="history-export" onClick={exportCSV}>{t.history.exportCSV}</button>
+                <button className="history-export" onClick={clearHistory} style={{ color: 'var(--fire)' }}>{t.history.clearHistory}</button>
               </>
             )}
           </div>

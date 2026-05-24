@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { loadSessions } from '../hooks/useSessionStorage';
+import { useLang } from '../i18n/LangContext';
 import './Heatmap.css';
 
 interface Props {
@@ -20,9 +21,8 @@ function intensityClass(mins: number | undefined) {
   return 'hm-5';
 }
 
-const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
 export default function Heatmap({ refreshKey }: Props) {
+  const { t } = useLang();
   const tooltipRef = useRef<HTMLDivElement>(null);
   const [tooltip, setTooltip] = useState<{ text: string; x: number; y: number } | null>(null);
 
@@ -37,32 +37,32 @@ export default function Heatmap({ refreshKey }: Props) {
       dayMap[s.date] += Math.round((s.dur || 300) / 60);
     });
 
-    // Build 90 days back from today
     const end = new Date(today);
     const start = new Date(today);
     start.setDate(start.getDate() - 89);
 
-    // Align to Sunday
     const startDow = start.getDay();
     const alignedStart = new Date(start);
     alignedStart.setDate(alignedStart.getDate() - startDow);
 
-    const weeks: Array<{ monthLabel: string | null; days: Array<{ key: string | null; mins: number | undefined; label: string }> }> = [];
+    const weeks: Array<{ monthLabel: string | null; monthIndex: number; days: Array<{ key: string | null; mins: number | undefined; mins_raw: number; dateStr: string }> }> = [];
 
     const cur = new Date(alignedStart);
     while (cur <= end) {
-      const week: typeof weeks[0] = { monthLabel: null, days: [] };
+      const week: typeof weeks[0] = { monthLabel: null, monthIndex: cur.getMonth(), days: [] };
       for (let d = 0; d < 7; d++) {
         const key = dateKey(cur);
         const inRange = cur >= start && cur <= end;
         const isFirstOfMonth = cur.getDate() === 1;
         if (d === 0 && isFirstOfMonth) {
-          week.monthLabel = MONTHS[cur.getMonth()];
+          week.monthIndex = cur.getMonth();
+          week.monthLabel = '__show__';
         }
         week.days.push({
           key: inRange ? key : null,
           mins: inRange ? (dayMap[key] ?? 0) : undefined,
-          label: inRange ? `${cur.toDateString()} — ${dayMap[key] ? dayMap[key] + ' min' : 'rest day'}` : '',
+          mins_raw: dayMap[key] ?? 0,
+          dateStr: inRange ? cur.toDateString() : '',
         });
         cur.setDate(cur.getDate() + 1);
       }
@@ -72,29 +72,34 @@ export default function Heatmap({ refreshKey }: Props) {
     return { weeks, year: yr };
   }, [refreshKey]);
 
-  const handleMouseEnter = (e: React.MouseEvent, label: string) => {
-    if (!label) return;
+  const handleMouseEnter = (e: React.MouseEvent, dateStr: string, mins_raw: number) => {
+    if (!dateStr) return;
     const rect = (e.target as HTMLElement).getBoundingClientRect();
+    const label = mins_raw
+      ? `${dateStr} — ${mins_raw} ${t.heatmap.min}`
+      : `${dateStr} — ${t.heatmap.restDay}`;
     setTooltip({ text: label, x: rect.left + rect.width / 2, y: rect.top - 8 });
   };
 
   return (
     <div className="heatmap-section">
       <div className="heatmap-title">
-        <span>Activity — 90 days</span>
+        <span>{t.heatmap.title}</span>
         <span className="heatmap-year">{year}</span>
       </div>
       <div className="heatmap-scroll">
         <div className="heatmap-grid">
           {weeks.map((week, wi) => (
             <div key={wi} className="heatmap-month-col">
-              <div className="heatmap-month-label">{week.monthLabel || ''}</div>
+              <div className="heatmap-month-label">
+                {week.monthLabel === '__show__' ? (t.heatmap.months[week.monthIndex] ?? '') : ''}
+              </div>
               <div className="heatmap-week">
                 {week.days.map((day, di) => (
                   <div
                     key={di}
                     className={`hm-day ${intensityClass(day.mins)}`}
-                    onMouseEnter={day.key ? e => handleMouseEnter(e, day.label) : undefined}
+                    onMouseEnter={day.key ? e => handleMouseEnter(e, day.dateStr, day.mins_raw) : undefined}
                     onMouseLeave={() => setTooltip(null)}
                   />
                 ))}
@@ -104,14 +109,14 @@ export default function Heatmap({ refreshKey }: Props) {
         </div>
       </div>
       <div className="heatmap-legend">
-        <span>Less</span>
+        <span>{t.heatmap.less}</span>
         <span className="hm-leg" style={{ background: '#000000', border: '1px solid rgba(255,255,255,0.08)' }} />
         <span className="hm-leg" style={{ background: '#1a3d1a' }} />
         <span className="hm-leg" style={{ background: '#1f5c1f' }} />
         <span className="hm-leg" style={{ background: '#278527' }} />
         <span className="hm-leg" style={{ background: '#2eb02e' }} />
         <span className="hm-leg" style={{ background: '#3ddd3d' }} />
-        <span>More</span>
+        <span>{t.heatmap.more}</span>
       </div>
       {tooltip && (
         <div

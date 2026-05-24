@@ -3,6 +3,8 @@ import GoalScreen from './components/GoalScreen';
 import SessionScreen from './components/SessionScreen';
 import SacredGeometry from './components/SacredGeometry';
 import WelcomeScreen from './components/WelcomeScreen';
+import { LangProvider, useLang } from './i18n/LangContext';
+import { LANGS } from './i18n/lang';
 import './App.css';
 import './components/SacredGeometry.css';
 
@@ -18,7 +20,25 @@ function markWelcomeSeen() {
   catch { /* empty */ }
 }
 
-export default function App() {
+function LangToggle() {
+  const { lang, setLang } = useLang();
+  return (
+    <div className="lang-toggle">
+      {LANGS.map(l => (
+        <button
+          key={l}
+          className={`lang-btn ${lang === l ? 'on' : ''}`}
+          onClick={() => setLang(l)}
+          aria-label={l.toUpperCase()}
+        >
+          {l.toUpperCase()}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function AppInner() {
   const [page, setPage] = useState<'welcome' | 'goal' | 'session'>(
     hasSeenWelcome() ? 'goal' : 'welcome'
   );
@@ -45,6 +65,8 @@ export default function App() {
       <div className="glow glow-3" />
       <SacredGeometry />
 
+      <LangToggle />
+
       {page === 'welcome' ? (
         <WelcomeScreen onBegin={handleBegin} />
       ) : page === 'goal' ? (
@@ -61,5 +83,13 @@ export default function App() {
         />
       )}
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <LangProvider>
+      <AppInner />
+    </LangProvider>
   );
 }

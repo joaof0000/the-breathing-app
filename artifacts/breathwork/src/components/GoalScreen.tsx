@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { GOAL_BUTTONS, GOALS } from '../data/goals';
 import GratitudePicker from './GratitudePicker';
+import { useLang } from '../i18n/LangContext';
 import heroImg from '../assets/hero.png';
 import './GoalScreen.css';
 
@@ -57,40 +58,44 @@ const TECH_COLORS: Record<string, string> = {
 };
 
 export default function GoalScreen({ onSelectTech, gratitude, onGratitudeChange }: Props) {
+  const { t } = useLang();
   const [activePicker, setActivePicker] = useState<string | null>(null);
 
   const goal    = activePicker ? GOALS[activePicker] : null;
   const goalBtn = activePicker ? GOAL_BUTTONS.find(b => b.key === activePicker) : null;
 
+  const goalLabels = t.goals as Record<string, { label: string; sub: string }>;
+
   return (
     <div className="page1">
       <div className="p1-wrap">
 
-        {/* Hero image */}
         <div className="p1-hero">
           <img src={heroImg} alt="Meditation sanctuary" />
         </div>
 
         <div className="p1-title">Breathwork</div>
-        <p className="p1-sub">What do you need today?</p>
+        <p className="p1-sub">{t.goal.subtitle}</p>
 
         <div className="goal-grid">
-          {GOAL_BUTTONS.map(btn => (
-            <button key={btn.key} className="goal-btn" onClick={() => setActivePicker(btn.key)}>
-              <span className="goal-icon">{btn.icon}</span>
-              <span className="goal-label">{btn.label}</span>
-              <span className="goal-sub">{btn.sub}</span>
-            </button>
-          ))}
+          {GOAL_BUTTONS.map(btn => {
+            const gl = goalLabels[btn.key] ?? { label: btn.label, sub: btn.sub };
+            return (
+              <button key={btn.key} className="goal-btn" onClick={() => setActivePicker(btn.key)}>
+                <span className="goal-icon">{btn.icon}</span>
+                <span className="goal-label">{gl.label}</span>
+                <span className="goal-sub">{gl.sub}</span>
+              </button>
+            );
+          })}
         </div>
 
-        {/* Gratitude picker — fills the space below the grid */}
         <div className="p1-gratitude">
           <GratitudePicker selected={gratitude} onSelect={onGratitudeChange} />
         </div>
 
         <button className="p1-browse" onClick={() => onSelectTech(null)}>
-          Browse all techniques →
+          {t.goal.browse}
         </button>
       </div>
 
@@ -99,22 +104,23 @@ export default function GoalScreen({ onSelectTech, gratitude, onGratitudeChange 
           className="picker-overlay open"
           onClick={e => { if (e.target === e.currentTarget) setActivePicker(null); }}
         >
-          {/* Visual header — fills the blank space above the sheet */}
           <div className="picker-header-visual" onClick={() => setActivePicker(null)}>
             <div className="phv-icon">{goalBtn?.icon}</div>
             <div className="phv-label">
-              {goal.label.replace(/^[^\w]*/, '').replace(/\s*—.*$/, '')}
+              {(goalLabels[activePicker]?.label ?? goal.label).replace(/^[^\w]*/, '').replace(/\s*—.*$/, '')}
             </div>
-            <div className="phv-sub">{goalBtn?.sub}</div>
-            <div className="phv-hint">tap outside to close</div>
+            <div className="phv-sub">{goalLabels[activePicker]?.sub ?? goalBtn?.sub}</div>
+            <div className="phv-hint">{t.goal.tapOutside}</div>
           </div>
 
           <div className="picker-sheet">
-            <div className="picker-prompt">Choose your technique</div>
+            <div className="picker-prompt">{t.goal.chooseYourTech}</div>
             <div className="picker-choices">
               {goal.choices.map(c => {
                 const icon  = TECH_ICONS[c.tech]  || '·';
                 const color = TECH_COLORS[c.tech] || 'rgba(229,169,60,0.12)';
+                const infoEntry = (t.info as Record<string, { title: string }>)[c.tech];
+                const techName = infoEntry?.title ?? c.name;
                 return (
                   <button
                     key={c.tech}
@@ -123,14 +129,14 @@ export default function GoalScreen({ onSelectTech, gratitude, onGratitudeChange 
                   >
                     <span className="pc-icon" style={{ background: color }}>{icon}</span>
                     <div>
-                      <div className="pc-name">{c.name}</div>
+                      <div className="pc-name">{techName}</div>
                       <div className="pc-desc">{c.desc}</div>
                     </div>
                   </button>
                 );
               })}
             </div>
-            <button className="picker-cancel" onClick={() => setActivePicker(null)}>← Back</button>
+            <button className="picker-cancel" onClick={() => setActivePicker(null)}>{t.goal.back}</button>
           </div>
         </div>
       )}

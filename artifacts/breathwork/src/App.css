@@ -53,3 +53,43 @@
   transform: translateX(-50%);
   background: radial-gradient(ellipse at center, rgba(229,169,60,0.06) 0%, transparent 68%);
 }
+
+/* ── Language toggle ── */
+.lang-toggle {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 2000;
+  display: flex;
+  gap: 2px;
+  background: rgba(44, 31, 20, 0.75);
+  border: 1px solid rgba(229, 169, 60, 0.18);
+  border-radius: 6px;
+  padding: 3px;
+  backdrop-filter: blur(8px);
+}
+
+.lang-btn {
+  background: transparent;
+  border: none;
+  color: var(--dim);
+  font-family: inherit;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 3px 7px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  line-height: 1;
+}
+
+.lang-btn:hover {
+  color: var(--text);
+  background: rgba(229, 169, 60, 0.08);
+}
+
+.lang-btn.on {
+  background: rgba(229, 169, 60, 0.18);
+  color: var(--gold);
+}

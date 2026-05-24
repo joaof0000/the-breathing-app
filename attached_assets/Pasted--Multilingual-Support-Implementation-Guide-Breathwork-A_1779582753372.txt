@@ -1,0 +1,267 @@
+# Multilingual Support Implementation Guide
+## Breathwork App — EN / PT / ES Language Toggle
+
+**CRITICAL RULES — Read before starting:**
+- Complete each step fully before moving to the next
+- Run all verification checks at the end of every step
+- Report PASS or FAIL for each check before proceeding
+- Do not modify anything outside the scope of the current step
+- If any check fails, fix it before moving on
+- Zero JavaScript console errors required at all times
+
+---
+
+## Step 1 — Add Language Toggle UI Only
+
+**What to do:**
+Add three fixed-position buttons (EN, PT, ES) to the top-right corner of the screen. Visible on both Page 1 and Page 2 at all times. No logic yet — clicking only logs to console.
+
+**Verification checks:**
+- [ ] EN, PT, ES buttons visible on Page 1
+- [ ] EN, PT, ES buttons visible on Page 2
+- [ ] Buttons do not overlap any existing UI
+- [ ] EN button has active/highlighted state by default
+- [ ] Clicking each button logs the language code to console
+- [ ] Zero console errors
+- [ ] No existing functionality broken
+
+---
+
+## Step 2 — Create Translations File
+
+**What to do:**
+Create a new file called `lang.js`. Inside it, create a `TRANSLATIONS` object with three keys: `en`, `pt`, `es`. For now, add only these strings as a test:
+- Page 1 title
+- Page 1 subtitle ("What do you need today?")
+- All 8 goal button labels (Energy, Focus, ADHD/Blink, Calm, Sleep, Spiritual, Craving, Anger, Performance, Health, Trauma, Transmute)
+- All 8 goal button subtitles
+- The "Browse all techniques" link
+
+Do not connect this file to the UI yet. Just create it and show it.
+
+**Verification checks:**
+- [ ] `lang.js` file exists in the project
+- [ ] `TRANSLATIONS` object has `en`, `pt`, and `es` keys
+- [ ] Every string exists in all three languages — no missing keys
+- [ ] File imports correctly with no errors
+- [ ] Zero console errors
+
+---
+
+## Step 3 — Connect Language Toggle to Page 1 Only
+
+**What to do:**
+- Add `data-i18n="key_name"` attribute to every text element on Page 1
+- Write the `setLanguage(lang)` function that reads those attributes and updates all text
+- Connect the EN, PT, ES buttons to call `setLanguage()`
+- Highlight the active language button
+- Do not touch Page 2, info drawers, or any other section yet
+
+**Verification checks:**
+- [ ] Clicking PT — all Page 1 text switches to Portuguese
+- [ ] Clicking ES — all Page 1 text switches to Spanish
+- [ ] Clicking EN — all text returns to English correctly
+- [ ] Active button is highlighted for the selected language
+- [ ] No English text remains visible when PT or ES is selected on Page 1
+- [ ] Page 2 is completely untouched
+- [ ] Zero console errors
+
+---
+
+## Step 4 — Add All Remaining Strings to Translations File
+
+**What to do:**
+Expand `lang.js` to include every user-facing string in the entire app:
+- All technique tab names (4-7-8, Box, Wim Hof, Tummo, Nadi Shodhana, Surya Bhedana, Chandra Bhedana, Ujjayi, Kapalabhati, Bhastrika, Bhramari, Sitali, Murcha, 9 Purification, Coherent, Physio Sigh, Rebirthing, Transform. Breath, Reverse Breath, Kumbhaka, Transmutation, Ham-Sah, Blink, Custom)
+- Begin / Stop button
+- Duration label and preset buttons (1, 2, 3, 5, 10, 20 min)
+- "How does this work?" link
+- "Recommended:" label
+- All phase names shown in the ring during breathing (Inhale, Hold, Exhale, Rest, etc.)
+- Wim Hof retention prompt text and button
+- Volume label
+- Sessions tracker: Total, Streak, Today labels
+- "Last:" text
+- "+ log a session manually" button
+- Reference table headers: Goal, #1 Choice, Also Good
+- All 14 reference table goal names
+- History section: "View full session history", table headers (Technique, Date, Time, Duration), "Export as CSV"
+- "Activity — 3 months" heatmap title
+- Heatmap legend labels (0, 30+ min)
+
+Do not connect to UI yet. Show the completed file.
+
+**Verification checks:**
+- [ ] Every string listed above exists in `en`, `pt`, and `es`
+- [ ] No key is missing from any language
+- [ ] All three languages are complete — no placeholders or empty strings
+- [ ] Zero console errors
+
+---
+
+## Step 5 — Connect Page 2 Navigation and Controls
+
+**What to do:**
+Add `data-i18n` attributes and connect `setLanguage()` to:
+- All technique tab labels
+- Begin / Stop button
+- Duration label and preset button labels
+- "How does this work?" link
+- "Recommended:" label text
+- Volume label
+- The phase label and ring info text shown during breathing
+- Wim Hof retention prompt and button
+
+Do not touch info drawers or the tracker yet.
+
+**Verification checks:**
+- [ ] Switch to PT — all tabs display in Portuguese
+- [ ] Switch to ES — all tabs display in Spanish
+- [ ] Begin/Stop button switches language correctly
+- [ ] Duration presets switch language correctly
+- [ ] Phase labels in the ring switch language during a session
+- [ ] Switch back to EN — everything returns correctly
+- [ ] Info drawers untouched
+- [ ] Tracker untouched
+- [ ] Zero console errors
+
+---
+
+## Step 6 — Translate Info Drawers (First 5)
+
+**What to do:**
+Add translations for the info drawer content of these 5 techniques only:
+1. 4-7-8
+2. Box Breathing
+3. Wim Hof
+4. Bhramari
+5. Ham-Sah
+
+Translate all text inside each drawer — headings, body text, tip boxes, warning boxes, time-to-results block. Do not translate the remaining technique drawers yet.
+
+**Verification checks:**
+- [ ] Switch to PT — open 4-7-8 drawer — all text is in Portuguese
+- [ ] Switch to ES — open Box drawer — all text is in Spanish
+- [ ] Switch to PT — open Wim Hof drawer — all text is in Portuguese
+- [ ] Switch to ES — open Bhramari drawer — all text is in Spanish
+- [ ] Switch to PT — open Ham-Sah drawer — all text is in Portuguese
+- [ ] Switch back to EN — all 5 drawers return to English
+- [ ] Remaining drawers are completely untouched
+- [ ] Zero console errors
+
+---
+
+## Step 7 — Translate Remaining Info Drawers
+
+**What to do:**
+Add translations for all remaining technique info drawers:
+- Tummo, Nadi Shodhana, Surya Bhedana, Chandra Bhedana, Ujjayi, Kapalabhati, Bhastrika, Sitali, Murcha, 9 Purification Breaths, Coherent Breathing, Physiological Sigh, Rebirthing, Transformational Breath, Reverse Breathing, Kumbhaka, Transmutation, Blink, Custom
+
+Same process as Step 6 — all text inside each drawer must switch language.
+
+**Verification checks:**
+- [ ] Switch to PT — open Tummo drawer — all text is in Portuguese
+- [ ] Switch to ES — open Kapalabhati drawer — all text is in Spanish
+- [ ] Switch to PT — open Coherent Breathing drawer — all text is in Portuguese
+- [ ] Switch to ES — open Physiological Sigh drawer — all text is in Spanish
+- [ ] Switch back to EN — all drawers return to English
+- [ ] Zero console errors
+
+---
+
+## Step 8 — Add YouTube Links by Language (Test Batch First)
+
+**What to do — Part A (test batch):**
+Update the YouTube link system so each technique serves a language-specific URL. Implement for these 5 techniques only first:
+
+| Technique | EN | PT | ES |
+|---|---|---|---|
+| 4-7-8 | `youtube.com/results?search_query=andrew+weil+4-7-8+breathing` | `youtube.com/watch?v=2KK_HMEx2BY` | `youtube.com/watch?v=aRpQipIwaMs` |
+| Box | `youtube.com/results?search_query=box+breathing+tutorial+navy+seal` | `youtube.com/watch?v=p4OOnTE7ab4` | `youtube.com/watch?v=M42cnoIC-_0` |
+| Wim Hof | `youtube.com/watch?v=tybOi4hjZFQ` | `youtube.com/watch?v=UJBknAsxfrA` | `youtube.com/watch?v=hqJZR4d80Do` |
+| Bhramari | `youtube.com/results?search_query=bhramari+pranayama+bee+breath` | `youtube.com/watch?v=fXkAxmj7HQs` | `youtube.com/results?search_query=bhramari+pranayama+respiracion+abeja+espanol` |
+| Physiological Sigh | `youtube.com/watch?v=rBdhqBGqiMc` | `youtube.com/results?search_query=suspiro+fisiologico+Huberman+portugues` | `youtube.com/results?search_query=suspiro+fisiologico+Huberman+espanol` |
+
+**Verification checks — Part A:**
+- [ ] Switch to PT — click 4-7-8 YouTube button — goes to Portuguese video
+- [ ] Switch to ES — click Box YouTube button — goes to Spanish video
+- [ ] Switch to EN — click Wim Hof YouTube button — goes to English video
+- [ ] All 5 test techniques serve correct language URLs
+- [ ] Remaining techniques YouTube buttons still work as before
+- [ ] Zero console errors
+
+**What to do — Part B (remaining techniques):**
+Only proceed to Part B after Part A passes all checks.
+
+For all remaining techniques, use language-specific YouTube search URLs:
+- PT pattern: `youtube.com/results?search_query=[technique+name+in+portuguese]+tutorial`
+- ES pattern: `youtube.com/results?search_query=[technique+name+in+spanish]+tutorial`
+
+**Verification checks — Part B:**
+- [ ] Switch to PT — click YouTube button on Tummo — URL contains Portuguese search terms
+- [ ] Switch to ES — click YouTube button on Kapalabhati — URL contains Spanish search terms
+- [ ] All techniques serve language-appropriate URLs
+- [ ] Zero console errors
+
+---
+
+## Step 9 — Translate Tracker, Table, and History
+
+**What to do:**
+Connect `setLanguage()` to:
+- Sessions tracker: Total, Streak, Today labels
+- "Last:" text and technique names in tracker
+- "+ log a session manually" button
+- Reference table: all column headers, all 14 goal names, all technique names in #1 Choice and Also Good columns
+- History panel: toggle button text, table headers (Technique, Date, Time, Duration), "Export as CSV" button, filter buttons
+- Heatmap title "Activity — 3 months" and legend labels
+- Technique names in the history log rows
+
+**Verification checks:**
+- [ ] Switch to PT — tracker labels display in Portuguese
+- [ ] Switch to ES — reference table headers display in Spanish
+- [ ] Switch to PT — history panel text displays in Portuguese
+- [ ] Switch to ES — heatmap title displays in Spanish
+- [ ] Technique names in history rows switch language
+- [ ] Switch back to EN — everything returns correctly
+- [ ] Zero console errors
+
+---
+
+## Step 10 — Remember Language Choice + Final Verification
+
+**What to do — Part A:**
+Save the user's language choice to `localStorage` with the key `breathwork_lang`. On every page load, read this value and call `setLanguage()` with it before rendering anything. Default to `en` if nothing is saved.
+
+**Verification checks — Part A:**
+- [ ] Switch to PT — reload the page — app opens in Portuguese
+- [ ] Switch to ES — reload the page — app opens in Spanish
+- [ ] Clear localStorage — reload — app opens in English by default
+- [ ] Zero console errors
+
+**What to do — Part B — Full final verification:**
+Run through every check below. Fix anything that fails before marking complete.
+
+**Final verification checklist:**
+- [ ] EN — Page 1 — all text in English
+- [ ] PT — Page 1 — all text in Portuguese, no English visible
+- [ ] ES — Page 1 — all text in Spanish, no English visible
+- [ ] EN — Page 2 — all tabs, buttons, labels in English
+- [ ] PT — Page 2 — all tabs, buttons, labels in Portuguese
+- [ ] ES — Page 2 — all tabs, buttons, labels in Spanish
+- [ ] EN — open any info drawer — all text in English
+- [ ] PT — open any info drawer — all text in Portuguese
+- [ ] ES — open any info drawer — all text in Spanish
+- [ ] EN — YouTube button — English URL
+- [ ] PT — YouTube button — Portuguese URL
+- [ ] ES — YouTube button — Spanish URL
+- [ ] Tracker labels switch correctly in all 3 languages
+- [ ] Reference table switches correctly in all 3 languages
+- [ ] History panel switches correctly in all 3 languages
+- [ ] Language choice survives page reload
+- [ ] A completed session logs correctly regardless of active language
+- [ ] The heatmap renders correctly in all 3 languages
+- [ ] Open browser console — zero JavaScript errors in any language
+- [ ] Test on mobile viewport — toggle buttons do not overlap content
+
+**Only mark the task complete when every single check above shows PASS.**

@@ -9,6 +9,8 @@ import ReferenceTable from './ReferenceTable';
 import { TABS, NOSTRIL_TECHS, PUMP_TECHS, YT_LINKS, YT_LABELS, REC_DURATION, TECH_LABELS, getPhases } from '../data/techniques';
 import { useAudio } from '../hooks/useAudio';
 import { useSessionStorage, addInsight } from '../hooks/useSessionStorage';
+import { useLang } from '../i18n/LangContext';
+import type { Translations } from '../i18n/lang';
 import './SessionScreen.css';
 
 interface Props {
@@ -27,7 +29,7 @@ const INTENTION_ANCHORS = [
   'To transmute restless energy into focused clarity.',
   'To practice showing up — one breath at a time.',
   'To feel, rather than think, my way through this moment.',
-  'To honor my body\'s intelligence and wisdom.',
+  "To honor my body's intelligence and wisdom.",
   'To open space for healing without forcing anything.',
   'To be present with whatever arises — fully and without resistance.',
 ];
@@ -39,6 +41,10 @@ function fmtTime(s: number) {
 }
 
 export default function SessionScreen({ initialTech, onBack, gratitude }: Props) {
+  const { t } = useLang();
+  const tRef = useRef<Translations>(t);
+  useEffect(() => { tRef.current = t; }, [t]);
+
   const [tech, setTech] = useState(initialTech || '478');
   const [volume, setVolume] = useState(60);
   const [durMin, setDurMin] = useState(5);
@@ -51,28 +57,23 @@ export default function SessionScreen({ initialTech, onBack, gratitude }: Props)
   const [running, setRunning] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
-  // Intention state
   const [intention, setIntention] = useState('');
   const [inspireIdx, setInspireIdx] = useState(0);
   const [intentionFlash, setIntentionFlash] = useState(false);
 
-  // Journal state
   const [journalMode, setJournalMode] = useState(false);
   const [journalText, setJournalText] = useState('');
   const lastSessionTsRef = useRef<number>(0);
 
-  // Ring state
   const [fill, setFill] = useState(0);
   const [phaseClass, setPhaseClass] = useState('');
   const [phaseName, setPhaseName] = useState('');
   const [countdown, setCountdown] = useState('');
   const [ringInfo, setRingInfo] = useState('');
 
-  // Nostril state
   const [nostrilL, setNostrilL] = useState('idle');
   const [nostrilR, setNostrilR] = useState('idle');
 
-  // Wim Hof state
   const [whPromptText, setWhPromptText] = useState('');
   const [whLiveTimer, setWhLiveTimer] = useState('');
   const [whWaiting, setWhWaiting] = useState(false);
@@ -84,7 +85,6 @@ export default function SessionScreen({ initialTech, onBack, gratitude }: Props)
   const audio = useAudio(getVolume);
   const { record } = useSessionStorage();
 
-  // Refs for engine control
   const runningRef = useRef(false);
   const rafRef = useRef<number | null>(null);
   const whRafRef = useRef<number | null>(null);
@@ -140,7 +140,6 @@ export default function SessionScreen({ initialTech, onBack, gratitude }: Props)
     stopAllEngines();
   }, [record, tech, stopAllEngines]);
 
-  // Duration-based engine
   const startDuration = useCallback((techKey: string) => {
     const totalSecs = durMin * 60;
     const phases = getPhases(techKey, customIn, customH1, customOut, customH2);
@@ -202,7 +201,6 @@ export default function SessionScreen({ initialTech, onBack, gratitude }: Props)
     rafRef.current = requestAnimationFrame(tick);
   }, [durMin, customIn, customH1, customOut, customH2, audio, finishSession]);
 
-  // Pump engine
   const startPump = useCallback((techKey: string) => {
     const totalSecs = durMin * 60;
     const bpm = techKey === 'bhastrika' ? 50 : 80;
@@ -211,8 +209,11 @@ export default function SessionScreen({ initialTech, onBack, gratitude }: Props)
     let lastTime = performance.now();
     sessionStartRef.current = Date.now();
 
+    const pumpPhaseName = techKey === 'bhastrika' ? 'Pump — Full Force' : 'Pump — Sharp Exhale';
+    const restPhaseName = 'Rest — Breathe naturally';
+
     setPhaseClass('p-fire');
-    setPhaseName(techKey === 'bhastrika' ? 'Pump — Full Force' : 'Pump — Sharp Exhale');
+    setPhaseName(pumpPhaseName);
     setFill(0);
     audio.S.fire();
 
@@ -227,12 +228,12 @@ export default function SessionScreen({ initialTech, onBack, gratitude }: Props)
         setCountdown(String(count));
         setFill(f => (f + (1 / 30)) % 1);
         if (count % 30 === 0) {
-          setPhaseName('Rest — Breathe naturally');
+          setPhaseName(restPhaseName);
           setPhaseClass('p-inhale');
           audio.S.recov();
           setTimeout(() => {
             if (runningRef.current) {
-              setPhaseName(techKey === 'bhastrika' ? 'Pump — Full Force' : 'Pump — Sharp Exhale');
+              setPhaseName(pumpPhaseName);
               setPhaseClass('p-fire');
               audio.S.fire();
             }
@@ -244,7 +245,6 @@ export default function SessionScreen({ initialTech, onBack, gratitude }: Props)
     rafRef.current = requestAnimationFrame(tick);
   }, [durMin, audio, finishSession]);
 
-  // Bhramari engine
   const startBhramari = useCallback(() => {
     const totalSecs = durMin * 60;
     const phases = [
@@ -291,7 +291,6 @@ export default function SessionScreen({ initialTech, onBack, gratitude }: Props)
     rafRef.current = requestAnimationFrame(tick);
   }, [durMin, audio, finishSession]);
 
-  // Wim Hof engine
   const startWimHof = useCallback(() => {
     let round = 0;
     let breathCount = 0;
@@ -307,8 +306,8 @@ export default function SessionScreen({ initialTech, onBack, gratitude }: Props)
       breathCount = 0;
       whRoundRef.current = round;
       setPhaseClass('p-fire');
-      setPhaseName(`Round ${round} — Power Breaths`);
-      setRingInfo(`Breath 1 of ${BREATH_COUNT}`);
+      setPhaseName(tRef.current.session.wimhofRound(round));
+      setRingInfo(tRef.current.session.wimhofBreath(1, BREATH_COUNT));
       setFill(0);
       setCountdown('');
       audio.powerBreathTone();
@@ -321,11 +320,11 @@ export default function SessionScreen({ initialTech, onBack, gratitude }: Props)
           breathCount++;
           audio.powerBreathTone();
           setFill(breathCount / BREATH_COUNT);
-          setRingInfo(`Breath ${breathCount} of ${BREATH_COUNT}`);
+          setRingInfo(tRef.current.session.wimhofBreath(breathCount, BREATH_COUNT));
           if (breathCount >= BREATH_COUNT) {
             audio.S.exhale();
             setPhaseClass('p-ret');
-            setPhaseName('Exhale fully — Hold empty');
+            setPhaseName(tRef.current.session.wimhofExhale);
             setRingInfo('');
             setFill(0);
             whWaitingRef.current = true;
@@ -334,7 +333,7 @@ export default function SessionScreen({ initialTech, onBack, gratitude }: Props)
             const retLoop = (_ts: number) => {
               if (!runningRef.current || !whWaitingRef.current) return;
               setWhLiveTimer(fmtTime(Math.floor((Date.now() - whRetStartRef.current) / 1000)));
-              setWhPromptText('Hold empty lungs. Tap when you need to breathe.');
+              setWhPromptText(tRef.current.session.wimhofRetention);
               whRafRef.current = requestAnimationFrame(retLoop);
             };
             whRafRef.current = requestAnimationFrame(retLoop);
@@ -343,8 +342,8 @@ export default function SessionScreen({ initialTech, onBack, gratitude }: Props)
               setWhWaiting(false);
               if (whRafRef.current) { cancelAnimationFrame(whRafRef.current); whRafRef.current = null; }
               setPhaseClass('p-inhale');
-              setPhaseName('Deep Inhale — Hold 15s');
-              setRingInfo('Recovery breath');
+              setPhaseName(tRef.current.session.wimhofRecovPhase);
+              setRingInfo(tRef.current.session.wimhofRecovery);
               setFill(0);
               setWhLiveTimer('');
               setWhPromptText('');
@@ -376,7 +375,6 @@ export default function SessionScreen({ initialTech, onBack, gratitude }: Props)
     doRound();
   }, [whRounds, audio, finishSession]);
 
-  // Launch engines — called by beginSession (direct or after flash)
   const launchEngines = useCallback(() => {
     setRunning(true);
     runningRef.current = true;
@@ -456,10 +454,13 @@ export default function SessionScreen({ initialTech, onBack, gratitude }: Props)
   }, [record, tech, durMin]);
 
   const handleReset = useCallback(() => {
-    if (!confirm('Reset all session data? This cannot be undone.')) return;
+    if (!confirm(t.session.resetConfirm)) return;
     localStorage.removeItem('breathwork_v4');
     setRefreshKey(k => k + 1);
-  }, []);
+  }, [t]);
+
+  const items = t.gratitude.items as Record<string, string>;
+  const gratText = gratitude ? (items[gratitude] ?? gratitude) : '';
 
   const showNostril = NOSTRIL_TECHS.includes(tech);
   const ytLink = YT_LINKS[tech];
@@ -470,26 +471,25 @@ export default function SessionScreen({ initialTech, onBack, gratitude }: Props)
 
   return (
     <>
-      {/* ── Flash overlay — OUTSIDE the scrolling/animated container ── */}
       {intentionFlash && (
         <div className="intention-flash">
           <div className="intention-flash-card">
-            {gratitude && (
+            {gratText && (
               <div className="flash-gratitude-row">
-                <span className="flash-gratitude-label">Grateful for</span>
-                <span className="flash-gratitude-text">{gratitude}</span>
+                <span className="flash-gratitude-label">{t.session.gratefulFor}</span>
+                <span className="flash-gratitude-text">{gratText}</span>
               </div>
             )}
             {intention && (
               <>
-                <div className="intention-flash-label">Intention</div>
+                <div className="intention-flash-label">{t.session.intentionLabel}</div>
                 <div className="intention-flash-text">{intention}</div>
               </>
             )}
-            {!intention && gratitude && (
+            {!intention && gratText && (
               <div className="flash-only-gratitude">
-                <div className="intention-flash-label">Hold this in your heart</div>
-                <div className="intention-flash-text">{gratitude}</div>
+                <div className="intention-flash-label">{t.session.holdInHeart}</div>
+                <div className="intention-flash-text">{gratText}</div>
               </div>
             )}
           </div>
@@ -503,7 +503,6 @@ export default function SessionScreen({ initialTech, onBack, gratitude }: Props)
             Breathwork
           </h1>
 
-          {/* Tabs */}
           <div className="tabs" ref={tabsRef}>
             {TABS.map(tab => (
               <button
@@ -517,19 +516,18 @@ export default function SessionScreen({ initialTech, onBack, gratitude }: Props)
             ))}
           </div>
 
-          {/* Intention Block — above ring */}
           {isIdle && (
             <div className="intention-block">
               <div className="intention-header">
                 <span className="intention-title">
-                  Intention
+                  {t.session.intentionTitle}
                   <span className="intention-tech-link"> · {techLabel}</span>
                 </span>
-                <button className="inspire-btn" onClick={handleInspireMe}>Inspire Me</button>
+                <button className="inspire-btn" onClick={handleInspireMe}>{t.session.inspireMe}</button>
               </div>
               <textarea
                 className="intention-input"
-                placeholder="An anchor phrase for this session…"
+                placeholder={t.session.intentionPlaceholder}
                 value={intention}
                 onChange={e => setIntention(e.target.value)}
                 rows={2}
@@ -537,7 +535,6 @@ export default function SessionScreen({ initialTech, onBack, gratitude }: Props)
             </div>
           )}
 
-          {/* Ring */}
           <BreathRing
             fill={fill}
             phaseClass={phaseClass}
@@ -558,18 +555,17 @@ export default function SessionScreen({ initialTech, onBack, gratitude }: Props)
             onSkipInsight={handleSkipInsight}
             idleIntention={isIdle ? intention : ''}
             idleTechLabel={isIdle ? techLabel : ''}
-            idleGratitude={isIdle ? gratitude : ''}
+            idleGratitude={isIdle ? gratText : ''}
           />
 
           {showNostril && (
             <NostrilIndicator show={running} left={nostrilL} right={nostrilR} />
           )}
 
-          {/* Options */}
           <div className="options">
             {tech !== 'wimhof' && (
               <div className="opt-row">
-                <span className="opt-label">Duration</span>
+                <span className="opt-label">{t.session.duration}</span>
                 <div className="dur-btns">
                   {[1, 2, 3, 5, 10, 20].map(m => (
                     <button key={m} className={`dur-btn ${durMin === m ? 'on' : ''}`} onClick={() => setDurMin(m)}>{m}</button>
@@ -580,14 +576,14 @@ export default function SessionScreen({ initialTech, onBack, gratitude }: Props)
                     type="number" min={1} max={60} value={durMin}
                     onChange={e => setDurMin(Math.max(1, Math.min(60, parseInt(e.target.value) || 1)))}
                   />
-                  <span>min</span>
+                  <span>{t.session.min}</span>
                 </div>
               </div>
             )}
 
             {tech === 'wimhof' && (
               <div className="opt-row">
-                <span className="opt-label">Rounds</span>
+                <span className="opt-label">{t.session.rounds}</span>
                 <div className="dur-btns">
                   {[2, 3, 4, 5].map(r => (
                     <button key={r} className={`dur-btn ${whRounds === r ? 'on' : ''}`} onClick={() => setWhRounds(r)}>{r}</button>
@@ -598,34 +594,34 @@ export default function SessionScreen({ initialTech, onBack, gratitude }: Props)
 
             {tech === 'custom' && (
               <div className="custom-grid-wrap">
-                <div className="custom-grid-label">Pattern (seconds per phase)</div>
+                <div className="custom-grid-label">{t.session.pattern}</div>
                 <div className="custom-grid">
                   <div className="cg-item">
-                    <label>Inhale</label>
+                    <label>{t.session.inhale}</label>
                     <input type="number" min={1} max={30} value={customIn} onChange={e => setCustomIn(+e.target.value)} />
-                    <span className="cg-unit">seconds</span>
+                    <span className="cg-unit">{t.session.seconds}</span>
                   </div>
                   <div className="cg-item">
-                    <label>Hold In</label>
+                    <label>{t.session.holdIn}</label>
                     <input type="number" min={0} max={30} value={customH1} onChange={e => setCustomH1(+e.target.value)} />
-                    <span className="cg-unit">0 = skip</span>
+                    <span className="cg-unit">{t.session.skipPhase}</span>
                   </div>
                   <div className="cg-item">
-                    <label>Exhale</label>
+                    <label>{t.session.exhale}</label>
                     <input type="number" min={1} max={30} value={customOut} onChange={e => setCustomOut(+e.target.value)} />
-                    <span className="cg-unit">seconds</span>
+                    <span className="cg-unit">{t.session.seconds}</span>
                   </div>
                   <div className="cg-item">
-                    <label>Hold Out</label>
+                    <label>{t.session.holdOut}</label>
                     <input type="number" min={0} max={30} value={customH2} onChange={e => setCustomH2(+e.target.value)} />
-                    <span className="cg-unit">0 = skip</span>
+                    <span className="cg-unit">{t.session.skipPhase}</span>
                   </div>
                 </div>
               </div>
             )}
 
             <div className="opt-row opt-vol-row">
-              <span className="opt-label">Volume</span>
+              <span className="opt-label">{t.session.volume}</span>
               <input type="range" min={0} max={100} value={volume} className="vol-slider" onChange={e => setVolume(+e.target.value)} />
               <span className="vol-val">{volume}%</span>
             </div>
@@ -636,15 +632,15 @@ export default function SessionScreen({ initialTech, onBack, gratitude }: Props)
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="#ff4444">
                     <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/>
                   </svg>
-                  <span>{ytLabel || 'Watch tutorial on YouTube'}</span>
+                  <span>{ytLabel || t.session.watchTutorial}</span>
                 </a>
               </div>
             )}
 
-            {recDur && <div className="rec-label">{recDur}</div>}
+            {recDur && <div className="rec-label">{t.session.recommended} {recDur}</div>}
 
             <button className="info-link" onClick={() => setInfoOpen(o => !o)}>
-              {infoOpen ? 'Hide info ↑' : 'How does this work? ↓'}
+              {infoOpen ? t.session.hideInfo : t.session.howWorks}
             </button>
           </div>
 

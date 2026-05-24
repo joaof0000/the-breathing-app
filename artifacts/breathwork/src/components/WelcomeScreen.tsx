@@ -1,3 +1,4 @@
+import { useLang } from '../i18n/LangContext';
 import './WelcomeScreen.css';
 
 interface Props {
@@ -5,6 +6,7 @@ interface Props {
 }
 
 export default function WelcomeScreen({ onBegin }: Props) {
+  const { t } = useLang();
   return (
     <div className="welcome">
       <div className="welcome-inner">
@@ -21,19 +23,15 @@ export default function WelcomeScreen({ onBegin }: Props) {
 
         <h1 className="welcome-title">Breathwork</h1>
 
-        <p className="welcome-tagline">Your sanctuary for conscious breathing</p>
+        <p className="welcome-tagline">{t.welcome.tagline}</p>
 
-        <p className="welcome-body">
-          This app guides you through 24 time-honoured breathing techniques — from ancient pranayama 
-          to modern stress-relief methods. Each practice is matched to an intention, so you always 
-          begin with purpose and arrive exactly where you need to be.
-        </p>
+        <p className="welcome-body">{t.welcome.body}</p>
 
         <button className="welcome-btn" onClick={onBegin}>
-          Begin
+          {t.welcome.begin}
         </button>
 
-        <p className="welcome-hint">You can return here anytime from the settings.</p>
+        <p className="welcome-hint">{t.welcome.hint}</p>
       </div>
     </div>
   );

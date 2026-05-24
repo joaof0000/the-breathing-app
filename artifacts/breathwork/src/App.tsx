@@ -3,6 +3,8 @@ import GoalScreen from './components/GoalScreen';
 import SessionScreen from './components/SessionScreen';
 import SacredGeometry from './components/SacredGeometry';
 import WelcomeScreen from './components/WelcomeScreen';
+import PersonaliseScreen from './components/PersonaliseScreen';
+import { loadProfile } from './hooks/useProfile';
 import { LangProvider, useLang } from './i18n/LangContext';
 import { LANGS } from './i18n/lang';
 import './App.css';
@@ -38,14 +40,23 @@ function LangToggle() {
   );
 }
 
+type Page = 'welcome' | 'personalise' | 'goal' | 'session';
+
 function AppInner() {
-  const [page, setPage] = useState<'welcome' | 'goal' | 'session'>(
+  const [page, setPage] = useState<Page>(
     hasSeenWelcome() ? 'goal' : 'welcome'
   );
   const [selectedTech, setSelectedTech] = useState<string | null>(null);
   const [gratitude, setGratitude] = useState('');
+  const [profile, setProfile] = useState(() => loadProfile());
 
-  const handleBegin = () => { markWelcomeSeen(); setPage('goal'); };
+  const handleBegin = () => { setPage('personalise'); };
+
+  const handlePersonaliseDone = () => {
+    markWelcomeSeen();
+    setProfile(loadProfile());
+    setPage('goal');
+  };
 
   const handleSelectTech = (tech: string | null) => {
     setSelectedTech(tech);
@@ -53,6 +64,7 @@ function AppInner() {
   };
 
   const handleBack = () => {
+    setProfile(loadProfile());
     setPage('goal');
     setSelectedTech(null);
   };
@@ -69,11 +81,15 @@ function AppInner() {
 
       {page === 'welcome' ? (
         <WelcomeScreen onBegin={handleBegin} />
+      ) : page === 'personalise' ? (
+        <PersonaliseScreen onDone={handlePersonaliseDone} />
       ) : page === 'goal' ? (
         <GoalScreen
           onSelectTech={handleSelectTech}
           gratitude={gratitude}
           onGratitudeChange={setGratitude}
+          name={profile.name}
+          intention={profile.intention}
         />
       ) : (
         <SessionScreen

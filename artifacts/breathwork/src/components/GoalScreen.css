@@ -70,6 +70,16 @@
   margin-bottom: 0.3rem;
 }
 
+.p1-greeting {
+  font-family: 'Newsreader', serif;
+  font-size: 0.95rem;
+  font-style: italic;
+  color: var(--gold);
+  opacity: 0.88;
+  margin-bottom: 0.2rem;
+  letter-spacing: 0.02em;
+}
+
 .p1-sub {
   font-family: 'Newsreader', serif;
   font-size: 1rem;
@@ -113,6 +123,26 @@
 .goal-btn:active {
   transform: scale(0.96);
   box-shadow: 0 0 22px rgba(229,169,60,0.18);
+}
+
+.goal-btn--highlight {
+  background: rgba(229,169,60,0.13);
+  box-shadow: 0 0 28px rgba(229,169,60,0.22), inset 0 0 0 1px rgba(229,169,60,0.25);
+  position: relative;
+}
+
+.goal-btn--highlight .goal-label {
+  color: var(--gold);
+}
+
+.goal-intention-badge {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.6rem;
+  font-size: 0.55rem;
+  color: var(--gold);
+  opacity: 0.9;
+  line-height: 1;
 }
 
 .goal-icon { font-size: 1.5rem; }

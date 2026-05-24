@@ -3,12 +3,15 @@ import { GOAL_BUTTONS, GOALS } from '../data/goals';
 import GratitudePicker from './GratitudePicker';
 import { useLang } from '../i18n/LangContext';
 import heroImg from '../assets/hero.png';
+import { matchIntentionToGoal, timeOfDayGreeting } from '../hooks/useProfile';
 import './GoalScreen.css';
 
 interface Props {
   onSelectTech: (tech: string | null) => void;
   gratitude: string;
   onGratitudeChange: (g: string) => void;
+  name?: string;
+  intention?: string;
 }
 
 const TECH_ICONS: Record<string, string> = {
@@ -57,7 +60,7 @@ const TECH_COLORS: Record<string, string> = {
   custom:           'rgba(200,180,100,0.16)',
 };
 
-export default function GoalScreen({ onSelectTech, gratitude, onGratitudeChange }: Props) {
+export default function GoalScreen({ onSelectTech, gratitude, onGratitudeChange, name, intention }: Props) {
   const { t } = useLang();
   const [activePicker, setActivePicker] = useState<string | null>(null);
 
@@ -65,6 +68,9 @@ export default function GoalScreen({ onSelectTech, gratitude, onGratitudeChange 
   const goalBtn = activePicker ? GOAL_BUTTONS.find(b => b.key === activePicker) : null;
 
   const goalLabels = t.goals as Record<string, { label: string; sub: string }>;
+
+  const highlightKey = intention ? matchIntentionToGoal(intention) : null;
+  const greeting = name ? `${timeOfDayGreeting()}, ${name}` : null;
 
   return (
     <div className="page1">
@@ -75,16 +81,29 @@ export default function GoalScreen({ onSelectTech, gratitude, onGratitudeChange 
         </div>
 
         <div className="p1-title">Breathwork</div>
+
+        {greeting ? (
+          <p className="p1-greeting">{greeting}</p>
+        ) : null}
+
         <p className="p1-sub">{t.goal.subtitle}</p>
 
         <div className="goal-grid">
           {GOAL_BUTTONS.map(btn => {
             const gl = goalLabels[btn.key] ?? { label: btn.label, sub: btn.sub };
             return (
-              <button key={btn.key} className="goal-btn" onClick={() => setActivePicker(btn.key)}>
+              <button
+                key={btn.key}
+                className={`goal-btn${highlightKey === btn.key ? ' goal-btn--highlight' : ''}`}
+                onClick={() => setActivePicker(btn.key)}
+                aria-pressed={highlightKey === btn.key}
+              >
                 <span className="goal-icon">{btn.icon}</span>
                 <span className="goal-label">{gl.label}</span>
                 <span className="goal-sub">{gl.sub}</span>
+                {highlightKey === btn.key && (
+                  <span className="goal-intention-badge" aria-label="Matches your intention">✦</span>
+                )}
               </button>
             );
           })}

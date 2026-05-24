@@ -3,17 +3,12 @@ import GoalScreen from './components/GoalScreen';
 import SessionScreen from './components/SessionScreen';
 import SacredGeometry from './components/SacredGeometry';
 import WelcomeScreen from './components/WelcomeScreen';
-import BellyBreathingScreen from './components/BellyBreathingScreen';
 import BreathScienceScreen from './components/BreathScienceScreen';
 import { loadProfile } from './hooks/useProfile';
 import { LangProvider, useLang } from './i18n/LangContext';
 import { LANGS } from './i18n/lang';
 import './App.css';
 import './components/SacredGeometry.css';
-
-function markWelcomeSeen() {
-  try { localStorage.setItem('breathwork_welcomed', '1'); } catch { /* empty */ }
-}
 
 function LangToggle() {
   const { lang, setLang } = useLang();
@@ -33,7 +28,7 @@ function LangToggle() {
   );
 }
 
-type Page = 'welcome' | 'belly-basics' | 'goal' | 'session' | 'breathscience';
+type Page = 'welcome' | 'goal' | 'session' | 'breathscience';
 
 function AppInner() {
   const [page, setPage]               = useState<Page>('welcome');
@@ -42,20 +37,8 @@ function AppInner() {
   const [gratitude,    setGratitude]    = useState('');
   const [profile,      setProfile]      = useState(() => loadProfile());
 
-  const handleNew = (grat: string) => {
+  const handleWelcomeDone = (grat: string) => {
     setGratitude(grat);
-    setPage('belly-basics');
-  };
-
-  const handleExperienced = (grat: string) => {
-    markWelcomeSeen();
-    setGratitude(grat);
-    setProfile(loadProfile());
-    setPage('goal');
-  };
-
-  const handleBellyDone = () => {
-    markWelcomeSeen();
     setProfile(loadProfile());
     setPage('goal');
   };
@@ -86,9 +69,7 @@ function AppInner() {
       <LangToggle />
 
       {page === 'welcome' ? (
-        <WelcomeScreen onNew={handleNew} onExperienced={handleExperienced} />
-      ) : page === 'belly-basics' ? (
-        <BellyBreathingScreen onContinue={handleBellyDone} />
+        <WelcomeScreen onContinue={handleWelcomeDone} />
       ) : page === 'breathscience' ? (
         <BreathScienceScreen onBack={handleCloseScience} />
       ) : page === 'goal' ? (

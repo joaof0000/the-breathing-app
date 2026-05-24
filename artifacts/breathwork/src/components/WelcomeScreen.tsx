@@ -38,6 +38,7 @@ type Step = 'name' | 'gratitude' | 'teach';
 
 interface Props {
   onContinue: (gratitude: string) => void;
+  initialStep?: 'teach';
 }
 
 function DiaphragmDiagram() {
@@ -90,9 +91,10 @@ function DiaphragmDiagram() {
   );
 }
 
-export default function WelcomeScreen({ onContinue }: Props) {
+export default function WelcomeScreen({ onContinue, initialStep }: Props) {
   const existingName = loadProfile().name;
-  const [step, setStep]         = useState<Step>(existingName ? 'gratitude' : 'name');
+  const defaultStep: Step = initialStep ?? (existingName ? 'gratitude' : 'name');
+  const [step, setStep]         = useState<Step>(defaultStep);
   const [name, setName]         = useState(existingName || '');
   const [picked, setPicked]     = useState<Set<string>>(new Set());
   const [freeText, setFreeText] = useState('');

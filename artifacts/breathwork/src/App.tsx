@@ -35,6 +35,7 @@ function AppInner() {
   const [selectedGoal, setSelectedGoal] = useState<string | null>(null);
   const [gratitude,    setGratitude]    = useState('');
   const [profile,      setProfile]      = useState(() => loadProfile());
+  const [welcomeStep,  setWelcomeStep]  = useState<'teach' | undefined>(undefined);
 
   const handleWelcomeDone = (grat: string) => {
     setGratitude(grat);
@@ -48,10 +49,15 @@ function AppInner() {
     setPage('session');
   };
 
-  const handleBack = () => {
+  const handleSessionBack = () => {
     setProfile(loadProfile());
     setPage('goal');
     setSelectedTech(null);
+  };
+
+  const handleGoalBack = () => {
+    setWelcomeStep('teach');
+    setPage('welcome');
   };
 
   return (
@@ -65,17 +71,18 @@ function AppInner() {
       <LangToggle />
 
       {page === 'welcome' ? (
-        <WelcomeScreen onContinue={handleWelcomeDone} />
+        <WelcomeScreen onContinue={handleWelcomeDone} initialStep={welcomeStep} />
       ) : page === 'goal' ? (
         <GoalScreen
           onSelectTech={handleSelectTech}
           name={profile.name}
           intention={profile.intention}
+          onBack={handleGoalBack}
         />
       ) : (
         <SessionScreen
           initialTech={selectedTech}
-          onBack={handleBack}
+          onBack={handleSessionBack}
           gratitude={gratitude}
           goalKey={selectedGoal ?? undefined}
         />

@@ -9,6 +9,7 @@ interface Props {
   onSelectTech: (tech: string | null, goalKey?: string) => void;
   name?: string;
   intention?: string;
+  onBack?: () => void;
 }
 
 const TECH_ICONS: Record<string, string> = {
@@ -57,7 +58,7 @@ const TECH_COLORS: Record<string, string> = {
   custom:           'rgba(200,180,100,0.16)',
 };
 
-export default function GoalScreen({ onSelectTech, name, intention }: Props) {
+export default function GoalScreen({ onSelectTech, name, intention, onBack }: Props) {
   const { t } = useLang();
   const [activePicker, setActivePicker] = useState<string | null>(null);
 
@@ -109,6 +110,10 @@ export default function GoalScreen({ onSelectTech, name, intention }: Props) {
         <button className="p1-browse" onClick={() => onSelectTech(null)}>
           {t.goal.browse}
         </button>
+
+        {onBack && (
+          <button className="p1-back" onClick={onBack}>← Back</button>
+        )}
 
       </div>
 

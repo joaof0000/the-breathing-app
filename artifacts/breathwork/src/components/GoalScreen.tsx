@@ -7,7 +7,7 @@ import { matchIntentionToGoal, timeOfDayGreeting } from '../hooks/useProfile';
 import './GoalScreen.css';
 
 interface Props {
-  onSelectTech: (tech: string | null) => void;
+  onSelectTech: (tech: string | null, goalKey?: string) => void;
   gratitude: string;
   onGratitudeChange: (g: string) => void;
   name?: string;
@@ -151,7 +151,7 @@ export default function GoalScreen({ onSelectTech, gratitude, onGratitudeChange,
                   <button
                     key={c.tech}
                     className="picker-choice"
-                    onClick={() => { setActivePicker(null); onSelectTech(c.tech); }}
+                    onClick={() => { setActivePicker(null); onSelectTech(c.tech, activePicker ?? undefined); }}
                   >
                     <span className="pc-icon" style={{ background: color }}>{icon}</span>
                     <div>

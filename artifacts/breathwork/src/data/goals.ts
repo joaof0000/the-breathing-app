@@ -146,10 +146,10 @@ export const GOALS: Record<string, Goal> = {
       { tech: 'ninepurification', name: '9 Purification',    desc: 'Tibetan — first three breaths specifically clear anger through the right channel' },
     ],
     music: {
-      composer: 'Barber',
-      title: 'Adagio for Strings',
-      detail: 'Op. 11 (1936)',
-      why: 'The most cathartic piece in the Western canon. Barber holds intensity without releasing it prematurely — it creates a container for anger to be felt fully, then dissolve.',
+      composer: 'Bach',
+      title: 'Toccata & Fugue in D minor',
+      detail: 'BWV 565 (c. 1703–1707)',
+      why: 'The most visceral release in all of music. Those opening descending chords hold and channel rage the way a lightning rod holds lightning — anger enters, transforms, and resolves.',
     },
   },
   performance: {
@@ -188,10 +188,10 @@ export const GOALS: Record<string, Goal> = {
       { tech: 'bhramari',         name: 'Bhramari',                desc: 'Vagus nerve stimulation — calms the trauma-activated nervous system' },
     ],
     music: {
-      composer: 'Albinoni / Giazotto',
-      title: 'Adagio in G minor',
-      detail: 'For strings & organ (arr. 1958)',
-      why: 'The most healing piece ever composed. Slow, inevitable, and achingly honest — it creates the exact container trauma needs: something that holds pain without rushing it toward resolution.',
+      composer: 'Handel',
+      title: 'Sarabande in D minor',
+      detail: 'HWV 437, Suite No. 4 (c. 1703)',
+      why: 'Achingly slow and inevitable — Handel\'s Sarabande creates exactly the container trauma needs: something that holds pain with dignity, without rushing it toward resolution.',
     },
   },
   transmute: {

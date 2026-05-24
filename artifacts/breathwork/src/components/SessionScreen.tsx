@@ -8,6 +8,7 @@ import HistoryPanel from './HistoryPanel';
 import ReferenceTable from './ReferenceTable';
 import { TABS, NOSTRIL_TECHS, PUMP_TECHS, YT_LINKS, YT_LABELS, REC_DURATION, TECH_LABELS, getPhases } from '../data/techniques';
 import { useAudio } from '../hooks/useAudio';
+import { useSessionMusic } from '../hooks/useSessionMusic';
 import { useSessionStorage, addInsight } from '../hooks/useSessionStorage';
 import { useLang } from '../i18n/LangContext';
 import type { Translations } from '../i18n/lang';
@@ -17,6 +18,7 @@ interface Props {
   initialTech: string | null;
   onBack: () => void;
   gratitude: string;
+  goalKey?: string;
 }
 
 const INTENTION_ANCHORS = [
@@ -40,7 +42,7 @@ function fmtTime(s: number) {
   return m > 0 ? m + ':' + String(sc).padStart(2, '0') : String(sc);
 }
 
-export default function SessionScreen({ initialTech, onBack, gratitude }: Props) {
+export default function SessionScreen({ initialTech, onBack, gratitude, goalKey }: Props) {
   const { t } = useLang();
   const tRef = useRef<Translations>(t);
   useEffect(() => { tRef.current = t; }, [t]);
@@ -83,7 +85,10 @@ export default function SessionScreen({ initialTech, onBack, gratitude }: Props)
 
   const getVolume = useCallback(() => volRef.current / 100, []);
   const audio = useAudio(getVolume);
+  const music = useSessionMusic(goalKey ?? null, getVolume);
   const { record } = useSessionStorage();
+
+  useEffect(() => { music.updateVolume(volume / 100); }, [volume, music]);
 
   const runningRef = useRef(false);
   const rafRef = useRef<number | null>(null);
@@ -108,6 +113,7 @@ export default function SessionScreen({ initialTech, onBack, gratitude }: Props)
     const ts = record(techUsed, elapsed);
     lastSessionTsRef.current = ts;
     setRefreshKey(k => k + 1);
+    music.stop();
     audio.doneTone();
     setRunning(false);
     setWhWaiting(false);
@@ -121,10 +127,11 @@ export default function SessionScreen({ initialTech, onBack, gratitude }: Props)
     stopAllEngines();
     setJournalMode(true);
     setJournalText('');
-  }, [record, audio, stopAllEngines]);
+  }, [record, audio, music, stopAllEngines]);
 
   const stopSession = useCallback(() => {
     if (!runningRef.current && !whWaitingRef.current) return;
+    music.stop();
     const elapsed = Math.floor((Date.now() - sessionStartRef.current) / 1000);
     if (elapsed > 10) record(tech, elapsed);
     setRefreshKey(k => k + 1);
@@ -138,7 +145,7 @@ export default function SessionScreen({ initialTech, onBack, gratitude }: Props)
     setNostrilL('idle');
     setNostrilR('idle');
     stopAllEngines();
-  }, [record, tech, stopAllEngines]);
+  }, [record, tech, music, stopAllEngines]);
 
   const startDuration = useCallback((techKey: string) => {
     const totalSecs = durMin * 60;
@@ -390,6 +397,7 @@ export default function SessionScreen({ initialTech, onBack, gratitude }: Props)
 
   const beginSession = useCallback(() => {
     audio.ensureAC();
+    music.play();
     const hasIntention = intention.trim().length > 0;
     const hasGratitude = gratitude.trim().length > 0;
     if (hasIntention || hasGratitude) {
@@ -401,7 +409,7 @@ export default function SessionScreen({ initialTech, onBack, gratitude }: Props)
       return;
     }
     launchEngines();
-  }, [audio, intention, gratitude, launchEngines]);
+  }, [audio, music, intention, gratitude, launchEngines]);
 
   const handleWimHofStop = useCallback(() => {
     if (whStopRetRef.current) { whStopRetRef.current(); whStopRetRef.current = null; }
@@ -625,6 +633,19 @@ export default function SessionScreen({ initialTech, onBack, gratitude }: Props)
               <input type="range" min={0} max={100} value={volume} className="vol-slider" onChange={e => setVolume(+e.target.value)} />
               <span className="vol-val">{volume}%</span>
             </div>
+
+            {goalKey && (
+              <div className="opt-row opt-music-row">
+                <span className="opt-label opt-music-label">♪ {t.session.music}</span>
+                <button
+                  className={`music-toggle ${music.enabled ? 'music-on' : 'music-off'}`}
+                  onClick={() => music.setEnabled(e => !e)}
+                  title={music.enabled ? 'Mute background music' : 'Play background music'}
+                >
+                  {music.enabled ? '🔊' : '🔇'}
+                </button>
+              </div>
+            )}
 
             {ytLink && (
               <div className="opt-yt-row">

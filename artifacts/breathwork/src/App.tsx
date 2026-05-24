@@ -48,6 +48,7 @@ function AppInner() {
     hasSeenWelcome() ? 'goal' : 'welcome'
   );
   const [selectedTech, setSelectedTech] = useState<string | null>(null);
+  const [selectedGoal, setSelectedGoal] = useState<string | null>(null);
   const [gratitude, setGratitude] = useState('');
   const [profile, setProfile] = useState(() => loadProfile());
 
@@ -59,8 +60,9 @@ function AppInner() {
     setPage('goal');
   };
 
-  const handleSelectTech = (tech: string | null) => {
+  const handleSelectTech = (tech: string | null, goalKey?: string) => {
     setSelectedTech(tech);
+    setSelectedGoal(goalKey ?? null);
     setPage('session');
   };
 
@@ -103,6 +105,7 @@ function AppInner() {
           initialTech={selectedTech}
           onBack={handleBack}
           gratitude={gratitude}
+          goalKey={selectedGoal ?? undefined}
         />
       )}
     </div>

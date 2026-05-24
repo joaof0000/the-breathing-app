@@ -10,6 +10,7 @@ interface Props {
   onSelectTech: (tech: string | null, goalKey?: string) => void;
   name?: string;
   intention?: string;
+  lastMatchedGoal?: string;
   onBack?: () => void;
   lastTech?: string | null;
   onProfileUpdate?: () => void;
@@ -63,7 +64,7 @@ const TECH_COLORS: Record<string, string> = {
   custom:           'rgba(200,180,100,0.16)',
 };
 
-export default function GoalScreen({ onSelectTech, name, intention, onBack, lastTech, onProfileUpdate, onLearnMore, onReset }: Props) {
+export default function GoalScreen({ onSelectTech, name, intention, lastMatchedGoal, onBack, lastTech, onProfileUpdate, onLearnMore, onReset }: Props) {
   const { t } = useLang();
   const [activePicker, setActivePicker] = useState<string | null>(null);
   const [editOpen, setEditOpen] = useState(false);
@@ -77,7 +78,7 @@ export default function GoalScreen({ onSelectTech, name, intention, onBack, last
 
   const goalLabels = t.goals as Record<string, { label: string; sub: string }>;
 
-  const highlightKey = intention ? matchIntentionToGoal(intention) : null;
+  const highlightKey = matchIntentionToGoal(intention ?? '') ?? lastMatchedGoal ?? null;
   const greeting = name ? `${timeOfDayGreeting()}, ${name}` : null;
   const lastTechName = lastTech ? (TECH_LABELS[lastTech] ?? lastTech) : null;
 

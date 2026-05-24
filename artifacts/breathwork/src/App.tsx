@@ -67,7 +67,7 @@ function AppInner() {
   };
 
   const handleReset = () => {
-    setProfile({ name: '', intention: '' });
+    setProfile({ name: '', intention: '', lastMatchedGoal: undefined });
     setLastTech(null);
     setPage('welcome');
   };
@@ -101,6 +101,7 @@ function AppInner() {
           onSelectTech={handleSelectTech}
           name={profile.name}
           intention={profile.intention}
+          lastMatchedGoal={profile.lastMatchedGoal}
           onBack={handleGoalBack}
           lastTech={lastTech}
           onProfileUpdate={() => setProfile(loadProfile())}

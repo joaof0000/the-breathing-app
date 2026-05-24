@@ -3,6 +3,7 @@ const PROFILE_KEY = 'breathwork_profile';
 export interface UserProfile {
   name: string;
   intention: string;
+  lastMatchedGoal?: string;
 }
 
 let stOK = false;
@@ -15,32 +16,6 @@ try {
 }
 
 let memProfile: UserProfile = { name: '', intention: '' };
-
-export function loadProfile(): UserProfile {
-  if (!stOK) return memProfile;
-  try {
-    const raw = localStorage.getItem(PROFILE_KEY);
-    if (!raw) return { name: '', intention: '' };
-    return JSON.parse(raw) as UserProfile;
-  } catch {
-    return { name: '', intention: '' };
-  }
-}
-
-export function saveProfile(profile: UserProfile) {
-  if (!stOK) { memProfile = profile; return; }
-  try { localStorage.setItem(PROFILE_KEY, JSON.stringify(profile)); } catch { /* empty */ }
-}
-
-export function deleteProfile() {
-  memProfile = { name: '', intention: '' };
-  if (!stOK) return;
-  try {
-    localStorage.removeItem(PROFILE_KEY);
-    localStorage.removeItem('breathwork_v4');
-    localStorage.removeItem('breathwork_last_tech');
-  } catch { /* empty */ }
-}
 
 const INTENTION_KEYWORDS: [string, string][] = [
   ['energy',       'energy'],
@@ -105,6 +80,41 @@ export function matchIntentionToGoal(intention: string): string | null {
     if (lower.includes(keyword)) return goalKey;
   }
   return null;
+}
+
+export function loadProfile(): UserProfile {
+  if (!stOK) return memProfile;
+  try {
+    const raw = localStorage.getItem(PROFILE_KEY);
+    if (!raw) return { name: '', intention: '' };
+    return JSON.parse(raw) as UserProfile;
+  } catch {
+    return { name: '', intention: '' };
+  }
+}
+
+export function saveProfile(profile: UserProfile) {
+  const matched = matchIntentionToGoal(profile.intention);
+  let lastMatchedGoal: string | undefined;
+  if (matched) {
+    lastMatchedGoal = matched;
+  } else {
+    const existing = loadProfile();
+    lastMatchedGoal = existing.lastMatchedGoal;
+  }
+  const toSave: UserProfile = { ...profile, lastMatchedGoal };
+  if (!stOK) { memProfile = toSave; return; }
+  try { localStorage.setItem(PROFILE_KEY, JSON.stringify(toSave)); } catch { /* empty */ }
+}
+
+export function deleteProfile() {
+  memProfile = { name: '', intention: '' };
+  if (!stOK) return;
+  try {
+    localStorage.removeItem(PROFILE_KEY);
+    localStorage.removeItem('breathwork_v4');
+    localStorage.removeItem('breathwork_last_tech');
+  } catch { /* empty */ }
 }
 
 export function timeOfDayGreeting(): string {

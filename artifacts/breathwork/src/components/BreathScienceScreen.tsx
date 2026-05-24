@@ -326,9 +326,10 @@ const CONTENT: Record<Lang, Content> = {
 
 interface Props {
   onBack: () => void;
+  onContinue?: () => void;
 }
 
-export default function BreathScienceScreen({ onBack }: Props) {
+export default function BreathScienceScreen({ onBack, onContinue }: Props) {
   const { lang } = useLang();
   const c = CONTENT[lang];
 
@@ -411,7 +412,7 @@ export default function BreathScienceScreen({ onBack }: Props) {
 
         <div className="bsci-science-note">{c.scienceNote}</div>
 
-        <button className="bsci-cta" onClick={onBack}>{c.cta}</button>
+        <button className="bsci-cta" onClick={onContinue ?? onBack}>{c.cta}</button>
 
       </div>
     </div>

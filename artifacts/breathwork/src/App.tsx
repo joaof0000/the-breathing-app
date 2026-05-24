@@ -42,6 +42,7 @@ function AppInner() {
   const [selectedGoal, setSelectedGoal] = useState<string | null>(null);
   const [profile,      setProfile]      = useState(() => loadProfile());
   const [lastTech,     setLastTech]     = useState<string | null>(() => loadLastTech());
+  const [scienceFrom,  setScienceFrom]  = useState<'belly' | 'goal'>('goal');
 
   const handleWelcomeDone = () => {
     setProfile(loadProfile());
@@ -89,9 +90,12 @@ function AppInner() {
           onExperienced={() => setPage('goal')}
         />
       ) : page === 'belly' ? (
-        <BellyBreathingScreen onContinue={() => setPage('goal')} />
+        <BellyBreathingScreen onContinue={() => { setScienceFrom('belly'); setPage('science'); }} />
       ) : page === 'science' ? (
-        <BreathScienceScreen onBack={() => setPage('goal')} />
+        <BreathScienceScreen
+          onBack={() => setPage(scienceFrom)}
+          onContinue={() => setPage('goal')}
+        />
       ) : page === 'goal' ? (
         <GoalScreen
           onSelectTech={handleSelectTech}
@@ -100,7 +104,7 @@ function AppInner() {
           onBack={handleGoalBack}
           lastTech={lastTech}
           onProfileUpdate={() => setProfile(loadProfile())}
-          onLearnMore={() => setPage('science')}
+          onLearnMore={() => { setScienceFrom('goal'); setPage('science'); }}
           onReset={handleReset}
         />
       ) : (

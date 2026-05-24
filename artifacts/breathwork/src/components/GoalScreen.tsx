@@ -9,7 +9,6 @@ interface Props {
   onSelectTech: (tech: string | null, goalKey?: string) => void;
   name?: string;
   intention?: string;
-  onOpenScience?: () => void;
 }
 
 const TECH_ICONS: Record<string, string> = {
@@ -58,7 +57,7 @@ const TECH_COLORS: Record<string, string> = {
   custom:           'rgba(200,180,100,0.16)',
 };
 
-export default function GoalScreen({ onSelectTech, name, intention, onOpenScience }: Props) {
+export default function GoalScreen({ onSelectTech, name, intention }: Props) {
   const { t } = useLang();
   const [activePicker, setActivePicker] = useState<string | null>(null);
 
@@ -111,11 +110,6 @@ export default function GoalScreen({ onSelectTech, name, intention, onOpenScienc
           {t.goal.browse}
         </button>
 
-        {onOpenScience && (
-          <button className="p1-science" onClick={onOpenScience}>
-            🫁 {t.goal.whyBreathe}
-          </button>
-        )}
       </div>
 
       {activePicker && goal && (

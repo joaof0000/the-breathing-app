@@ -157,3 +157,82 @@
 }
 
 .welcome-skip:hover { opacity: 1; }
+
+/* Step 2: breathing choice */
+.welcome-choice-block {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  animation: welcome-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.welcome-choice-label {
+  font-family: 'Newsreader', Georgia, serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  font-weight: 300;
+  color: var(--dim);
+  text-align: center;
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+.welcome-choices {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.welcome-choice-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(229,169,60,0.22);
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.22s, border-color 0.22s, box-shadow 0.22s;
+}
+
+.welcome-choice-btn:hover {
+  background: rgba(229,169,60,0.07);
+  border-color: rgba(229,169,60,0.5);
+  box-shadow: 0 0 20px rgba(229,169,60,0.1);
+}
+
+.welcome-choice-btn:active {
+  background: rgba(229,169,60,0.12);
+}
+
+.wcb-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.wcb-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+}
+
+.wcb-text strong {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: 0.02em;
+}
+
+.wcb-text span {
+  font-family: 'Newsreader', Georgia, serif;
+  font-style: italic;
+  font-size: 0.8rem;
+  color: var(--dim);
+}

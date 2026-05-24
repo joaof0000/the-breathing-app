@@ -3,10 +3,12 @@ import { saveProfile, loadProfile } from '../hooks/useProfile';
 import './WelcomeScreen.css';
 
 interface Props {
-  onBegin: () => void;
+  onNew:        () => void;
+  onExperienced: () => void;
 }
 
-export default function WelcomeScreen({ onBegin }: Props) {
+export default function WelcomeScreen({ onNew, onExperienced }: Props) {
+  const [step, setStep] = useState<'name' | 'choice'>('name');
   const [name, setName] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -15,17 +17,14 @@ export default function WelcomeScreen({ onBegin }: Props) {
     return () => clearTimeout(t);
   }, []);
 
-  const commit = (nameVal: string) => {
+  const saveName = (nameVal: string) => {
     const existing = loadProfile();
     saveProfile({ ...existing, name: nameVal.trim() || 'Friend' });
-    onBegin();
   };
 
-  const handleContinue = () => commit(name);
-
-  const handleSkip = (e: React.MouseEvent) => {
-    e.preventDefault();
-    commit('');
+  const goToChoice = (nameVal: string) => {
+    saveName(nameVal);
+    setStep('choice');
   };
 
   return (
@@ -45,31 +44,51 @@ export default function WelcomeScreen({ onBegin }: Props) {
         <h1 className="welcome-title">Breathwork</h1>
         <p className="welcome-tagline">Your sanctuary for conscious breathing</p>
 
-        <div className="welcome-name-block">
-          <label className="welcome-name-label" htmlFor="wn-input">
-            What's your name?
-          </label>
-          <input
-            ref={inputRef}
-            id="wn-input"
-            className="welcome-name-input"
-            type="text"
-            placeholder="e.g. Sarah"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            onKeyDown={e => { if (e.key === 'Enter') handleContinue(); }}
-            maxLength={40}
-            autoComplete="given-name"
-          />
-        </div>
-
-        <button className="welcome-btn" onClick={handleContinue}>
-          Continue
-        </button>
-
-        <a href="#" className="welcome-skip" onClick={handleSkip}>
-          Skip
-        </a>
+        {step === 'name' ? (
+          <div className="welcome-name-block" key="name-step">
+            <label className="welcome-name-label" htmlFor="wn-input">
+              What's your name?
+            </label>
+            <input
+              ref={inputRef}
+              id="wn-input"
+              className="welcome-name-input"
+              type="text"
+              placeholder="e.g. Sarah"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') goToChoice(name); }}
+              maxLength={40}
+              autoComplete="given-name"
+            />
+            <button className="welcome-btn" onClick={() => goToChoice(name)}>
+              Continue
+            </button>
+            <a href="#" className="welcome-skip" onClick={e => { e.preventDefault(); goToChoice(''); }}>
+              Skip
+            </a>
+          </div>
+        ) : (
+          <div className="welcome-choice-block" key="choice-step">
+            <p className="welcome-choice-label">How comfortable are you with breathwork?</p>
+            <div className="welcome-choices">
+              <button className="welcome-choice-btn" onClick={onNew}>
+                <span className="wcb-icon">🌱</span>
+                <span className="wcb-text">
+                  <strong>I'm new to breathing</strong>
+                  <span>Teach me the basics</span>
+                </span>
+              </button>
+              <button className="welcome-choice-btn" onClick={onExperienced}>
+                <span className="wcb-icon">🌬️</span>
+                <span className="wcb-text">
+                  <strong>I know how to breathe</strong>
+                  <span>Let's go</span>
+                </span>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

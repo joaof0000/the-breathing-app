@@ -3,11 +3,8 @@ import GoalScreen from './components/GoalScreen';
 import SessionScreen from './components/SessionScreen';
 import SacredGeometry from './components/SacredGeometry';
 import WelcomeScreen from './components/WelcomeScreen';
-import PersonaliseScreen from './components/PersonaliseScreen';
-import BreathingChoiceScreen from './components/BreathingChoiceScreen';
 import BellyBreathingScreen from './components/BellyBreathingScreen';
 import BreathScienceScreen from './components/BreathScienceScreen';
-import GratitudeMomentScreen from './components/GratitudeMomentScreen';
 import { loadProfile } from './hooks/useProfile';
 import { LangProvider, useLang } from './i18n/LangContext';
 import { LANGS } from './i18n/lang';
@@ -44,41 +41,28 @@ function LangToggle() {
   );
 }
 
-type Page = 'welcome' | 'personalise' | 'breathing-choice' | 'belly-basics' | 'gratitude-moment' | 'goal' | 'session' | 'breathscience';
+type Page = 'welcome' | 'belly-basics' | 'goal' | 'session' | 'breathscience';
 
 function AppInner() {
   const [page, setPage] = useState<Page>(
-    hasSeenWelcome() ? 'gratitude-moment' : 'welcome'
+    hasSeenWelcome() ? 'goal' : 'welcome'
   );
-  const [selectedTech, setSelectedTech] = useState<string | null>(null);
-  const [selectedGoal, setSelectedGoal] = useState<string | null>(null);
-  const [gratitude, setGratitude] = useState('');
-  const [profile, setProfile] = useState(() => loadProfile());
+  const [selectedTech, setSelectedTech]   = useState<string | null>(null);
+  const [selectedGoal, setSelectedGoal]   = useState<string | null>(null);
+  const [gratitude,    setGratitude]      = useState('');
+  const [profile,      setProfile]        = useState(() => loadProfile());
 
-  const handleBegin = () => { setPage('personalise'); };
+  const handleNew = () => { setPage('belly-basics'); };
 
-  const handlePersonaliseDone = () => {
-    setProfile(loadProfile());
-    setPage('breathing-choice');
-  };
-
-  const handleBreathingNew = () => { setPage('belly-basics'); };
-
-  const handleBreathingExperienced = () => {
+  const handleExperienced = () => {
     markWelcomeSeen();
-    setPage('gratitude-moment');
+    setProfile(loadProfile());
+    setPage('goal');
   };
 
   const handleBellyDone = () => {
     markWelcomeSeen();
-    setPage('gratitude-moment');
-  };
-
-  const handleGratitudeContinue = (_selected: string[], _freeText: string) => {
-    setPage('goal');
-  };
-
-  const handleGratitudeSkip = () => {
+    setProfile(loadProfile());
     setPage('goal');
   };
 
@@ -94,7 +78,7 @@ function AppInner() {
     setSelectedTech(null);
   };
 
-  const handleOpenScience = () => setPage('breathscience');
+  const handleOpenScience  = () => setPage('breathscience');
   const handleCloseScience = () => setPage('goal');
 
   return (
@@ -108,15 +92,9 @@ function AppInner() {
       <LangToggle />
 
       {page === 'welcome' ? (
-        <WelcomeScreen onBegin={handleBegin} />
-      ) : page === 'personalise' ? (
-        <PersonaliseScreen onDone={handlePersonaliseDone} />
-      ) : page === 'breathing-choice' ? (
-        <BreathingChoiceScreen onNew={handleBreathingNew} onExperienced={handleBreathingExperienced} />
+        <WelcomeScreen onNew={handleNew} onExperienced={handleExperienced} />
       ) : page === 'belly-basics' ? (
         <BellyBreathingScreen onContinue={handleBellyDone} />
-      ) : page === 'gratitude-moment' ? (
-        <GratitudeMomentScreen onContinue={handleGratitudeContinue} onSkip={handleGratitudeSkip} />
       ) : page === 'breathscience' ? (
         <BreathScienceScreen onBack={handleCloseScience} />
       ) : page === 'goal' ? (

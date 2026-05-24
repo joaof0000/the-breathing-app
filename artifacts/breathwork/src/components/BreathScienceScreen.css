@@ -1,0 +1,298 @@
+.bsci-page {
+  min-height: 100dvh;
+  overflow-y: auto;
+  position: relative;
+  z-index: 10;
+}
+
+.bsci-wrap {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+}
+
+/* ── Back button ── */
+.bsci-back {
+  background: none;
+  border: none;
+  color: var(--dim);
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  padding: 4px 0;
+  margin-bottom: 28px;
+  display: block;
+  transition: color 0.15s;
+}
+.bsci-back:hover { color: var(--gold); }
+
+/* ── Hero ── */
+.bsci-hero {
+  text-align: center;
+  margin-bottom: 44px;
+}
+
+.bsci-badge {
+  display: inline-block;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 1px solid rgba(229, 169, 60, 0.3);
+  border-radius: 20px;
+  padding: 3px 12px;
+  margin-bottom: 16px;
+}
+
+.bsci-headline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  font-weight: 300;
+  color: var(--text);
+  line-height: 1.2;
+  margin: 0 0 14px;
+}
+
+.bsci-sub {
+  font-family: 'Newsreader', serif;
+  font-size: 1rem;
+  color: var(--dim);
+  line-height: 1.65;
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+/* ── Section ── */
+.bsci-section {
+  margin-bottom: 48px;
+}
+
+.bsci-section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--gold);
+  margin: 0 0 24px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(229, 169, 60, 0.15);
+}
+
+/* ── Reasons ── */
+.bsci-reasons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.bsci-reason {
+  background: var(--card);
+  border: 1px solid rgba(229, 169, 60, 0.1);
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+
+.bsci-reason-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+
+.bsci-reason-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.bsci-reason-num {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--gdim);
+  margin-bottom: 2px;
+}
+
+.bsci-reason-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.25;
+}
+
+.bsci-reason-body {
+  font-family: 'Newsreader', serif;
+  font-size: 0.9rem;
+  color: var(--dim);
+  line-height: 1.65;
+  margin: 0 0 10px;
+}
+
+.bsci-stat {
+  display: inline-block;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--gold);
+  background: rgba(229, 169, 60, 0.1);
+  border: 1px solid rgba(229, 169, 60, 0.2);
+  border-radius: 4px;
+  padding: 2px 8px;
+}
+
+/* ── Diaphragm section ── */
+.bsci-diaphr-intro {
+  font-family: 'Newsreader', serif;
+  font-size: 1rem;
+  color: var(--dim);
+  line-height: 1.65;
+  margin: 0 0 20px;
+  font-style: italic;
+}
+
+/* ── Cards ── */
+.bsci-card {
+  background: var(--card);
+  border: 1px solid rgba(229, 169, 60, 0.1);
+  border-radius: 12px;
+  padding: 20px 22px;
+  margin-bottom: 14px;
+}
+
+.bsci-card--green {
+  border-color: rgba(80, 200, 120, 0.2);
+  background: rgba(80, 200, 120, 0.05);
+}
+
+.bsci-card--amber {
+  border-color: rgba(255, 160, 40, 0.25);
+  background: rgba(255, 160, 40, 0.06);
+}
+
+.bsci-card-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 12px;
+}
+
+.bsci-card-body {
+  font-family: 'Newsreader', serif;
+  font-size: 0.9rem;
+  color: var(--dim);
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* ── Steps ── */
+.bsci-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bsci-step {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.bsci-step-num {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  background: rgba(229, 169, 60, 0.15);
+  border: 1px solid rgba(229, 169, 60, 0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--gold);
+  margin-top: 1px;
+}
+
+.bsci-step-text {
+  font-family: 'Newsreader', serif;
+  font-size: 0.9rem;
+  color: var(--dim);
+  line-height: 1.6;
+}
+
+/* ── Checks ── */
+.bsci-checks {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bsci-check {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-family: 'Newsreader', serif;
+  font-size: 0.9rem;
+  color: var(--dim);
+  line-height: 1.5;
+}
+
+.bsci-check-mark {
+  color: #50c878;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ── Science note ── */
+.bsci-science-note {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.65rem;
+  color: var(--faint);
+  line-height: 1.6;
+  text-align: center;
+  margin: 32px 0 28px;
+  padding: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* ── CTA ── */
+.bsci-cta {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  background: transparent;
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  color: var(--gold);
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.bsci-cta:hover {
+  background: rgba(229, 169, 60, 0.12);
+}
+
+@media (max-width: 480px) {
+  .bsci-wrap { padding: 20px 16px 48px; }
+  .bsci-reason { padding: 14px 16px; }
+  .bsci-card { padding: 16px 16px; }
+}

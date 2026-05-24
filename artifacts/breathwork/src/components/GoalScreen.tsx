@@ -12,6 +12,7 @@ interface Props {
   onGratitudeChange: (g: string) => void;
   name?: string;
   intention?: string;
+  onOpenScience?: () => void;
 }
 
 const TECH_ICONS: Record<string, string> = {
@@ -60,7 +61,7 @@ const TECH_COLORS: Record<string, string> = {
   custom:           'rgba(200,180,100,0.16)',
 };
 
-export default function GoalScreen({ onSelectTech, gratitude, onGratitudeChange, name, intention }: Props) {
+export default function GoalScreen({ onSelectTech, gratitude, onGratitudeChange, name, intention, onOpenScience }: Props) {
   const { t } = useLang();
   const [activePicker, setActivePicker] = useState<string | null>(null);
 
@@ -116,6 +117,12 @@ export default function GoalScreen({ onSelectTech, gratitude, onGratitudeChange,
         <button className="p1-browse" onClick={() => onSelectTech(null)}>
           {t.goal.browse}
         </button>
+
+        {onOpenScience && (
+          <button className="p1-science" onClick={onOpenScience}>
+            🫁 {t.goal.whyBreathe}
+          </button>
+        )}
       </div>
 
       {activePicker && goal && (

@@ -679,6 +679,7 @@ const en = {
   goal: {
     subtitle: 'What do you need today?',
     browse: 'Browse all techniques →',
+    whyBreathe: 'Why should I breathe consciously?',
     chooseYourTech: 'Choose your technique',
     back: '← Back',
     tapOutside: 'tap outside to close',
@@ -916,6 +917,7 @@ const pt: typeof en = {
   goal: {
     subtitle: 'O que você precisa hoje?',
     browse: 'Explorar todas as técnicas →',
+    whyBreathe: 'Por que devo respirar conscientemente?',
     chooseYourTech: 'Escolha sua técnica',
     back: '← Voltar',
     tapOutside: 'toque fora para fechar',
@@ -1153,6 +1155,7 @@ const es: typeof en = {
   goal: {
     subtitle: '¿Qué necesitas hoy?',
     browse: 'Ver todas las técnicas →',
+    whyBreathe: '¿Por qué debo respirar conscientemente?',
     chooseYourTech: 'Elige tu técnica',
     back: '← Volver',
     tapOutside: 'toca afuera para cerrar',

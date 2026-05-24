@@ -4,6 +4,7 @@ import SessionScreen from './components/SessionScreen';
 import SacredGeometry from './components/SacredGeometry';
 import WelcomeScreen from './components/WelcomeScreen';
 import PersonaliseScreen from './components/PersonaliseScreen';
+import BreathScienceScreen from './components/BreathScienceScreen';
 import { loadProfile } from './hooks/useProfile';
 import { LangProvider, useLang } from './i18n/LangContext';
 import { LANGS } from './i18n/lang';
@@ -40,7 +41,7 @@ function LangToggle() {
   );
 }
 
-type Page = 'welcome' | 'personalise' | 'goal' | 'session';
+type Page = 'welcome' | 'personalise' | 'goal' | 'session' | 'breathscience';
 
 function AppInner() {
   const [page, setPage] = useState<Page>(
@@ -69,6 +70,9 @@ function AppInner() {
     setSelectedTech(null);
   };
 
+  const handleOpenScience = () => setPage('breathscience');
+  const handleCloseScience = () => setPage('goal');
+
   return (
     <div className="app">
       <div className="grain" />
@@ -83,6 +87,8 @@ function AppInner() {
         <WelcomeScreen onBegin={handleBegin} />
       ) : page === 'personalise' ? (
         <PersonaliseScreen onDone={handlePersonaliseDone} />
+      ) : page === 'breathscience' ? (
+        <BreathScienceScreen onBack={handleCloseScience} />
       ) : page === 'goal' ? (
         <GoalScreen
           onSelectTech={handleSelectTech}
@@ -90,6 +96,7 @@ function AppInner() {
           onGratitudeChange={setGratitude}
           name={profile.name}
           intention={profile.intention}
+          onOpenScience={handleOpenScience}
         />
       ) : (
         <SessionScreen

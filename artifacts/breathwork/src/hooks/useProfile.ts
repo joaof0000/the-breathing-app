@@ -32,6 +32,16 @@ export function saveProfile(profile: UserProfile) {
   try { localStorage.setItem(PROFILE_KEY, JSON.stringify(profile)); } catch { /* empty */ }
 }
 
+export function deleteProfile() {
+  memProfile = { name: '', intention: '' };
+  if (!stOK) return;
+  try {
+    localStorage.removeItem(PROFILE_KEY);
+    localStorage.removeItem('breathwork_v4');
+    localStorage.removeItem('breathwork_last_tech');
+  } catch { /* empty */ }
+}
+
 const INTENTION_KEYWORDS: [string, string][] = [
   ['energy',       'energy'],
   ['wake',         'energy'],

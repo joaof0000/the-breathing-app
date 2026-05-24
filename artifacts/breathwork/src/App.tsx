@@ -65,6 +65,12 @@ function AppInner() {
     setPage('welcome');
   };
 
+  const handleReset = () => {
+    setProfile({ name: '', intention: '' });
+    setLastTech(null);
+    setPage('welcome');
+  };
+
   return (
     <div className="app">
       <div className="grain" />
@@ -95,6 +101,7 @@ function AppInner() {
           lastTech={lastTech}
           onProfileUpdate={() => setProfile(loadProfile())}
           onLearnMore={() => setPage('science')}
+          onReset={handleReset}
         />
       ) : (
         <SessionScreen

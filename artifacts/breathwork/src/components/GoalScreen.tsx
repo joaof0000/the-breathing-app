@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { GOAL_BUTTONS, GOALS } from '../data/goals';
 import { useLang } from '../i18n/LangContext';
 import heroImg from '../assets/hero.png';
-import { matchIntentionToGoal, timeOfDayGreeting, saveProfile } from '../hooks/useProfile';
+import { matchIntentionToGoal, timeOfDayGreeting, saveProfile, deleteProfile } from '../hooks/useProfile';
 import { TECH_LABELS } from '../data/techniques';
 import './GoalScreen.css';
 
@@ -14,6 +14,7 @@ interface Props {
   lastTech?: string | null;
   onProfileUpdate?: () => void;
   onLearnMore?: () => void;
+  onReset?: () => void;
 }
 
 const TECH_ICONS: Record<string, string> = {
@@ -62,12 +63,13 @@ const TECH_COLORS: Record<string, string> = {
   custom:           'rgba(200,180,100,0.16)',
 };
 
-export default function GoalScreen({ onSelectTech, name, intention, onBack, lastTech, onProfileUpdate, onLearnMore }: Props) {
+export default function GoalScreen({ onSelectTech, name, intention, onBack, lastTech, onProfileUpdate, onLearnMore, onReset }: Props) {
   const { t } = useLang();
   const [activePicker, setActivePicker] = useState<string | null>(null);
   const [editOpen, setEditOpen] = useState(false);
   const [editName, setEditName] = useState('');
   const [editIntention, setEditIntention] = useState('');
+  const [confirmReset, setConfirmReset] = useState(false);
   const nameInputRef = useRef<HTMLInputElement>(null);
 
   const goal    = activePicker ? GOALS[activePicker] : null;
@@ -95,6 +97,18 @@ export default function GoalScreen({ onSelectTech, name, intention, onBack, last
     saveProfile({ name: editName.trim(), intention: editIntention.trim() });
     setEditOpen(false);
     onProfileUpdate?.();
+  };
+
+  const handleReset = () => {
+    deleteProfile();
+    setEditOpen(false);
+    setConfirmReset(false);
+    onReset?.();
+  };
+
+  const handleEditClose = () => {
+    setEditOpen(false);
+    setConfirmReset(false);
   };
 
   return (
@@ -236,41 +250,59 @@ export default function GoalScreen({ onSelectTech, name, intention, onBack, last
       {editOpen && (
         <div
           className="edit-overlay open"
-          onClick={e => { if (e.target === e.currentTarget) setEditOpen(false); }}
+          onClick={e => { if (e.target === e.currentTarget) handleEditClose(); }}
         >
           <div className="edit-sheet">
             <div className="edit-title">Edit profile</div>
 
-            <label className="edit-label" htmlFor="edit-name">Your name</label>
-            <input
-              id="edit-name"
-              ref={nameInputRef}
-              className="edit-input"
-              type="text"
-              placeholder="Name (optional)"
-              value={editName}
-              onChange={e => setEditName(e.target.value)}
-              onKeyDown={e => { if (e.key === 'Enter') handleEditSave(); if (e.key === 'Escape') setEditOpen(false); }}
-              maxLength={40}
-              autoComplete="given-name"
-            />
+            {!confirmReset ? (
+              <>
+                <label className="edit-label" htmlFor="edit-name">Your name</label>
+                <input
+                  id="edit-name"
+                  ref={nameInputRef}
+                  className="edit-input"
+                  type="text"
+                  placeholder="Name (optional)"
+                  value={editName}
+                  onChange={e => setEditName(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') handleEditSave(); if (e.key === 'Escape') handleEditClose(); }}
+                  maxLength={40}
+                  autoComplete="given-name"
+                />
 
-            <label className="edit-label" htmlFor="edit-intention">Your intention</label>
-            <input
-              id="edit-intention"
-              className="edit-input"
-              type="text"
-              placeholder="e.g. I want to feel calmer (optional)"
-              value={editIntention}
-              onChange={e => setEditIntention(e.target.value)}
-              onKeyDown={e => { if (e.key === 'Enter') handleEditSave(); if (e.key === 'Escape') setEditOpen(false); }}
-              maxLength={120}
-            />
+                <label className="edit-label" htmlFor="edit-intention">Your intention</label>
+                <input
+                  id="edit-intention"
+                  className="edit-input"
+                  type="text"
+                  placeholder="e.g. I want to feel calmer (optional)"
+                  value={editIntention}
+                  onChange={e => setEditIntention(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') handleEditSave(); if (e.key === 'Escape') handleEditClose(); }}
+                  maxLength={120}
+                />
 
-            <div className="edit-actions">
-              <button className="edit-save" onClick={handleEditSave}>Save</button>
-              <button className="edit-cancel" onClick={() => setEditOpen(false)}>Cancel</button>
-            </div>
+                <div className="edit-actions">
+                  <button className="edit-save" onClick={handleEditSave}>Save</button>
+                  <button className="edit-cancel" onClick={handleEditClose}>Cancel</button>
+                </div>
+
+                <button className="edit-reset-link" onClick={() => setConfirmReset(true)}>
+                  Reset &amp; start over
+                </button>
+              </>
+            ) : (
+              <div className="edit-confirm-reset">
+                <p className="edit-confirm-msg">
+                  This will delete your profile and session history. You'll go back through the intro. This cannot be undone.
+                </p>
+                <div className="edit-actions">
+                  <button className="edit-reset-confirm-btn" onClick={handleReset}>Yes, reset everything</button>
+                  <button className="edit-cancel" onClick={() => setConfirmReset(false)}>Keep my data</button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

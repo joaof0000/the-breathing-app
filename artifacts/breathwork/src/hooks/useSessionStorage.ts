@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 
 const SK = 'breathwork_v4';
+const LAST_TECH_KEY = 'breathwork_last_tech';
 
 export interface SessionRecord {
   date: string;
@@ -37,6 +38,16 @@ export function loadSessions(): SessionRecord[] {
 export function saveSessions(s: SessionRecord[]) {
   if (!stOK) { memS = s; return; }
   try { localStorage.setItem(SK, JSON.stringify(s)); } catch { /* empty */ }
+}
+
+export function loadLastTech(): string | null {
+  if (!stOK) return null;
+  try { return localStorage.getItem(LAST_TECH_KEY) || null; } catch { return null; }
+}
+
+export function saveLastTech(tech: string) {
+  if (!stOK) return;
+  try { localStorage.setItem(LAST_TECH_KEY, tech); } catch { /* empty */ }
 }
 
 export function addInsight(ts: number, insight: string) {
@@ -85,6 +96,7 @@ export function useSessionStorage() {
     const ts = Date.now();
     s.push({ date: todayStr(), tech, ts, time: timeStr, dur: durSecs || 0 });
     saveSessions(s);
+    saveLastTech(tech);
     return ts;
   }, []);
 

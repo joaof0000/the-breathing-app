@@ -4,6 +4,7 @@ import SessionScreen from './components/SessionScreen';
 import SacredGeometry from './components/SacredGeometry';
 import WelcomeScreen from './components/WelcomeScreen';
 import { loadProfile } from './hooks/useProfile';
+import { loadLastTech } from './hooks/useSessionStorage';
 import { LangProvider, useLang } from './i18n/LangContext';
 import { LANGS } from './i18n/lang';
 import './App.css';
@@ -37,6 +38,7 @@ function AppInner() {
   const [selectedTech, setSelectedTech] = useState<string | null>(null);
   const [selectedGoal, setSelectedGoal] = useState<string | null>(null);
   const [profile,      setProfile]      = useState(() => loadProfile());
+  const [lastTech,     setLastTech]     = useState<string | null>(() => loadLastTech());
 
   const handleWelcomeDone = () => {
     setProfile(loadProfile());
@@ -51,6 +53,7 @@ function AppInner() {
 
   const handleSessionBack = () => {
     setProfile(loadProfile());
+    setLastTech(loadLastTech());
     setPage('goal');
     setSelectedTech(null);
   };
@@ -77,6 +80,7 @@ function AppInner() {
           name={profile.name}
           intention={profile.intention}
           onBack={handleGoalBack}
+          lastTech={lastTech}
         />
       ) : (
         <SessionScreen

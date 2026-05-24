@@ -3,6 +3,7 @@ import { GOAL_BUTTONS, GOALS } from '../data/goals';
 import { useLang } from '../i18n/LangContext';
 import heroImg from '../assets/hero.png';
 import { matchIntentionToGoal, timeOfDayGreeting } from '../hooks/useProfile';
+import { TECH_LABELS } from '../data/techniques';
 import './GoalScreen.css';
 
 interface Props {
@@ -10,6 +11,7 @@ interface Props {
   name?: string;
   intention?: string;
   onBack?: () => void;
+  lastTech?: string | null;
 }
 
 const TECH_ICONS: Record<string, string> = {
@@ -58,7 +60,7 @@ const TECH_COLORS: Record<string, string> = {
   custom:           'rgba(200,180,100,0.16)',
 };
 
-export default function GoalScreen({ onSelectTech, name, intention, onBack }: Props) {
+export default function GoalScreen({ onSelectTech, name, intention, onBack, lastTech }: Props) {
   const { t } = useLang();
   const [activePicker, setActivePicker] = useState<string | null>(null);
 
@@ -69,6 +71,7 @@ export default function GoalScreen({ onSelectTech, name, intention, onBack }: Pr
 
   const highlightKey = intention ? matchIntentionToGoal(intention) : null;
   const greeting = name ? `${timeOfDayGreeting()}, ${name}` : null;
+  const lastTechName = lastTech ? (TECH_LABELS[lastTech] ?? lastTech) : null;
 
   return (
     <div className="page1">
@@ -85,6 +88,19 @@ export default function GoalScreen({ onSelectTech, name, intention, onBack }: Pr
         ) : null}
 
         <p className="p1-sub">{t.goal.subtitle}</p>
+
+        {lastTech && lastTechName && (
+          <button
+            className="p1-resume"
+            onClick={() => onSelectTech(lastTech)}
+          >
+            <span className="p1-resume-icon">{TECH_ICONS[lastTech] || '·'}</span>
+            <span className="p1-resume-text">
+              <span className="p1-resume-label">Resume</span>
+              <span className="p1-resume-name">{lastTechName}</span>
+            </span>
+          </button>
+        )}
 
         <div className="goal-grid">
           {GOAL_BUTTONS.map(btn => {

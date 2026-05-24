@@ -100,11 +100,60 @@
   background: rgba(229, 169, 60, 0.2);
 }
 
-.welcome-hint {
+.welcome-name-block {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-top: 0.25rem;
+}
+
+.welcome-name-label {
+  font-family: 'Newsreader', Georgia, serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  font-weight: 300;
+  color: var(--text);
+  text-align: center;
+  opacity: 0.85;
+}
+
+.welcome-name-input {
+  width: 100%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(229,169,60,0.28);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 300;
+  color: var(--text);
+  text-align: center;
+  letter-spacing: 0.04em;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.welcome-name-input::placeholder {
+  color: var(--faint);
+}
+
+.welcome-name-input:focus {
+  border-color: rgba(229,169,60,0.6);
+  box-shadow: 0 0 0 3px rgba(229,169,60,0.08);
+}
+
+.welcome-skip {
   font-family: 'Poppins', sans-serif;
   font-size: 0.72rem;
   font-weight: 300;
   color: var(--faint);
-  letter-spacing: 0.03em;
-  text-align: center;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  opacity: 0.7;
+  margin-top: -0.5rem;
+  transition: opacity 0.2s;
 }
+
+.welcome-skip:hover { opacity: 1; }

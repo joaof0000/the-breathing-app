@@ -4,7 +4,10 @@ import SessionScreen from './components/SessionScreen';
 import SacredGeometry from './components/SacredGeometry';
 import WelcomeScreen from './components/WelcomeScreen';
 import PersonaliseScreen from './components/PersonaliseScreen';
+import BreathingChoiceScreen from './components/BreathingChoiceScreen';
+import BellyBreathingScreen from './components/BellyBreathingScreen';
 import BreathScienceScreen from './components/BreathScienceScreen';
+import GratitudeMomentScreen from './components/GratitudeMomentScreen';
 import { loadProfile } from './hooks/useProfile';
 import { LangProvider, useLang } from './i18n/LangContext';
 import { LANGS } from './i18n/lang';
@@ -41,11 +44,11 @@ function LangToggle() {
   );
 }
 
-type Page = 'welcome' | 'personalise' | 'goal' | 'session' | 'breathscience';
+type Page = 'welcome' | 'personalise' | 'breathing-choice' | 'belly-basics' | 'gratitude-moment' | 'goal' | 'session' | 'breathscience';
 
 function AppInner() {
   const [page, setPage] = useState<Page>(
-    hasSeenWelcome() ? 'goal' : 'welcome'
+    hasSeenWelcome() ? 'gratitude-moment' : 'welcome'
   );
   const [selectedTech, setSelectedTech] = useState<string | null>(null);
   const [selectedGoal, setSelectedGoal] = useState<string | null>(null);
@@ -55,8 +58,27 @@ function AppInner() {
   const handleBegin = () => { setPage('personalise'); };
 
   const handlePersonaliseDone = () => {
-    markWelcomeSeen();
     setProfile(loadProfile());
+    setPage('breathing-choice');
+  };
+
+  const handleBreathingNew = () => { setPage('belly-basics'); };
+
+  const handleBreathingExperienced = () => {
+    markWelcomeSeen();
+    setPage('gratitude-moment');
+  };
+
+  const handleBellyDone = () => {
+    markWelcomeSeen();
+    setPage('gratitude-moment');
+  };
+
+  const handleGratitudeContinue = (_selected: string[], _freeText: string) => {
+    setPage('goal');
+  };
+
+  const handleGratitudeSkip = () => {
     setPage('goal');
   };
 
@@ -89,6 +111,12 @@ function AppInner() {
         <WelcomeScreen onBegin={handleBegin} />
       ) : page === 'personalise' ? (
         <PersonaliseScreen onDone={handlePersonaliseDone} />
+      ) : page === 'breathing-choice' ? (
+        <BreathingChoiceScreen onNew={handleBreathingNew} onExperienced={handleBreathingExperienced} />
+      ) : page === 'belly-basics' ? (
+        <BellyBreathingScreen onContinue={handleBellyDone} />
+      ) : page === 'gratitude-moment' ? (
+        <GratitudeMomentScreen onContinue={handleGratitudeContinue} onSkip={handleGratitudeSkip} />
       ) : page === 'breathscience' ? (
         <BreathScienceScreen onBack={handleCloseScience} />
       ) : page === 'goal' ? (

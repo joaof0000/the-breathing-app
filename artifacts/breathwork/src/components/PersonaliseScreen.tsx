@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { saveProfile } from '../hooks/useProfile';
+import { saveProfile, loadProfile } from '../hooks/useProfile';
 import './PersonaliseScreen.css';
 
 interface Props {
@@ -7,11 +7,11 @@ interface Props {
 }
 
 export default function PersonaliseScreen({ onDone }: Props) {
-  const [name, setName] = useState('');
   const [intention, setIntention] = useState('');
 
   const handleContinue = () => {
-    saveProfile({ name: name.trim(), intention: intention.trim() });
+    const existing = loadProfile();
+    saveProfile({ ...existing, intention: intention.trim() });
     onDone();
   };
 
@@ -26,26 +26,12 @@ export default function PersonaliseScreen({ onDone }: Props) {
           </svg>
         </div>
 
-        <h2 className="personalise-title">Make it yours</h2>
+        <h2 className="personalise-title">One more thing</h2>
         <p className="personalise-sub">
-          Entirely optional — share as little or as much as you like.
+          What's your intention for today? We'll highlight the best technique for you.
         </p>
 
         <div className="personalise-fields">
-          <div className="pf-group">
-            <label className="pf-label" htmlFor="ps-name">Your name</label>
-            <input
-              id="ps-name"
-              className="pf-input"
-              type="text"
-              placeholder="e.g. Sarah"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              maxLength={40}
-              autoComplete="given-name"
-            />
-          </div>
-
           <div className="pf-group">
             <label className="pf-label" htmlFor="ps-intention">Today's intention</label>
             <input
@@ -64,7 +50,7 @@ export default function PersonaliseScreen({ onDone }: Props) {
         </div>
 
         <button className="personalise-btn" onClick={handleContinue}>
-          {name.trim() || intention.trim() ? 'Begin my practice' : 'Skip'}
+          {intention.trim() ? 'Begin my practice' : 'Skip'}
         </button>
       </div>
     </div>

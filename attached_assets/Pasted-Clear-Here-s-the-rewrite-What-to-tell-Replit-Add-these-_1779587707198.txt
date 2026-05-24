@@ -1,0 +1,26 @@
+Clear. Here's the rewrite:
+
+---
+
+**What to tell Replit:**
+
+---
+
+> Add these three things to the front page, one at a time. Build and verify each one before moving to the next.
+>
+> **1. Name + Greeting**
+> First visit only: show a simple name entry field. "What's your name?" with a text input and a Continue button. Store the name in localStorage. On every return visit, greet them by name with the correct time of day — "Good morning, [Name]" before noon, "Good afternoon, [Name]" from noon to 5pm, "Good evening, [Name]" after 5pm. If they skip the name field, use "Friend" as the default.
+>
+> **2. Breathing Basics Screen**
+> After the greeting, show two buttons. First button: "I'm new to breathing — teach me the basics." Second button: "I know how to breathe — let's go." If they tap the first button, show a single screen that explains: place one hand on your chest, one on your belly. When you breathe correctly, only the belly hand moves — the chest stays still. Breathe in through the nose, out through the mouth. Slow and gentle. This is belly breathing and it is the foundation of everything. Add one short sentence on why conscious breathing works — it activates the parasympathetic nervous system, which is your body's natural calm switch. Then a button: "Got it — let's breathe." If they tap "I know how to breathe", skip this screen entirely and go straight to the goal grid.
+>
+> **3. Gratitude Moment**
+> After the breathing basics screen (or after the skip), before the goal grid appears, show a gratitude screen. Title: "Before you breathe." Prompt: "Name three things you are grateful for today." Show 8 quick-tap options: Health, Love, Family, Growth, Work, This moment, My practice, My body. They must select at least 3 before the Continue button activates. Also show a single optional free-text line for anything else. At the bottom, a small Skip link for people who want to bypass it. When they continue, go to the goal grid.
+>
+> Build the name and greeting first. Verify it works. Then build the breathing basics screen. Verify. Then build the gratitude moment. Verify. Do not connect them until each works on its own.
+
+---
+
+Simple. Three things. One at a time. Clear enough to hand to anyone.
+
+Your one action: paste this into Replit and tell it to start with number 1 only.

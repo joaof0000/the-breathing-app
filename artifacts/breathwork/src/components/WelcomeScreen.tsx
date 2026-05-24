@@ -1,4 +1,5 @@
-import { useLang } from '../i18n/LangContext';
+import { useState, useRef, useEffect } from 'react';
+import { saveProfile, loadProfile } from '../hooks/useProfile';
 import './WelcomeScreen.css';
 
 interface Props {
@@ -6,7 +7,27 @@ interface Props {
 }
 
 export default function WelcomeScreen({ onBegin }: Props) {
-  const { t } = useLang();
+  const [name, setName] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const t = setTimeout(() => inputRef.current?.focus(), 600);
+    return () => clearTimeout(t);
+  }, []);
+
+  const commit = (nameVal: string) => {
+    const existing = loadProfile();
+    saveProfile({ ...existing, name: nameVal.trim() || 'Friend' });
+    onBegin();
+  };
+
+  const handleContinue = () => commit(name);
+
+  const handleSkip = (e: React.MouseEvent) => {
+    e.preventDefault();
+    commit('');
+  };
+
   return (
     <div className="welcome">
       <div className="welcome-inner">
@@ -22,16 +43,33 @@ export default function WelcomeScreen({ onBegin }: Props) {
         </div>
 
         <h1 className="welcome-title">Breathwork</h1>
+        <p className="welcome-tagline">Your sanctuary for conscious breathing</p>
 
-        <p className="welcome-tagline">{t.welcome.tagline}</p>
+        <div className="welcome-name-block">
+          <label className="welcome-name-label" htmlFor="wn-input">
+            What's your name?
+          </label>
+          <input
+            ref={inputRef}
+            id="wn-input"
+            className="welcome-name-input"
+            type="text"
+            placeholder="e.g. Sarah"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter') handleContinue(); }}
+            maxLength={40}
+            autoComplete="given-name"
+          />
+        </div>
 
-        <p className="welcome-body">{t.welcome.body}</p>
-
-        <button className="welcome-btn" onClick={onBegin}>
-          {t.welcome.begin}
+        <button className="welcome-btn" onClick={handleContinue}>
+          Continue
         </button>
 
-        <p className="welcome-hint">{t.welcome.hint}</p>
+        <a href="#" className="welcome-skip" onClick={handleSkip}>
+          Skip
+        </a>
       </div>
     </div>
   );

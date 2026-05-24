@@ -99,7 +99,6 @@ export default function InfoDrawer({ tech, open, onClose }: Props) {
           <p>{t.infoDrawer.noInfo}</p>
         )}
       </div>
-      <button className="info-close" onClick={onClose}>{t.infoDrawer.gotIt}</button>
     </div>
   );
 }

@@ -3,6 +3,9 @@ import GoalScreen from './components/GoalScreen';
 import SessionScreen from './components/SessionScreen';
 import SacredGeometry from './components/SacredGeometry';
 import WelcomeScreen from './components/WelcomeScreen';
+import BreathingChoiceScreen from './components/BreathingChoiceScreen';
+import BellyBreathingScreen from './components/BellyBreathingScreen';
+import BreathScienceScreen from './components/BreathScienceScreen';
 import { loadProfile } from './hooks/useProfile';
 import { loadLastTech } from './hooks/useSessionStorage';
 import { LangProvider, useLang } from './i18n/LangContext';
@@ -28,7 +31,7 @@ function LangToggle() {
   );
 }
 
-type Page = 'welcome' | 'goal' | 'session';
+type Page = 'welcome' | 'choice' | 'belly' | 'science' | 'goal' | 'session';
 
 function AppInner() {
   const [page, setPage] = useState<Page>(() => {
@@ -42,7 +45,7 @@ function AppInner() {
 
   const handleWelcomeDone = () => {
     setProfile(loadProfile());
-    setPage('goal');
+    setPage('choice');
   };
 
   const handleSelectTech = (tech: string | null, goalKey?: string) => {
@@ -74,6 +77,15 @@ function AppInner() {
 
       {page === 'welcome' ? (
         <WelcomeScreen onContinue={handleWelcomeDone} />
+      ) : page === 'choice' ? (
+        <BreathingChoiceScreen
+          onNew={() => setPage('belly')}
+          onExperienced={() => setPage('goal')}
+        />
+      ) : page === 'belly' ? (
+        <BellyBreathingScreen onContinue={() => setPage('goal')} />
+      ) : page === 'science' ? (
+        <BreathScienceScreen onBack={() => setPage('goal')} />
       ) : page === 'goal' ? (
         <GoalScreen
           onSelectTech={handleSelectTech}
@@ -82,6 +94,7 @@ function AppInner() {
           onBack={handleGoalBack}
           lastTech={lastTech}
           onProfileUpdate={() => setProfile(loadProfile())}
+          onLearnMore={() => setPage('science')}
         />
       ) : (
         <SessionScreen

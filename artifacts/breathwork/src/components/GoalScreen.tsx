@@ -13,6 +13,7 @@ interface Props {
   onBack?: () => void;
   lastTech?: string | null;
   onProfileUpdate?: () => void;
+  onLearnMore?: () => void;
 }
 
 const TECH_ICONS: Record<string, string> = {
@@ -61,7 +62,7 @@ const TECH_COLORS: Record<string, string> = {
   custom:           'rgba(200,180,100,0.16)',
 };
 
-export default function GoalScreen({ onSelectTech, name, intention, onBack, lastTech, onProfileUpdate }: Props) {
+export default function GoalScreen({ onSelectTech, name, intention, onBack, lastTech, onProfileUpdate, onLearnMore }: Props) {
   const { t } = useLang();
   const [activePicker, setActivePicker] = useState<string | null>(null);
   const [editOpen, setEditOpen] = useState(false);
@@ -165,9 +166,14 @@ export default function GoalScreen({ onSelectTech, name, intention, onBack, last
           {t.goal.browse}
         </button>
 
-        {onBack && (
-          <button className="p1-back" onClick={onBack}>← Revisit intro</button>
-        )}
+        <div className="p1-footer-links">
+          {onBack && (
+            <button className="p1-back" onClick={onBack}>← Revisit intro</button>
+          )}
+          {onLearnMore && (
+            <button className="p1-learn" onClick={onLearnMore}>How to breathe →</button>
+          )}
+        </div>
 
       </div>
 

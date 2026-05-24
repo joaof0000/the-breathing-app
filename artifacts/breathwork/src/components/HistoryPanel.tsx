@@ -32,18 +32,24 @@ export default function HistoryPanel({ refreshKey, onRefresh }: Props) {
     return sessions.filter(s => s.tech === filter);
   }, [sessions, filter]);
 
-  const hasInsights = useMemo(() => sessions.some(s => s.insight || s.mood), [sessions]);
+  const hasInsights = useMemo(() => sessions.some(s => s.note || s.insight || s.mood), [sessions]);
   const MOOD_EMOJIS = ['😔', '😐', '🙂', '😊', '🌟'];
+
+  const excerptNote = (s: { note?: string; insight?: string }) => {
+    const text = s.note ?? s.insight ?? '';
+    return text.length > 80 ? text.slice(0, 77) + '…' : text;
+  };
 
   const exportCSV = () => {
     const headers = [t.history.date, t.history.time, t.history.technique, t.history.duration];
-    if (hasInsights) { headers.push('Mood'); headers.push(t.history.insight); }
+    if (hasInsights) { headers.push('Mood'); headers.push('Note'); }
     const rows = [headers];
     sessions.forEach(s => {
       const row = [s.date, s.time, TECH_LABELS[s.tech] || s.tech, fmtDur(s.dur)];
       if (hasInsights) {
+        const noteText = s.note ?? s.insight ?? '';
         row.push(s.mood ? String(s.mood) : '');
-        row.push(s.insight ? `"${s.insight.replace(/"/g, '""')}"` : '');
+        row.push(noteText ? `"${noteText.replace(/"/g, '""')}"` : '');
       }
       rows.push(row);
     });
@@ -103,8 +109,8 @@ export default function HistoryPanel({ refreshKey, onRefresh }: Props) {
                     {hasInsights && (
                       <td className="history-insight">
                         {s.mood ? <span className="history-mood-emoji">{MOOD_EMOJIS[s.mood - 1]}</span> : null}
-                        {s.insight ? <span>{s.insight}</span> : null}
-                        {!s.mood && !s.insight ? '—' : null}
+                        {excerptNote(s) ? <span>{excerptNote(s)}</span> : null}
+                        {!s.mood && !excerptNote(s) ? '—' : null}
                       </td>
                     )}
                   </tr>

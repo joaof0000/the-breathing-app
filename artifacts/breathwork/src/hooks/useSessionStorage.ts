@@ -10,6 +10,7 @@ export interface SessionRecord {
   dur: number;
   insight?: string;
   mood?: number;
+  note?: string;
 }
 
 function todayStr() {
@@ -54,7 +55,7 @@ export function addJournal(ts: number, mood: number, note: string) {
     sessions[idx] = {
       ...sessions[idx],
       ...(mood > 0 ? { mood } : {}),
-      ...(note.trim() ? { insight: note.trim() } : {}),
+      ...(note.trim() ? { note: note.trim() } : {}),
     };
     saveSessions(sessions);
   }

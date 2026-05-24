@@ -424,13 +424,15 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
     setJournalMode(false);
     setJournalText('');
     setJournalMood(0);
-  }, [journalMood, journalText]);
+    onBack();
+  }, [journalMood, journalText, onBack]);
 
   const handleSkipInsight = useCallback(() => {
     setJournalMode(false);
     setJournalText('');
     setJournalMood(0);
-  }, []);
+    onBack();
+  }, [onBack]);
 
   const handleInspireMe = useCallback(() => {
     const next = (inspireIdx + 1) % INTENTION_ANCHORS.length;

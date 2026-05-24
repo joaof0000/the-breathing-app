@@ -2,34 +2,65 @@ import { useState, useRef, useEffect } from 'react';
 import { saveProfile, loadProfile } from '../hooks/useProfile';
 import './WelcomeScreen.css';
 
+const GRATITUDE_OPTS = [
+  { id: 'health',   label: 'Health' },
+  { id: 'love',     label: 'Love' },
+  { id: 'family',   label: 'Family' },
+  { id: 'growth',   label: 'Growth' },
+  { id: 'work',     label: 'Work' },
+  { id: 'moment',   label: 'This moment' },
+  { id: 'practice', label: 'My practice' },
+  { id: 'body',     label: 'My body' },
+];
+const MIN_GRAT = 3;
+
 interface Props {
-  onNew:        () => void;
-  onExperienced: () => void;
+  onNew:         (gratitude: string) => void;
+  onExperienced: (gratitude: string) => void;
 }
+
+type Step = 'name' | 'gratitude' | 'choice';
 
 export default function WelcomeScreen({ onNew, onExperienced }: Props) {
   const existingName = loadProfile().name;
-  const [step, setStep] = useState<'name' | 'choice'>(
-    existingName ? 'choice' : 'name'
-  );
-  const [name, setName] = useState('');
+  const [step, setStep] = useState<Step>(existingName ? 'gratitude' : 'name');
+  const [name, setName]           = useState(existingName || '');
+  const [picked, setPicked]       = useState<Set<string>>(new Set());
+  const [freeText, setFreeText]   = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (step !== 'name') return;
-    const t = setTimeout(() => inputRef.current?.focus(), 600);
+    const t = setTimeout(() => inputRef.current?.focus(), 400);
     return () => clearTimeout(t);
   }, [step]);
 
-  const saveName = (nameVal: string) => {
+  const saveName = (val: string) => {
     const existing = loadProfile();
-    saveProfile({ ...existing, name: nameVal.trim() || 'Friend' });
+    saveProfile({ ...existing, name: val.trim() || 'Friend' });
   };
 
-  const goToChoice = (nameVal: string) => {
-    saveName(nameVal);
-    setStep('choice');
+  const handleNameContinue = () => {
+    saveName(name);
+    setStep('gratitude');
   };
+
+  const toggleGrat = (id: string) => {
+    setPicked(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const buildGratitudeString = () => {
+    const labels = [...picked].map(id => GRATITUDE_OPTS.find(o => o.id === id)?.label ?? id);
+    if (freeText.trim()) labels.push(freeText.trim());
+    return labels.join(', ');
+  };
+
+  const canContinueGrat = picked.size >= MIN_GRAT;
+  const remaining = Math.max(0, MIN_GRAT - picked.size);
 
   return (
     <div className="welcome">
@@ -48,8 +79,9 @@ export default function WelcomeScreen({ onNew, onExperienced }: Props) {
         <h1 className="welcome-title">Breathwork</h1>
         <p className="welcome-tagline">Your sanctuary for conscious breathing</p>
 
-        {step === 'name' ? (
-          <div className="welcome-name-block" key="name-step">
+        {/* ── Step 1: Name ── */}
+        {step === 'name' && (
+          <div className="welcome-name-block">
             <label className="welcome-name-label" htmlFor="wn-input">
               What's your name?
             </label>
@@ -61,29 +93,72 @@ export default function WelcomeScreen({ onNew, onExperienced }: Props) {
               placeholder="e.g. Sarah"
               value={name}
               onChange={e => setName(e.target.value)}
-              onKeyDown={e => { if (e.key === 'Enter') goToChoice(name); }}
+              onKeyDown={e => { if (e.key === 'Enter') handleNameContinue(); }}
               maxLength={40}
               autoComplete="given-name"
             />
-            <button className="welcome-btn" onClick={() => goToChoice(name)}>
+            <button className="welcome-btn" onClick={handleNameContinue}>
               Continue
             </button>
-            <a href="#" className="welcome-skip" onClick={e => { e.preventDefault(); goToChoice(''); }}>
+            <a href="#" className="welcome-skip" onClick={e => { e.preventDefault(); saveName(''); setStep('gratitude'); }}>
               Skip
             </a>
           </div>
-        ) : (
-          <div className="welcome-choice-block" key="choice-step">
+        )}
+
+        {/* ── Step 2: Gratitude ── */}
+        {step === 'gratitude' && (
+          <div className="welcome-grat-block">
+            <p className="welcome-grat-title">What are you grateful for today?</p>
+            <p className="welcome-grat-sub">Choose at least 3.</p>
+            <div className="welcome-grat-chips">
+              {GRATITUDE_OPTS.map(opt => (
+                <button
+                  key={opt.id}
+                  className={`welcome-grat-chip ${picked.has(opt.id) ? 'on' : ''}`}
+                  onClick={() => toggleGrat(opt.id)}
+                >
+                  {picked.has(opt.id) && <span className="wgc-check">✓ </span>}
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+            <input
+              className="welcome-grat-free"
+              type="text"
+              placeholder="Anything else… (optional)"
+              value={freeText}
+              onChange={e => setFreeText(e.target.value)}
+              maxLength={80}
+            />
+            <button
+              className={`welcome-btn ${!canContinueGrat ? 'welcome-btn-dim' : ''}`}
+              onClick={() => canContinueGrat && setStep('choice')}
+              disabled={!canContinueGrat}
+            >
+              {canContinueGrat ? 'Continue' : `Choose ${remaining} more`}
+            </button>
+            {!existingName && (
+              <button className="welcome-back" onClick={() => setStep('name')}>
+                ← Back
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* ── Step 3: Breathing choice ── */}
+        {step === 'choice' && (
+          <div className="welcome-choice-block">
             <p className="welcome-choice-label">How comfortable are you with breathwork?</p>
             <div className="welcome-choices">
-              <button className="welcome-choice-btn" onClick={onNew}>
+              <button className="welcome-choice-btn" onClick={() => onNew(buildGratitudeString())}>
                 <span className="wcb-icon">🌱</span>
                 <span className="wcb-text">
                   <strong>I'm new to breathing</strong>
                   <span>Teach me the basics</span>
                 </span>
               </button>
-              <button className="welcome-choice-btn" onClick={onExperienced}>
+              <button className="welcome-choice-btn" onClick={() => onExperienced(buildGratitudeString())}>
                 <span className="wcb-icon">🌬️</span>
                 <span className="wcb-text">
                   <strong>I know how to breathe</strong>
@@ -91,6 +166,9 @@ export default function WelcomeScreen({ onNew, onExperienced }: Props) {
                 </span>
               </button>
             </div>
+            <button className="welcome-back" onClick={() => setStep('gratitude')}>
+              ← Back
+            </button>
           </div>
         )}
       </div>

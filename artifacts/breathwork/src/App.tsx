@@ -11,16 +11,8 @@ import { LANGS } from './i18n/lang';
 import './App.css';
 import './components/SacredGeometry.css';
 
-const WELCOME_KEY = 'breathwork_welcomed';
-
-function hasSeenWelcome(): boolean {
-  try { return localStorage.getItem(WELCOME_KEY) === '1'; }
-  catch { return false; }
-}
-
 function markWelcomeSeen() {
-  try { localStorage.setItem(WELCOME_KEY, '1'); }
-  catch { /* empty */ }
+  try { localStorage.setItem('breathwork_welcomed', '1'); } catch { /* empty */ }
 }
 
 function LangToggle() {
@@ -44,16 +36,20 @@ function LangToggle() {
 type Page = 'welcome' | 'belly-basics' | 'goal' | 'session' | 'breathscience';
 
 function AppInner() {
-  const [page, setPage] = useState<Page>('welcome');
-  const [selectedTech, setSelectedTech]   = useState<string | null>(null);
-  const [selectedGoal, setSelectedGoal]   = useState<string | null>(null);
-  const [gratitude,    setGratitude]      = useState('');
-  const [profile,      setProfile]        = useState(() => loadProfile());
+  const [page, setPage]               = useState<Page>('welcome');
+  const [selectedTech, setSelectedTech] = useState<string | null>(null);
+  const [selectedGoal, setSelectedGoal] = useState<string | null>(null);
+  const [gratitude,    setGratitude]    = useState('');
+  const [profile,      setProfile]      = useState(() => loadProfile());
 
-  const handleNew = () => { setPage('belly-basics'); };
+  const handleNew = (grat: string) => {
+    setGratitude(grat);
+    setPage('belly-basics');
+  };
 
-  const handleExperienced = () => {
+  const handleExperienced = (grat: string) => {
     markWelcomeSeen();
+    setGratitude(grat);
     setProfile(loadProfile());
     setPage('goal');
   };
@@ -98,8 +94,6 @@ function AppInner() {
       ) : page === 'goal' ? (
         <GoalScreen
           onSelectTech={handleSelectTech}
-          gratitude={gratitude}
-          onGratitudeChange={setGratitude}
           name={profile.name}
           intention={profile.intention}
           onOpenScience={handleOpenScience}

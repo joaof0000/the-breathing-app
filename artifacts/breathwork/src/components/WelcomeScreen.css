@@ -158,7 +158,120 @@
 
 .welcome-skip:hover { opacity: 1; }
 
-/* Step 2: breathing choice */
+/* Step 2: Gratitude */
+.welcome-grat-block {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  animation: welcome-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.welcome-grat-title {
+  font-family: 'Newsreader', Georgia, serif;
+  font-style: italic;
+  font-size: 1rem;
+  font-weight: 300;
+  color: var(--text);
+  text-align: center;
+  margin: 0;
+  opacity: 0.9;
+}
+
+.welcome-grat-sub {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 300;
+  color: var(--faint);
+  letter-spacing: 0.06em;
+  margin: -0.4rem 0 0;
+}
+
+.welcome-grat-chips {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.welcome-grat-chip {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(229,169,60,0.2);
+  border-radius: 100px;
+  padding: 0.5rem 1rem;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 300;
+  color: var(--dim);
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, color 0.18s;
+  line-height: 1;
+}
+
+.welcome-grat-chip:hover {
+  border-color: rgba(229,169,60,0.45);
+  background: rgba(229,169,60,0.05);
+}
+
+.welcome-grat-chip.on {
+  background: rgba(229,169,60,0.12);
+  border-color: var(--gold);
+  color: var(--text);
+}
+
+.wgc-check {
+  color: var(--gold);
+  font-size: 0.7rem;
+}
+
+.welcome-grat-free {
+  width: 100%;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(229,169,60,0.16);
+  border-radius: 6px;
+  padding: 0.65rem 1rem;
+  font-family: 'Newsreader', Georgia, serif;
+  font-size: 0.9rem;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.welcome-grat-free::placeholder { color: var(--faint); }
+.welcome-grat-free:focus { border-color: rgba(229,169,60,0.45); }
+
+.welcome-btn-dim {
+  opacity: 0.45;
+  cursor: default;
+  border-color: rgba(229,169,60,0.3);
+  color: var(--faint);
+}
+
+.welcome-back {
+  background: none;
+  border: none;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 300;
+  color: var(--faint);
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  opacity: 0.65;
+  transition: opacity 0.2s;
+  padding: 0.2rem 0.4rem;
+  margin-top: -0.3rem;
+}
+
+.welcome-back:hover { opacity: 1; }
+
+/* Step 3: breathing choice */
 .welcome-choice-block {
   width: 100%;
   display: flex;

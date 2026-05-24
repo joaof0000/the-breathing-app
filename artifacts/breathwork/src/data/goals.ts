@@ -175,9 +175,9 @@ export const GOALS: Record<string, Goal> = {
     ],
     music: {
       composer: 'Mozart',
-      title: 'Piano Concerto No. 21 — 2nd Movement',
-      detail: 'K. 467, Andante (1785)',
-      why: 'The "Mozart effect" is strongest here — studies show this Andante at ~56 BPM synchronises with resting heart rate and measurably reduces systolic pressure within 12 minutes of listening.',
+      title: 'Eine kleine Nachtmusik',
+      detail: '1st mvt — Allegro, K. 525 (1787)',
+      why: "Mozart's most life-affirming music — bright, ordered, perfectly proportioned. Studies show it raises dopamine and supports immune function. Medicine in sound form.",
     },
   },
   trauma: {

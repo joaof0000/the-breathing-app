@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { saveProfile, loadProfile } from '../hooks/useProfile';
+import { useLang } from '../i18n/LangContext';
 import './WelcomeScreen.css';
 
 interface Props {
@@ -7,13 +8,14 @@ interface Props {
 }
 
 export default function WelcomeScreen({ onContinue }: Props) {
+  const { t } = useLang();
   const existingName = loadProfile().name;
   const [name, setName] = useState(existingName || '');
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const t = setTimeout(() => inputRef.current?.focus(), 500);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => inputRef.current?.focus(), 500);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleBegin = () => {
@@ -40,15 +42,15 @@ export default function WelcomeScreen({ onContinue }: Props) {
           </svg>
         </div>
 
-        <h1 className="welcome-title">Breathwork</h1>
-        <p className="welcome-tagline">Your sanctuary for conscious breathing</p>
+        <h1 className="welcome-title">{t.appTitle}</h1>
+        <p className="welcome-tagline">{t.welcome.tagline}</p>
 
         <div className="welcome-name-block">
           <input
             ref={inputRef}
             className="welcome-name-input"
             type="text"
-            placeholder="Your name (optional)"
+            placeholder={t.welcome.namePlaceholder}
             value={name}
             onChange={e => setName(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') handleBegin(); }}
@@ -56,7 +58,7 @@ export default function WelcomeScreen({ onContinue }: Props) {
             autoComplete="given-name"
           />
           <button className="welcome-btn" onClick={handleBegin}>
-            Begin
+            {t.welcome.begin}
           </button>
         </div>
 

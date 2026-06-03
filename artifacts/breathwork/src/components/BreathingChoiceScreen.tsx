@@ -1,11 +1,15 @@
+import { useLang } from '../i18n/LangContext';
 import './BreathingChoiceScreen.css';
 
 interface Props {
-  onNew:      () => void;
+  onNew:         () => void;
   onExperienced: () => void;
 }
 
 export default function BreathingChoiceScreen({ onNew, onExperienced }: Props) {
+  const { t } = useLang();
+  const c = t.choice;
+
   return (
     <div className="bchoice">
       <div className="bchoice-inner">
@@ -19,23 +23,23 @@ export default function BreathingChoiceScreen({ onNew, onExperienced }: Props) {
           </svg>
         </div>
 
-        <h2 className="bchoice-title">Before we begin</h2>
-        <p className="bchoice-sub">How comfortable are you with breathwork?</p>
+        <h2 className="bchoice-title">{c.title}</h2>
+        <p className="bchoice-sub">{c.sub}</p>
 
         <div className="bchoice-options">
           <button className="bchoice-btn bchoice-btn-new" onClick={onNew}>
             <span className="bchoice-btn-icon">🌱</span>
             <span className="bchoice-btn-text">
-              <strong>I'm new to breathing</strong>
-              <span>Teach me the basics</span>
+              <strong>{c.newTitle}</strong>
+              <span>{c.newSub}</span>
             </span>
           </button>
 
           <button className="bchoice-btn bchoice-btn-exp" onClick={onExperienced}>
             <span className="bchoice-btn-icon">🌬️</span>
             <span className="bchoice-btn-text">
-              <strong>I know how to breathe</strong>
-              <span>Let's go</span>
+              <strong>{c.expTitle}</strong>
+              <span>{c.expSub}</span>
             </span>
           </button>
         </div>

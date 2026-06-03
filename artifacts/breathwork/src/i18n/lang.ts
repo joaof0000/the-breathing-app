@@ -714,6 +714,15 @@ const en = {
     body: '24 time-honoured breathing techniques — from ancient pranayama to modern stress-relief methods. Each practice is matched to an intention, so you always begin with purpose.',
     begin: 'Begin',
     hint: 'You can return here anytime from the settings.',
+    namePlaceholder: 'Your name (optional)',
+  },
+  choice: {
+    title: 'Before we begin',
+    sub: 'How comfortable are you with breathwork?',
+    newTitle: "I'm new to breathing",
+    newSub: 'Teach me the basics',
+    expTitle: 'I know how to breathe',
+    expSub: "Let's go",
   },
   goal: {
     subtitle: 'What do you need today?',
@@ -955,6 +964,15 @@ const pt: typeof en = {
     body: '24 técnicas de respiração milenares — do pranayama antigo aos métodos modernos de alívio do estresse. Cada prática é associada a uma intenção, para que você sempre comece com propósito.',
     begin: 'Começar',
     hint: 'Você pode voltar aqui a qualquer momento nas configurações.',
+    namePlaceholder: 'Seu nome (opcional)',
+  },
+  choice: {
+    title: 'Antes de começar',
+    sub: 'Qual é o seu nível de familiaridade com a respiração?',
+    newTitle: 'Sou novo na respiração',
+    newSub: 'Me ensine o básico',
+    expTitle: 'Já sei respirar',
+    expSub: 'Vamos lá',
   },
   goal: {
     subtitle: 'O que você precisa hoje?',
@@ -1196,6 +1214,15 @@ const es: typeof en = {
     body: '24 técnicas de respiración milenarias — desde el pranayama antiguo hasta los métodos modernos de alivio del estrés. Cada práctica se asocia a una intención, para que siempre comiences con propósito.',
     begin: 'Comenzar',
     hint: 'Puedes volver aquí en cualquier momento desde la configuración.',
+    namePlaceholder: 'Tu nombre (opcional)',
+  },
+  choice: {
+    title: 'Antes de empezar',
+    sub: '¿Cuánta experiencia tienes con la respiración consciente?',
+    newTitle: 'Soy nuevo en la respiración',
+    newSub: 'Enséñame lo básico',
+    expTitle: 'Ya sé respirar',
+    expSub: 'Vamos',
   },
   goal: {
     subtitle: '¿Qué necesitas hoy?',

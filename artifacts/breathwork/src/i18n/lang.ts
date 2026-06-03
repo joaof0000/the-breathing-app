@@ -228,6 +228,19 @@ const enInfo: Record<string, InfoEntry> = {
     note: "The attentional shift from fast-blink protocol is felt within 2 minutes. Two weeks of Protocol 3 daily practice and attentional lapses reduce measurably.",
     ytLabel: 'Watch: Huberman Blink Protocol — focus and attention reset',
   },
+  naturalwalk: {
+    title: 'Natural Walk — Guolin Qigong Xi-Xi-Hu',
+    intro: ["Developed by Guo Lin (1906–1984) as a cancer recovery practice. The double-inhale walking breath fully inflates both lung lobes — something ordinary breathing rarely achieves. The extended exhale activates the parasympathetic nervous system. The outward, soft gaze deliberately interrupts the inner noise loop. Clinical studies in China documented measurable immune improvement in cancer patients after sustained practice."],
+    sections: [
+      { title: 'The Breath — Xi Xi Hu', steps: ['**Xi** — short inhale through the nose, belly expands (lower lungs fill) — 2 seconds.', '**Xi** — second short inhale through the nose, chest lifts (upper lungs fill) — 2 seconds.', '**Hu** — one long, slow exhale through the nose (or slightly open mouth) — 6 seconds.', 'No hold. No pause. Continuous rhythm. The exhale is longer than both inhales combined.'] },
+      { title: 'The Walk', steps: ['Walk slowly — a relaxed stroll, not exercise pace.', 'Heel touches first, then roll to toe.', 'Inhale-inhale on one step, exhale across the next step (or two). Find your rhythm.', 'Arms swing naturally and loosely at your sides — slightly more than a normal walk.', 'Hands open, relaxed, fingers loose.', 'Body upright, shoulders down. Smile slightly — this activates the parasympathetic response.', 'Eyes: soft gaze outward and forward. Not inward. This is deliberate — it interrupts the inner noise loop.'] },
+      { title: 'The Mind', steps: ['Do not focus inside your body.', 'Let attention rest gently on what is around you — trees, sky, ground.', 'This is the opposite of most meditation, and it is intentional.'] },
+    ],
+    tip: "Walk slowly. Heel to toe. Inhale short through the nose — belly fills. Inhale again short — chest fills. Exhale long and slow through the nose. Repeat. Let your arms swing. Look outward. Smile slightly. Don't think. Just breathe and walk.",
+    feel: '1 week daily', see: '4 weeks',
+    note: "Minimum 30 minutes per session for therapeutic effect. Ideal: 60 minutes, morning, outdoors. Start with 15–20 minutes if new to the practice and build up gradually.",
+    ytLabel: 'Watch: Guolin Qigong — Natural Walking Practice (official tutorial)',
+  },
   custom: {
     title: 'Custom Pattern',
     intro: ["Set your own inhale, hold, exhale, and hold-out durations using the controls above. Any pattern you choose will loop for the selected duration."],
@@ -443,6 +456,19 @@ const ptInfo: Record<string, InfoEntry> = {
     note: "A mudança de atenção do protocolo de piscar rápido é sentida em 2 minutos. Duas semanas de Protocolo 3 diário e as lapsos de atenção reduzem de forma mensurável.",
     ytLabel: 'Assistir: Protocolo de Piscar de Huberman — redefinição de foco e atenção',
   },
+  naturalwalk: {
+    title: 'Caminhada Natural — Qigong de Guo Lin Xi-Xi-Hu',
+    intro: ["Desenvolvida por Guo Lin (1906–1984) como prática de recuperação do câncer. A respiração dupla de caminhada infla completamente os dois lobos pulmonares — algo que a respiração comum raramente consegue. A expiração prolongada ativa o sistema nervoso parassimpático. O olhar suave e externo interrompe deliberadamente o loop de ruído interno. Estudos clínicos na China documentaram melhora mensurável do sistema imunológico em pacientes oncológicos com prática sustentada."],
+    sections: [
+      { title: 'A Respiração — Xi Xi Hu', steps: ['**Xi** — inspiração curta pelo nariz, barriga se expande (pulmões inferiores enchem) — 2 segundos.', '**Xi** — segunda inspiração curta pelo nariz, peito se levanta (pulmões superiores enchem) — 2 segundos.', '**Hu** — uma expiração longa e lenta pelo nariz (ou boca levemente aberta) — 6 segundos.', 'Sem retenção. Sem pausa. Ritmo contínuo. A expiração é mais longa que as duas inspirações juntas.'] },
+      { title: 'A Caminhada', steps: ['Caminhe devagar — um passeio relaxado, não uma caminhada de exercício.', 'O calcanhar toca primeiro, depois rola até os dedos.', 'Inspire-inspire em um passo, expire no próximo passo (ou dois). Encontre seu ritmo.', 'Braços balançam naturalmente e soltos ao lado do corpo — um pouco mais que o normal.', 'Mãos abertas, relaxadas, dedos soltos.', 'Corpo ereto, ombros baixos. Sorria levemente — isso ativa a resposta parassimpática.', 'Olhos: olhar suave para fora e para frente. Não para dentro. Isso é deliberado — interrompe o loop de ruído interno.'] },
+      { title: 'A Mente', steps: ['Não se concentre dentro do seu corpo.', 'Deixe a atenção pousar suavemente no que está ao redor — árvores, céu, chão.', 'Isso é o oposto da maioria das meditações, e é intencional.'] },
+    ],
+    tip: "Caminhe devagar. Calcanhar ao dedo. Inspire curto pelo nariz — barriga enche. Inspire de novo curto — peito enche. Expire longo e lento pelo nariz. Repita. Deixe os braços balançar. Olhe para fora. Sorria levemente. Não pense. Apenas respire e caminhe.",
+    feel: '1 semana diária', see: '4 semanas',
+    note: "Mínimo de 30 minutos por sessão para efeito terapêutico. Ideal: 60 minutos, de manhã, ao ar livre. Comece com 15–20 minutos se for novo na prática e aumente gradualmente.",
+    ytLabel: 'Assistir: Qigong de Guo Lin — Prática de Caminhada Natural (tutorial oficial)',
+  },
   custom: {
     title: 'Padrão Personalizado',
     intro: ["Defina suas próprias durações de inspiração, retenção, expiração e retenção com os controles acima. Qualquer padrão escolhido se repetirá pela duração selecionada."],
@@ -657,6 +683,19 @@ const esInfo: Record<string, InfoEntry> = {
     feel: '1 sesión', see: '2 semanas diarias',
     note: "El cambio de atención del protocolo de parpadeo rápido se siente en 2 minutos. Dos semanas de Protocolo 3 diario y los lapsos de atención disminuyen de forma medible.",
     ytLabel: 'Ver: Protocolo de Parpadeo de Huberman — reinicio de enfoque y atención',
+  },
+  naturalwalk: {
+    title: 'Caminata Natural — Qigong de Guo Lin Xi-Xi-Hu',
+    intro: ["Desarrollada por Guo Lin (1906–1984) como práctica de recuperación del cáncer. La respiración doble de caminata infla completamente ambos lóbulos pulmonares — algo que la respiración ordinaria raramente logra. La exhalación prolongada activa el sistema nervioso parasimpático. La mirada suave y externa interrumpe deliberadamente el bucle de ruido interno. Estudios clínicos en China documentaron mejora inmunológica medible en pacientes oncológicos con práctica sostenida."],
+    sections: [
+      { title: 'La Respiración — Xi Xi Hu', steps: ['**Xi** — inhalación corta por la nariz, el vientre se expande (pulmones inferiores se llenan) — 2 segundos.', '**Xi** — segunda inhalación corta por la nariz, el pecho se eleva (pulmones superiores se llenan) — 2 segundos.', '**Hu** — una exhalación larga y lenta por la nariz (o boca ligeramente abierta) — 6 segundos.', 'Sin retención. Sin pausa. Ritmo continuo. La exhalación es más larga que las dos inhalaciones juntas.'] },
+      { title: 'La Caminata', steps: ['Camina despacio — un paseo relajado, no caminata de ejercicio.', 'El talón toca primero, luego rueda hasta los dedos.', 'Inhala-inhala en un paso, exhala en el siguiente (o dos). Encuentra tu ritmo.', 'Los brazos se balancean natural y libremente a los lados — un poco más que lo normal.', 'Manos abiertas, relajadas, dedos sueltos.', 'Cuerpo erguido, hombros bajos. Sonríe ligeramente — esto activa la respuesta parasimpática.', 'Ojos: mirada suave hacia afuera y al frente. No hacia adentro. Esto es deliberado — interrumpe el bucle de ruido interno.'] },
+      { title: 'La Mente', steps: ['No te concentres dentro de tu cuerpo.', 'Deja que la atención descanse suavemente en lo que te rodea — árboles, cielo, suelo.', 'Esto es lo opuesto a la mayoría de las meditaciones, y es intencional.'] },
+    ],
+    tip: "Camina despacio. Talón a punta. Inhala corto por la nariz — el vientre se llena. Inhala de nuevo corto — el pecho se llena. Exhala largo y lento por la nariz. Repite. Deja que los brazos se balanceen. Mira hacia afuera. Sonríe ligeramente. No pienses. Solo respira y camina.",
+    feel: '1 semana diaria', see: '4 semanas',
+    note: "Mínimo 30 minutos por sesión para efecto terapéutico. Ideal: 60 minutos, por la mañana, al aire libre. Comienza con 15–20 minutos si eres nuevo en la práctica y aumenta gradualmente.",
+    ytLabel: 'Ver: Qigong de Guo Lin — Caminata Natural (tutorial oficial)',
   },
   custom: {
     title: 'Patrón Personalizado',

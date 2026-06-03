@@ -36,6 +36,7 @@ export const TABS: TechTab[] = [
   { id: 'kumbhaka',         label: 'Kumbhaka' },
   { id: 'hamsah',           label: 'Ham-Sah' },
   { id: 'transmutation',    label: 'Transmutation' },
+  { id: 'naturalwalk',      label: 'Natural Walk' },
   { id: 'custom',           label: 'Custom' },
 ];
 
@@ -64,6 +65,7 @@ export const TECH_LABELS: Record<string, string> = {
   hamsah: 'Ham-Sah',
   transmutation: 'Transmutation',
   blink: 'Blink Protocol',
+  naturalwalk: 'Natural Walk',
 };
 
 export const NOSTRIL_TECHS = ['nadi', 'surya', 'chandra', 'ninepurification'];
@@ -93,6 +95,7 @@ export const YT_LINKS: Record<string, string> = {
   hamsah:             'https://www.youtube.com/results?search_query=ham+sah+mantra+breathwork+transmutation+pranayama',
   transmutation:      'https://www.youtube.com/results?search_query=sexual+energy+transmutation+breathwork+kundalini+upward+energy',
   blink:              'https://www.youtube.com/results?search_query=huberman+blink+protocol+dopamine+focus+attention',
+  naturalwalk:        'https://www.youtube.com/watch?v=12RSk3BkCFw',
   custom:             '',
 };
 
@@ -120,6 +123,7 @@ export const YT_LABELS: Record<string, string> = {
   hamsah:             'Watch: Ham-Sah mantra breathwork tutorial',
   transmutation:      'Watch: Sexual Energy Transmutation — breathwork and practice',
   blink:              'Watch: Huberman Blink Protocol — focus and attention reset',
+  naturalwalk:        'Watch: Guolin Qigong — Natural Walking Practice (official tutorial)',
 };
 
 export const REC_DURATION: Record<string, string> = {
@@ -146,6 +150,7 @@ export const REC_DURATION: Record<string, string> = {
   hamsah:             '10–15 min',
   transmutation:      '5–15 min',
   blink:              '5 min',
+  naturalwalk:        '30–60 min walk',
   custom:             '',
 };
 
@@ -248,6 +253,11 @@ export function getPhases(tech: string, customIn = 4, customH1 = 4, customOut = 
       { name: 'Open Gaze — Fix & Hold', s: 30, cls: 'p-hold',  snd: 'hold' },
       { name: 'Slow Blinks — Rest',    s: 60, cls: 'p-moon',   snd: 'moon' },
       { name: 'Rest & Notice',         s: 15, cls: 'p-exhale', snd: 'exhale' },
+    ];
+    case 'naturalwalk': return [
+      { name: 'Xi — Inhale Belly',  s: 2, cls: 'p-inhale', snd: 'inhale' },
+      { name: 'Xi — Inhale Chest',  s: 2, cls: 'p-inhale', snd: 'hold' },
+      { name: 'Hu — Long Exhale',   s: 6, cls: 'p-exhale', snd: 'exhale' },
     ];
     case 'custom': {
       const p: Phase[] = [{ name: 'Inhale', s: customIn, cls: 'p-inhale', snd: 'inhale' }];

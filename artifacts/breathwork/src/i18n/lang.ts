@@ -746,6 +746,7 @@ const en = {
     health:      { label: 'Health',      sub: 'Blood pressure & immunity' },
     trauma:      { label: 'Trauma',      sub: 'Release & heal' },
     transmute:   { label: 'Transmute',   sub: 'Redirect vital energy' },
+    recovery:    { label: 'Recovery',    sub: 'Illness, healing & immune' },
   },
   gratitude: {
     title: 'Gratitude',
@@ -996,6 +997,7 @@ const pt: typeof en = {
     health:      { label: 'Saúde',        sub: 'Pressão arterial e imunidade' },
     trauma:      { label: 'Trauma',       sub: 'Liberar e curar' },
     transmute:   { label: 'Transmutar',   sub: 'Redirecionar energia vital' },
+    recovery:    { label: 'Recuperação',  sub: 'Doença, cura e imunidade' },
   },
   gratitude: {
     title: 'Gratidão',
@@ -1246,6 +1248,7 @@ const es: typeof en = {
     health:      { label: 'Salud',        sub: 'Presión arterial e inmunidad' },
     trauma:      { label: 'Trauma',       sub: 'Liberar y sanar' },
     transmute:   { label: 'Transmutar',   sub: 'Redirigir energía vital' },
+    recovery:    { label: 'Recuperación', sub: 'Enfermedad, sanación e inmunidad' },
   },
   gratitude: {
     title: 'Gratitud',

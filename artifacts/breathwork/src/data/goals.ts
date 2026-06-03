@@ -37,6 +37,7 @@ export const GOAL_BUTTONS: GoalButton[] = [
   { key: 'health',      icon: '🩺', label: 'Health',      sub: 'Blood pressure & immunity' },
   { key: 'trauma',      icon: '🧬', label: 'Trauma',      sub: 'Release & heal' },
   { key: 'transmute',   icon: '⚗️', label: 'Transmute',   sub: 'Redirect vital energy' },
+  { key: 'recovery',   icon: '🌿', label: 'Recovery',    sub: 'Illness, healing & immune' },
 ];
 
 export const GOALS: Record<string, Goal> = {
@@ -206,6 +207,20 @@ export const GOALS: Record<string, Goal> = {
       title: 'Chaconne in D minor',
       detail: 'Partita No. 2, BWV 1004 (1720)',
       why: 'Bach\'s greatest achievement — 15 minutes of transformation built from a single bass line. It spirals upward through every emotional state: the musical mirror of alchemical transmutation.',
+    },
+  },
+  recovery: {
+    label: '🌿 Recovery — Illness, Healing & Immune',
+    choices: [
+      { tech: 'naturalwalk',  name: 'Natural Walk',          desc: 'Guolin Qigong Xi-Xi-Hu — clinically documented immune activation through double-inhale walking breath' },
+      { tech: 'bhramari',     name: 'Bhramari',              desc: 'Bee hum — vagus nerve stimulation with measurable anti-inflammatory and blood pressure effects' },
+      { tech: 'coherent',     name: 'Coherent Breathing',    desc: '5.5 breaths/min — maximizes HRV, the body\'s single best measurable marker of long-term resilience' },
+    ],
+    music: {
+      composer: 'Satie',
+      title: 'Gymnopédie No. 1',
+      detail: 'Trois Gymnopédies (1888)',
+      why: 'The most universally healing music ever written. Satie\'s Gymnopédie slows time itself — its unhurried pace and open harmonics have been used in clinical settings to reduce perceived pain and anxiety. The body remembers how to repair when given this much space.',
     },
   },
 };

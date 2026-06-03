@@ -291,4 +291,5 @@ export const REFERENCE_TABLE = [
   { situation: '🥋 Martial Arts / Qi', best: { tech: 'reversebreathing', name: 'Reverse Breathing' }, also: 'Kumbhaka · Bhastrika' },
   { situation: '🪷 Pre-meditation Clearing', best: { tech: 'ninepurification', name: '9 Purification' }, also: 'Nadi Shodhana · Bhramari' },
   { situation: '🔬 Deep Consciousness', best: { tech: 'murcha', name: 'Murcha' }, also: 'Tummo · Kumbhaka' },
+  { situation: '🌿 Illness / Recovery', best: { tech: 'naturalwalk', name: 'Natural Walk' }, also: 'Bhramari · Coherent' },
 ];

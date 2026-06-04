@@ -4,6 +4,7 @@ import { useLang } from '../i18n/LangContext';
 import heroImg from '../assets/hero.png';
 import { matchIntentionToGoal, timeOfDayGreeting, saveProfile, deleteProfile } from '../hooks/useProfile';
 import { TECH_LABELS } from '../data/techniques';
+import { useFavorites } from '../hooks/useFavorites';
 import './GoalScreen.css';
 
 interface Props {
@@ -66,6 +67,7 @@ const TECH_COLORS: Record<string, string> = {
 
 export default function GoalScreen({ onSelectTech, name, intention, lastMatchedGoal, onBack, lastTech, onProfileUpdate, onLearnMore, onReset }: Props) {
   const { t } = useLang();
+  const { favorites, toggleFavorite, isFavorite } = useFavorites();
   const [activePicker, setActivePicker] = useState<string | null>(null);
   const [editOpen, setEditOpen] = useState(false);
   const [editName, setEditName] = useState('');
@@ -156,6 +158,36 @@ export default function GoalScreen({ onSelectTech, name, intention, lastMatchedG
           </button>
         )}
 
+        {favorites.length > 0 && (
+          <div className="fav-strip">
+            <div className="fav-strip-label">❤ Favourites</div>
+            <div className="fav-strip-cards">
+              {favorites.map(techId => {
+                const icon  = TECH_ICONS[techId]  || '·';
+                const color = TECH_COLORS[techId] || 'rgba(229,169,60,0.12)';
+                const techName = TECH_LABELS[techId] ?? techId;
+                return (
+                  <div key={techId} className="fav-card">
+                    <button
+                      className="fav-card-main"
+                      onClick={() => onSelectTech(techId)}
+                      aria-label={`Start ${techName}`}
+                    >
+                      <span className="fav-card-icon" style={{ background: color }}>{icon}</span>
+                      <span className="fav-card-name">{techName}</span>
+                    </button>
+                    <button
+                      className="fav-card-remove"
+                      onClick={() => toggleFavorite(techId)}
+                      aria-label={`Remove ${techName} from favourites`}
+                    >♥</button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         <div className="goal-grid">
           {GOAL_BUTTONS.map(btn => {
             const gl = goalLabels[btn.key] ?? { label: btn.label, sub: btn.sub };
@@ -214,18 +246,25 @@ export default function GoalScreen({ onSelectTech, name, intention, lastMatchedG
                 const color = TECH_COLORS[c.tech] || 'rgba(229,169,60,0.12)';
                 const infoEntry = (t.info as Record<string, { title: string }>)[c.tech];
                 const techName = infoEntry?.title ?? c.name;
+                const fav = isFavorite(c.tech);
                 return (
-                  <button
-                    key={c.tech}
-                    className="picker-choice"
-                    onClick={() => { setActivePicker(null); onSelectTech(c.tech, activePicker ?? undefined); }}
-                  >
-                    <span className="pc-icon" style={{ background: color }}>{icon}</span>
-                    <div>
-                      <div className="pc-name">{techName}</div>
-                      <div className="pc-desc">{c.desc}</div>
-                    </div>
-                  </button>
+                  <div key={c.tech} className="picker-choice-wrap">
+                    <button
+                      className={`picker-choice${fav ? ' picker-choice--fav' : ''}`}
+                      onClick={() => { setActivePicker(null); onSelectTech(c.tech, activePicker ?? undefined); }}
+                    >
+                      <span className="pc-icon" style={{ background: color }}>{icon}</span>
+                      <div>
+                        <div className="pc-name">{techName}</div>
+                        <div className="pc-desc">{c.desc}</div>
+                      </div>
+                    </button>
+                    <button
+                      className={`pc-fav-btn${fav ? ' pc-fav-btn--on' : ''}`}
+                      onClick={() => toggleFavorite(c.tech)}
+                      aria-label={fav ? `Remove ${techName} from favourites` : `Add ${techName} to favourites`}
+                    >♥</button>
+                  </div>
                 );
               })}
             </div>

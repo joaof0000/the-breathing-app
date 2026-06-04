@@ -747,6 +747,8 @@ const en = {
     trauma:      { label: 'Trauma',      sub: 'Release & heal' },
     transmute:   { label: 'Transmute',   sub: 'Redirect vital energy' },
     recovery:    { label: 'Recovery',    sub: 'Illness, healing & immune' },
+    bleak:       { label: 'Bleak',       sub: 'When the light feels far' },
+    grief:       { label: 'Grief',       sub: 'Loss & letting go' },
   },
   gratitude: {
     title: 'Gratitude',
@@ -998,6 +1000,8 @@ const pt: typeof en = {
     trauma:      { label: 'Trauma',       sub: 'Liberar e curar' },
     transmute:   { label: 'Transmutar',   sub: 'Redirecionar energia vital' },
     recovery:    { label: 'Recuperação',  sub: 'Doença, cura e imunidade' },
+    bleak:       { label: 'Sombrio',      sub: 'Quando a luz parece distante' },
+    grief:       { label: 'Luto',         sub: 'Perda e deixar ir' },
   },
   gratitude: {
     title: 'Gratidão',
@@ -1249,6 +1253,8 @@ const es: typeof en = {
     trauma:      { label: 'Trauma',       sub: 'Liberar y sanar' },
     transmute:   { label: 'Transmutar',   sub: 'Redirigir energía vital' },
     recovery:    { label: 'Recuperación', sub: 'Enfermedad, sanación e inmunidad' },
+    bleak:       { label: 'Sombrío',      sub: 'Cuando la luz se siente lejos' },
+    grief:       { label: 'Duelo',        sub: 'Pérdida y soltar' },
   },
   gratitude: {
     title: 'Gratitud',

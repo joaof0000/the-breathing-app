@@ -38,6 +38,8 @@ export const GOAL_BUTTONS: GoalButton[] = [
   { key: 'trauma',      icon: '🧬', label: 'Trauma',      sub: 'Release & heal' },
   { key: 'transmute',   icon: '⚗️', label: 'Transmute',   sub: 'Redirect vital energy' },
   { key: 'recovery',   icon: '🌿', label: 'Recovery',    sub: 'Illness, healing & immune' },
+  { key: 'bleak',     icon: '🌑', label: 'Bleak',       sub: 'When the light feels far' },
+  { key: 'grief',     icon: '🕊️', label: 'Grief',       sub: 'Loss & letting go' },
 ];
 
 export const GOALS: Record<string, Goal> = {
@@ -207,6 +209,34 @@ export const GOALS: Record<string, Goal> = {
       title: 'Chaconne in D minor',
       detail: 'Partita No. 2, BWV 1004 (1720)',
       why: 'Bach\'s greatest achievement — 15 minutes of transformation built from a single bass line. It spirals upward through every emotional state: the musical mirror of alchemical transmutation.',
+    },
+  },
+  bleak: {
+    label: '🌑 Bleak — Depression & Low Mood',
+    choices: [
+      { tech: 'coherent',  name: 'Coherent Breathing', desc: 'Most researched non-drug intervention for low mood — 20 min daily shifts HRV, lifts baseline' },
+      { tech: 'bhramari',  name: 'Bhramari',           desc: 'Bee hum — quiets the inner critic and dark thought loops through vagal resonance' },
+      { tech: '478',       name: '4-7-8 Breath',       desc: 'Breaks the shallow breath pattern that locks in low mood — forces a physiological reset' },
+    ],
+    music: {
+      composer: 'Arvo Pärt',
+      title: 'Spiegel im Spiegel',
+      detail: 'For piano and violin (1978)',
+      why: 'Mirror in the mirror — Pärt\'s tintinnabuli style creates a space of pure, unhurried stillness. It does not try to lift you out of bleakness. It simply holds it — and that permission to feel is, itself, the beginning of movement.',
+    },
+  },
+  grief: {
+    label: '🕊️ Grief — Loss & Letting Go',
+    choices: [
+      { tech: 'rebirthing',  name: 'Rebirthing Breathwork', desc: 'Circular connected breath — allows suppressed grief to surface and move through the body' },
+      { tech: 'bhramari',    name: 'Bhramari',              desc: 'Gentle hum — holds sadness with warmth, soothes the tightened chest of loss' },
+      { tech: 'naturalwalk', name: 'Natural Walk',          desc: 'Moving breath — walking and breathing together integrates grief gently over time' },
+    ],
+    music: {
+      composer: 'Barber',
+      title: 'Adagio for Strings',
+      detail: 'Op. 11 (1936)',
+      why: 'Barber\'s Adagio is the sound of grief being fully acknowledged. It does not rush toward consolation. It builds in slow waves — and in naming the pain completely, allows it to eventually, quietly, dissolve.',
     },
   },
   recovery: {

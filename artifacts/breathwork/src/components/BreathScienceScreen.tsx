@@ -14,6 +14,11 @@ interface DiaphStep {
   text: string;
 }
 
+interface VideoCard {
+  title: string;
+  sub: string;
+}
+
 interface Content {
   back: string;
   badge: string;
@@ -23,6 +28,11 @@ interface Content {
   reasons: Reason[];
   diaphTitle: string;
   diaphIntro: string;
+  diaphCaption: string;
+  anatExhale: string;
+  anatDiaphRises: string;
+  anatInhale: string;
+  anatDiaphDescends: string;
   diaphWhatTitle: string;
   diaphWhat: string;
   diaphStepsTitle: string;
@@ -34,6 +44,8 @@ interface Content {
   diaphPracticeTitle: string;
   diaphPractice: string;
   scienceNote: string;
+  videosTitle: string;
+  videos: VideoCard[];
   cta: string;
 }
 
@@ -108,6 +120,11 @@ const CONTENT: Record<Lang, Content> = {
     ],
     diaphTitle: 'How to Breathe from Your Diaphragm',
     diaphIntro: 'Diaphragmatic breathing is the foundation of every technique in this app. It is how you were designed to breathe — and how almost nobody breathes by adulthood.',
+    diaphCaption: 'The diaphragm is a muscle. It contracts downward to draw air in, and relaxes upward to push air out.',
+    anatExhale: 'EXHALE',
+    anatDiaphRises: 'diaphragm rises',
+    anatInhale: 'INHALE',
+    anatDiaphDescends: 'diaphragm descends',
     diaphWhatTitle: 'What is the diaphragm?',
     diaphWhat: 'The diaphragm is a large, dome-shaped muscle that sits at the base of your lungs, separating the chest from the abdomen. When it contracts and flattens downward, it creates a vacuum that draws air deep into the lower lobes of the lungs — the most oxygen-rich regions. Chest breathing uses roughly ⅓ of lung capacity. Diaphragmatic breathing uses the full lung — plus stimulates the vagus nerve fibres that run through the diaphragm itself.',
     diaphStepsTitle: 'Step-by-step: learn it in 5 minutes',
@@ -130,6 +147,13 @@ const CONTENT: Record<Lang, Content> = {
     diaphPracticeTitle: 'Building the habit',
     diaphPractice: 'Practise 5 minutes lying down every day for one week. Within 7 days your resting breathing pattern will begin to shift automatically — even during stress. This is the single highest-leverage habit in the entire app.',
     scienceNote: 'References: Zelano et al. (2016), Russo et al. (2017), Kox et al. (2014), Lehrer & Gevirtz (2014), McKeown (2015), Nestor (2020)',
+    videosTitle: 'Watch & Learn',
+    videos: [
+      { title: 'Breathing & the nervous system', sub: 'How breath directly controls stress & calm' },
+      { title: 'Why nasal breathing matters', sub: 'Nitric oxide, oxygen uptake & brain function' },
+      { title: 'Heart rate variability explained', sub: 'Why HRV predicts health & how breathing improves it' },
+      { title: 'Breathing & the immune system', sub: 'Wim Hof study: conscious breath controls immunity' },
+    ],
     cta: 'Start breathing →',
   },
 
@@ -203,6 +227,11 @@ const CONTENT: Record<Lang, Content> = {
     ],
     diaphTitle: 'Como Respirar Pelo Diafragma',
     diaphIntro: 'A respiração diafragmática é a base de todas as técnicas neste aplicativo. É como você foi projetado para respirar — e como quase ninguém respira na idade adulta.',
+    diaphCaption: 'O diafragma é um músculo. Ele se contrai para baixo para atrair ar e relaxa para cima para expeli-lo.',
+    anatExhale: 'EXPIRAR',
+    anatDiaphRises: 'diafragma sobe',
+    anatInhale: 'INSPIRAR',
+    anatDiaphDescends: 'diafragma desce',
     diaphWhatTitle: 'O que é o diafragma?',
     diaphWhat: 'O diafragma é um músculo grande em forma de cúpula que fica na base dos pulmões, separando o tórax do abdômen. Quando se contrai e achata para baixo, cria um vácuo que atrai ar profundamente para os lobos inferiores dos pulmões — as regiões mais ricas em oxigênio. A respiração torácica usa cerca de ⅓ da capacidade pulmonar. A respiração diafragmática usa o pulmão inteiro — além de estimular as fibras do nervo vago que percorrem o próprio diafragma.',
     diaphStepsTitle: 'Passo a passo: aprenda em 5 minutos',
@@ -225,6 +254,13 @@ const CONTENT: Record<Lang, Content> = {
     diaphPracticeTitle: 'Construindo o hábito',
     diaphPractice: 'Pratique 5 minutos deitado todos os dias durante uma semana. Em 7 dias, seu padrão de respiração em repouso começará a mudar automaticamente — mesmo durante o estresse. Este é o hábito de maior alavancagem em todo o aplicativo.',
     scienceNote: 'Referências: Zelano et al. (2016), Russo et al. (2017), Kox et al. (2014), Lehrer & Gevirtz (2014), McKeown (2015), Nestor (2020)',
+    videosTitle: 'Assista e Aprenda',
+    videos: [
+      { title: 'Respiração e sistema nervoso', sub: 'Como a respiração controla o estresse e a calma' },
+      { title: 'Por que a respiração nasal importa', sub: 'Óxido nítrico, absorção de oxigênio e função cerebral' },
+      { title: 'Variabilidade da frequência cardíaca explicada', sub: 'Por que a VFC prevê saúde e como a respiração a melhora' },
+      { title: 'Respiração e sistema imune', sub: 'Estudo Wim Hof: a respiração consciente controla a imunidade' },
+    ],
     cta: 'Começar a respirar →',
   },
 
@@ -298,6 +334,11 @@ const CONTENT: Record<Lang, Content> = {
     ],
     diaphTitle: 'Cómo Respirar Desde el Diafragma',
     diaphIntro: 'La respiración diafragmática es la base de todas las técnicas en esta aplicación. Es como estás diseñado para respirar — y como casi nadie respira en la edad adulta.',
+    diaphCaption: 'El diafragma es un músculo. Se contrae hacia abajo para atraer aire y se relaja hacia arriba para expulsarlo.',
+    anatExhale: 'EXHALAR',
+    anatDiaphRises: 'diafragma sube',
+    anatInhale: 'INHALAR',
+    anatDiaphDescends: 'diafragma desciende',
     diaphWhatTitle: '¿Qué es el diafragma?',
     diaphWhat: 'El diafragma es un músculo grande en forma de cúpula que se asienta en la base de los pulmones, separando el tórax del abdomen. Cuando se contrae y se aplana hacia abajo, crea un vacío que atrae aire profundamente hacia los lóbulos inferiores de los pulmones — las regiones más ricas en oxígeno. La respiración torácica usa aproximadamente ⅓ de la capacidad pulmonar. La respiración diafragmática usa el pulmón completo — además de estimular las fibras del nervio vago que recorren el propio diafragma.',
     diaphStepsTitle: 'Paso a paso: apréndelo en 5 minutos',
@@ -320,6 +361,13 @@ const CONTENT: Record<Lang, Content> = {
     diaphPracticeTitle: 'Construyendo el hábito',
     diaphPractice: 'Practica 5 minutos acostado todos los días durante una semana. En 7 días tu patrón de respiración en reposo comenzará a cambiar automáticamente — incluso durante el estrés. Este es el hábito de mayor apalancamiento en toda la aplicación.',
     scienceNote: 'Referencias: Zelano et al. (2016), Russo et al. (2017), Kox et al. (2014), Lehrer & Gevirtz (2014), McKeown (2015), Nestor (2020)',
+    videosTitle: 'Mira y Aprende',
+    videos: [
+      { title: 'Respiración y sistema nervioso', sub: 'Cómo la respiración controla el estrés y la calma' },
+      { title: 'Por qué importa respirar por la nariz', sub: 'Óxido nítrico, absorción de oxígeno y función cerebral' },
+      { title: 'La variabilidad de la frecuencia cardíaca explicada', sub: 'Por qué la VFC predice la salud y cómo la respiración la mejora' },
+      { title: 'Respiración y sistema inmune', sub: 'Estudio Wim Hof: la respiración consciente controla la inmunidad' },
+    ],
     cta: 'Empezar a respirar →',
   },
 };
@@ -382,8 +430,8 @@ export default function BreathScienceScreen({ onBack, onContinue }: Props) {
               <path d="M 28 88 Q 72 68 116 88" className="bsci-anat-diaph" strokeWidth="2" strokeLinecap="round" />
               {/* Belly flat */}
               <ellipse cx="72" cy="110" rx="36" ry="10" className="bsci-anat-belly bsci-anat-belly-flat" />
-              <text x="72" y="135" className="bsci-anat-phase-lbl bsci-anat-exhale-lbl">EXHALE</text>
-              <text x="72" y="146" className="bsci-anat-sub-lbl">diaphragm rises</text>
+              <text x="72" y="135" className="bsci-anat-phase-lbl bsci-anat-exhale-lbl">{c.anatExhale}</text>
+              <text x="72" y="146" className="bsci-anat-sub-lbl">{c.anatDiaphRises}</text>
               {/* Up arrow */}
               <path d="M 72 100 L 72 88 M 67 93 L 72 87 L 77 93" className="bsci-anat-arrow-up" strokeLinecap="round" strokeLinejoin="round" />
 
@@ -399,12 +447,12 @@ export default function BreathScienceScreen({ onBack, onContinue }: Props) {
               <path d="M 172 100 Q 216 114 260 100" className="bsci-anat-diaph bsci-anat-diaph-down" strokeWidth="2" strokeLinecap="round" />
               {/* Belly expanded */}
               <ellipse cx="216" cy="128" rx="42" ry="18" className="bsci-anat-belly bsci-anat-belly-full" />
-              <text x="216" y="152" className="bsci-anat-phase-lbl bsci-anat-inhale-lbl">INHALE</text>
-              <text x="216" y="163" className="bsci-anat-sub-lbl">diaphragm descends</text>
+              <text x="216" y="152" className="bsci-anat-phase-lbl bsci-anat-inhale-lbl">{c.anatInhale}</text>
+              <text x="216" y="163" className="bsci-anat-sub-lbl">{c.anatDiaphDescends}</text>
               {/* Down arrow */}
               <path d="M 216 108 L 216 120 M 211 115 L 216 121 L 221 115" className="bsci-anat-arrow-down" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            <p className="bsci-anat-caption">The diaphragm is a muscle. It contracts downward to draw air in, and relaxes upward to push air out.</p>
+            <p className="bsci-anat-caption">{c.diaphCaption}</p>
           </div>
 
           <div className="bsci-card">
@@ -449,56 +497,28 @@ export default function BreathScienceScreen({ onBack, onContinue }: Props) {
 
         {/* Video resources */}
         <div className="bsci-videos">
-          <h2 className="bsci-videos-title">Watch &amp; Learn</h2>
+          <h2 className="bsci-videos-title">{c.videosTitle}</h2>
           <div className="bsci-video-grid">
-            <a
-              className="bsci-video-card"
-              href="https://www.youtube.com/results?search_query=breathing+science+nervous+system+vagus+nerve+explained"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <span className="bsci-video-play">▶</span>
-              <div className="bsci-video-info">
-                <strong>Breathing &amp; the nervous system</strong>
-                <span>How breath directly controls stress &amp; calm</span>
-              </div>
-            </a>
-            <a
-              className="bsci-video-card"
-              href="https://www.youtube.com/results?search_query=nasal+breathing+benefits+nitric+oxide+James+Nestor+science"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <span className="bsci-video-play">▶</span>
-              <div className="bsci-video-info">
-                <strong>Why nasal breathing matters</strong>
-                <span>Nitric oxide, oxygen uptake &amp; brain function</span>
-              </div>
-            </a>
-            <a
-              className="bsci-video-card"
-              href="https://www.youtube.com/results?search_query=heart+rate+variability+HRV+breathing+explained"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <span className="bsci-video-play">▶</span>
-              <div className="bsci-video-info">
-                <strong>Heart rate variability explained</strong>
-                <span>Why HRV predicts health &amp; how breathing improves it</span>
-              </div>
-            </a>
-            <a
-              className="bsci-video-card"
-              href="https://www.youtube.com/results?search_query=Wim+Hof+breathing+science+immune+system+Radboud"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <span className="bsci-video-play">▶</span>
-              <div className="bsci-video-info">
-                <strong>Breathing &amp; the immune system</strong>
-                <span>Wim Hof study: conscious breath controls immunity</span>
-              </div>
-            </a>
+            {([
+              'https://www.youtube.com/results?search_query=breathing+science+nervous+system+vagus+nerve+explained',
+              'https://www.youtube.com/results?search_query=nasal+breathing+benefits+nitric+oxide+James+Nestor+science',
+              'https://www.youtube.com/results?search_query=heart+rate+variability+HRV+breathing+explained',
+              'https://www.youtube.com/results?search_query=Wim+Hof+breathing+science+immune+system+Radboud',
+            ] as const).map((href, i) => (
+              <a
+                key={i}
+                className="bsci-video-card"
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span className="bsci-video-play">▶</span>
+                <div className="bsci-video-info">
+                  <strong>{c.videos[i].title}</strong>
+                  <span>{c.videos[i].sub}</span>
+                </div>
+              </a>
+            ))}
           </div>
         </div>
 

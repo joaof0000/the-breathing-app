@@ -39,6 +39,8 @@ jobs:
       - name: Configure Pages (enables Pages if not already on)
         uses: actions/configure-pages@v5
         id: pages
+        with:
+          enablement: true
 
       - name: Build
         run: pnpm --filter @workspace/breathwork run build

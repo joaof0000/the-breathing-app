@@ -3,9 +3,16 @@ import { GOAL_BUTTONS, GOALS } from '../data/goals';
 import { useLang } from '../i18n/LangContext';
 import heroImg from '../assets/hero.png';
 import { matchIntentionToGoal, timeOfDayGreeting, saveProfile, deleteProfile } from '../hooks/useProfile';
-import { TECH_LABELS } from '../data/techniques';
+import { TABS, TECH_LABELS } from '../data/techniques';
 import { useFavorites } from '../hooks/useFavorites';
+import { usePresets } from '../hooks/usePresets';
 import './GoalScreen.css';
+
+const DAILY_TECH_IDS = TABS.map(t => t.id).filter(id => id !== 'custom');
+function getTechOfTheDay(): string {
+  const dayIndex = Math.floor(Date.now() / 86400000) % DAILY_TECH_IDS.length;
+  return DAILY_TECH_IDS[dayIndex];
+}
 
 interface Props {
   onSelectTech: (tech: string | null, goalKey?: string) => void;
@@ -68,12 +75,21 @@ const TECH_COLORS: Record<string, string> = {
 export default function GoalScreen({ onSelectTech, name, intention, lastMatchedGoal, onBack, lastTech, onProfileUpdate, onLearnMore, onReset }: Props) {
   const { t } = useLang();
   const { favorites, toggleFavorite, isFavorite } = useFavorites();
+  const { presets, addPreset, removePreset } = usePresets();
   const [activePicker, setActivePicker] = useState<string | null>(null);
   const [editOpen, setEditOpen] = useState(false);
   const [editName, setEditName] = useState('');
   const [editIntention, setEditIntention] = useState('');
   const [confirmReset, setConfirmReset] = useState(false);
+  const [presetModal, setPresetModal] = useState(false);
+  const [presetName, setPresetName] = useState('');
+  const [presetTech, setPresetTech] = useState('478');
+  const [presetDur, setPresetDur] = useState(5);
   const nameInputRef = useRef<HTMLInputElement>(null);
+
+  const todaysTech = getTechOfTheDay();
+  const todaysTechName = TECH_LABELS[todaysTech] ?? todaysTech;
+  const todaysTechIcon = TECH_ICONS[todaysTech] ?? '·';
 
   const goal    = activePicker ? GOALS[activePicker] : null;
   const goalBtn = activePicker ? GOAL_BUTTONS.find(b => b.key === activePicker) : null;
@@ -188,6 +204,45 @@ export default function GoalScreen({ onSelectTech, name, intention, lastMatchedG
           </div>
         )}
 
+        <div className="totd-card">
+          <div className="totd-label">✦ Technique of the day</div>
+          <button className="totd-btn" onClick={() => onSelectTech(todaysTech)}>
+            <span className="totd-icon" style={{ background: TECH_COLORS[todaysTech] || 'rgba(229,169,60,0.12)' }}>{todaysTechIcon}</span>
+            <span className="totd-name">{todaysTechName}</span>
+            <span className="totd-go">Start →</span>
+          </button>
+        </div>
+
+        {presets.length > 0 && (
+          <div className="fav-strip">
+            <div className="fav-strip-label">⚡ My Presets</div>
+            <div className="fav-strip-cards">
+              {presets.map(p => (
+                <div key={p.id} className="fav-card">
+                  <button
+                    className="fav-card-main"
+                    onClick={() => onSelectTech(p.tech)}
+                    aria-label={`Start ${p.name}`}
+                  >
+                    <span className="fav-card-icon" style={{ background: TECH_COLORS[p.tech] || 'rgba(229,169,60,0.12)' }}>
+                      {TECH_ICONS[p.tech] || '·'}
+                    </span>
+                    <span className="fav-card-name">{p.name}</span>
+                    <span className="fav-card-dur">{p.dur}m</span>
+                  </button>
+                  <button
+                    className="fav-card-remove"
+                    onClick={() => removePreset(p.id)}
+                    aria-label={`Remove preset ${p.name}`}
+                  >×</button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <button className="add-preset-btn" onClick={() => setPresetModal(true)}>+ Save a preset</button>
+
         <div className="goal-grid">
           {GOAL_BUTTONS.map(btn => {
             const gl = goalLabels[btn.key] ?? { label: btn.label, sub: btn.sub };
@@ -283,6 +338,58 @@ export default function GoalScreen({ onSelectTech, name, intention, lastMatchedG
             )}
 
             <button className="picker-cancel" onClick={() => setActivePicker(null)}>{t.goal.back}</button>
+          </div>
+        </div>
+      )}
+
+      {presetModal && (
+        <div
+          className="edit-overlay open"
+          onClick={e => { if (e.target === e.currentTarget) setPresetModal(false); }}
+        >
+          <div className="edit-sheet">
+            <div className="edit-title">Save a preset</div>
+            <label className="edit-label" htmlFor="preset-name">Preset name</label>
+            <input
+              id="preset-name"
+              className="edit-input"
+              type="text"
+              placeholder="e.g. Morning calm"
+              value={presetName}
+              onChange={e => setPresetName(e.target.value)}
+              maxLength={40}
+              autoFocus
+            />
+            <label className="edit-label" htmlFor="preset-tech">Technique</label>
+            <select
+              id="preset-tech"
+              className="edit-input edit-select"
+              value={presetTech}
+              onChange={e => setPresetTech(e.target.value)}
+            >
+              {TABS.filter(tab => tab.id !== 'custom').map(tab => (
+                <option key={tab.id} value={tab.id}>{tab.label}</option>
+              ))}
+            </select>
+            <label className="edit-label" htmlFor="preset-dur">Duration (minutes)</label>
+            <div className="dur-btns" style={{ marginBottom: '1rem' }}>
+              {[1, 2, 3, 5, 10, 20].map(m => (
+                <button key={m} className={`dur-btn${presetDur === m ? ' on' : ''}`} onClick={() => setPresetDur(m)}>{m}</button>
+              ))}
+            </div>
+            <div className="edit-actions">
+              <button
+                className="edit-save"
+                onClick={() => {
+                  if (presetName.trim()) {
+                    addPreset(presetName, presetTech, presetDur);
+                    setPresetName('');
+                    setPresetModal(false);
+                  }
+                }}
+              >Save preset</button>
+              <button className="edit-cancel" onClick={() => setPresetModal(false)}>Cancel</button>
+            </div>
           </div>
         </div>
       )}

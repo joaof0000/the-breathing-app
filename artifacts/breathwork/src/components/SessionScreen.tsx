@@ -8,11 +8,20 @@ import HistoryPanel from './HistoryPanel';
 import ReferenceTable from './ReferenceTable';
 import { TABS, NOSTRIL_TECHS, PUMP_TECHS, YT_LINKS, YT_LABELS, REC_DURATION, TECH_LABELS, getPhases } from '../data/techniques';
 import { useAudio } from '../hooks/useAudio';
+import type { Soundscape } from '../hooks/useAudio';
 import { useSessionMusic } from '../hooks/useSessionMusic';
 import { useSessionStorage, addJournal } from '../hooks/useSessionStorage';
+import { useWakeLock } from '../hooks/useWakeLock';
 import { useLang } from '../i18n/LangContext';
 import type { Translations } from '../i18n/lang';
 import './SessionScreen.css';
+
+const SOUNDSCAPE_LABELS: Record<Soundscape, string> = {
+  none: '—',
+  rain: '🌧 Rain',
+  ocean: '🌊 Ocean',
+  forest: '🌿 Forest',
+};
 
 interface Props {
   initialTech: string | null;
@@ -81,6 +90,8 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
   const [whLiveTimer, setWhLiveTimer] = useState('');
   const [whWaiting, setWhWaiting] = useState(false);
 
+  const [soundscape, setSoundscape] = useState<Soundscape>('none');
+
   const volRef = useRef(volume);
   useEffect(() => { volRef.current = volume; }, [volume]);
 
@@ -88,6 +99,14 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
   const audio = useAudio(getVolume);
   const music = useSessionMusic(goalKey ?? null);
   const { record } = useSessionStorage();
+  const wakeLock = useWakeLock();
+
+  useEffect(() => {
+    audio.setSoundscapeVolume(volume);
+  }, [volume, audio]);
+
+  const soundscapeRef = useRef<Soundscape>('none');
+  useEffect(() => { soundscapeRef.current = soundscape; }, [soundscape]);
 
   const runningRef = useRef(false);
   const rafRef = useRef<number | null>(null);
@@ -113,7 +132,9 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
     lastSessionTsRef.current = ts;
     setRefreshKey(k => k + 1);
     music.stop();
+    audio.stopSoundscape();
     audio.doneTone();
+    wakeLock.release();
     setRunning(false);
     setWhWaiting(false);
     setFill(0);
@@ -127,11 +148,13 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
     setJournalMode(true);
     setJournalText('');
     setJournalMood(0);
-  }, [record, audio, music, stopAllEngines]);
+  }, [record, audio, music, wakeLock, stopAllEngines]);
 
   const stopSession = useCallback(() => {
     if (!runningRef.current && !whWaitingRef.current) return;
     music.stop();
+    audio.stopSoundscape();
+    wakeLock.release();
     const elapsed = Math.floor((Date.now() - sessionStartRef.current) / 1000);
     if (elapsed > 10) record(tech, elapsed);
     setRefreshKey(k => k + 1);
@@ -145,7 +168,7 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
     setNostrilL('idle');
     setNostrilR('idle');
     stopAllEngines();
-  }, [record, tech, music, stopAllEngines]);
+  }, [record, tech, music, audio, wakeLock, stopAllEngines]);
 
   const startDuration = useCallback((techKey: string) => {
     const totalSecs = durMin * 60;
@@ -398,6 +421,10 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
   const beginSession = useCallback(() => {
     audio.ensureAC();
     music.play();
+    wakeLock.acquire();
+    if (soundscapeRef.current !== 'none') {
+      audio.startSoundscape(soundscapeRef.current);
+    }
     const hasIntention = intention.trim().length > 0;
     const hasGratitude = gratitude.trim().length > 0;
     if (hasIntention || hasGratitude) {
@@ -409,7 +436,7 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
       return;
     }
     launchEngines();
-  }, [audio, music, intention, gratitude, launchEngines]);
+  }, [audio, music, wakeLock, intention, gratitude, launchEngines]);
 
   const handleWimHofStop = useCallback(() => {
     if (whStopRetRef.current) { whStopRetRef.current(); whStopRetRef.current = null; }
@@ -639,6 +666,23 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
               <input type="range" min={0} max={100} value={volume} className="vol-slider" onChange={e => setVolume(+e.target.value)} />
               <span className="vol-val">{volume}%</span>
             </div>
+
+            {!running && (
+              <div className="opt-row opt-scape-row">
+                <span className="opt-label">Soundscape</span>
+                <div className="scape-btns">
+                  {(['none', 'rain', 'ocean', 'forest'] as Soundscape[]).map(s => (
+                    <button
+                      key={s}
+                      className={`scape-btn${soundscape === s ? ' on' : ''}`}
+                      onClick={() => setSoundscape(s)}
+                    >
+                      {SOUNDSCAPE_LABELS[s]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {goalKey && (
               <div className="opt-music-block">

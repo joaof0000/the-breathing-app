@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { loadSessions, saveSessions } from '../hooks/useSessionStorage';
 import { TECH_LABELS } from '../data/techniques';
 import { useLang } from '../i18n/LangContext';
@@ -34,6 +35,13 @@ export default function HistoryPanel({ refreshKey, onRefresh }: Props) {
 
   const hasInsights = useMemo(() => sessions.some(s => s.note || s.insight || s.mood), [sessions]);
   const MOOD_EMOJIS = ['😔', '😐', '🙂', '😊', '🌟'];
+
+  const moodChartData = useMemo(() => {
+    return sessions
+      .filter(s => s.mood && s.mood > 0)
+      .slice(-30)
+      .map(s => ({ date: s.date.slice(5), mood: s.mood as number }));
+  }, [sessions]);
 
   const excerptNote = (s: { note?: string; insight?: string }) => {
     const text = s.note ?? s.insight ?? '';
@@ -83,6 +91,24 @@ export default function HistoryPanel({ refreshKey, onRefresh }: Props) {
                   {TECH_LABELS[tc] || tc}
                 </button>
               ))}
+            </div>
+          )}
+
+          {moodChartData.length >= 2 && (
+            <div className="mood-chart-wrap">
+              <div className="mood-chart-label">Mood trend</div>
+              <ResponsiveContainer width="100%" height={90}>
+                <LineChart data={moodChartData} margin={{ top: 4, right: 8, bottom: 0, left: -28 }}>
+                  <XAxis dataKey="date" tick={{ fontSize: 9, fill: '#C4A882' }} tickLine={false} axisLine={false} interval="preserveStartEnd" />
+                  <YAxis domain={[1, 5]} ticks={[1, 3, 5]} tick={{ fontSize: 9, fill: '#C4A882' }} tickLine={false} axisLine={false} />
+                  <Tooltip
+                    contentStyle={{ background: 'rgba(44,31,20,0.95)', border: '1px solid rgba(229,169,60,0.2)', borderRadius: 8, fontSize: 11 }}
+                    labelStyle={{ color: '#C4A882' }}
+                    formatter={(v: number) => [MOOD_EMOJIS[v - 1] ?? v, 'Mood']}
+                  />
+                  <Line type="monotone" dataKey="mood" stroke="#E5A93C" strokeWidth={2} dot={{ r: 3, fill: '#E5A93C', strokeWidth: 0 }} activeDot={{ r: 5 }} />
+                </LineChart>
+              </ResponsiveContainer>
             </div>
           )}
 

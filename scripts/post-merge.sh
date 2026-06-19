@@ -1,4 +1,8 @@
 #!/bin/bash
 set -e
+
 pnpm install --frozen-lockfile
-pnpm --filter db push
+
+# Sync the latest changes to GitHub automatically.
+# Uses the Replit GitHub integration (replit-git-askpass) for authentication.
+pnpm --filter @workspace/scripts run sync-github

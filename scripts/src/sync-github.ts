@@ -188,7 +188,7 @@ async function main() {
   let pushSucceeded = false;
   try {
     execSync(
-      `git push "${GITHUB_SSH_REMOTE}" HEAD:main --force`,
+      `git push "${GITHUB_SSH_REMOTE}" HEAD:main`,
       {
         stdio: "inherit",
         env: {

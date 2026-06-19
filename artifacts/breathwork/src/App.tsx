@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTheme } from 'next-themes';
 import GoalScreen from './components/GoalScreen';
 import SessionScreen from './components/SessionScreen';
 import SacredGeometry from './components/SacredGeometry';
@@ -15,6 +16,7 @@ import './components/SacredGeometry.css';
 
 function LangToggle() {
   const { lang, setLang } = useLang();
+  const { theme, setTheme } = useTheme();
   return (
     <div className="lang-toggle">
       {LANGS.map(l => (
@@ -27,6 +29,14 @@ function LangToggle() {
           {l.toUpperCase()}
         </button>
       ))}
+      <button
+        className="lang-btn theme-btn"
+        onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+        aria-label="Toggle theme"
+        title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+      >
+        {theme === 'dark' ? '☀' : '🌙'}
+      </button>
     </div>
   );
 }

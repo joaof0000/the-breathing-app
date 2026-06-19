@@ -494,3 +494,39 @@ h1 {
 }
 
 .info-link:hover { color: var(--gold); }
+
+/* Soundscape selector */
+.opt-scape-row {
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.scape-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.scape-btn {
+  background: rgba(229,169,60,0.06);
+  border: 1px solid rgba(229,169,60,0.15);
+  border-radius: 9999px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.7rem;
+  color: var(--dim);
+  padding: 0.25rem 0.7rem;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, border-color 0.18s;
+}
+
+.scape-btn:hover {
+  background: rgba(229,169,60,0.12);
+  color: var(--text);
+}
+
+.scape-btn.on {
+  background: rgba(229,169,60,0.18);
+  border-color: rgba(229,169,60,0.4);
+  color: var(--gold);
+}

@@ -1,7 +1,18 @@
 import { useRef, useCallback } from 'react';
 
+export type Soundscape = 'none' | 'rain' | 'ocean' | 'forest';
+
+interface ScapeNodes {
+  source: AudioBufferSourceNode;
+  gain: GainNode;
+  filter: BiquadFilterNode;
+  lfo?: OscillatorNode;
+  lfoGain?: GainNode;
+}
+
 export function useAudio(getVolume: () => number) {
   const acRef = useRef<AudioContext | null>(null);
+  const scapeRef = useRef<ScapeNodes | null>(null);
 
   const ensureAC = useCallback(() => {
     if (!acRef.current) {
@@ -141,5 +152,87 @@ export function useAudio(getVolume: () => number) {
     moon: () => tone(285, 2.5),
   };
 
-  return { ensureAC, tone, tick, hum, pumpTone, doneTone, powerBreathTone, S };
+  const stopSoundscape = useCallback(() => {
+    if (!scapeRef.current) return;
+    const n = scapeRef.current;
+    try { n.lfo?.stop(); } catch {}
+    try { n.source.stop(); } catch {}
+    scapeRef.current = null;
+  }, []);
+
+  const startSoundscape = useCallback((type: Soundscape) => {
+    stopSoundscape();
+    if (type === 'none') return;
+    const ac = ensureAC();
+    const v = getVolume();
+
+    // 10-second stereo noise buffer, looped
+    const bufLen = ac.sampleRate * 10;
+    const buf = ac.createBuffer(2, bufLen, ac.sampleRate);
+    for (let ch = 0; ch < 2; ch++) {
+      const d = buf.getChannelData(ch);
+      for (let i = 0; i < bufLen; i++) d[i] = Math.random() * 2 - 1;
+    }
+
+    const source = ac.createBufferSource();
+    source.buffer = buf;
+    source.loop = true;
+
+    const filter = ac.createBiquadFilter();
+    const gain = ac.createGain();
+    gain.connect(ac.destination);
+
+    let lfo: OscillatorNode | undefined;
+    let lfoGain: GainNode | undefined;
+
+    if (type === 'rain') {
+      filter.type = 'lowpass';
+      filter.frequency.value = 1400;
+      filter.Q.value = 0.4;
+      gain.gain.value = v * 0.18;
+    } else if (type === 'ocean') {
+      filter.type = 'lowpass';
+      filter.frequency.value = 700;
+      filter.Q.value = 0.5;
+      gain.gain.value = v * 0.12;
+      lfo = ac.createOscillator();
+      lfo.frequency.value = 0.12;
+      lfoGain = ac.createGain();
+      lfoGain.gain.value = v * 0.09;
+      lfo.connect(lfoGain);
+      lfoGain.connect(gain.gain);
+      lfo.start();
+    } else if (type === 'forest') {
+      filter.type = 'bandpass';
+      filter.frequency.value = 3500;
+      filter.Q.value = 0.25;
+      gain.gain.value = v * 0.07;
+    }
+
+    source.connect(filter);
+    filter.connect(gain);
+    source.start();
+    scapeRef.current = { source, gain, filter, lfo, lfoGain };
+  }, [ensureAC, getVolume, stopSoundscape]);
+
+  const setSoundscapeVolume = useCallback((v: number) => {
+    if (!scapeRef.current) return;
+    const n = scapeRef.current;
+    const base = v / 100;
+    // Determine original multiplier by soundscape type (stored in filter frequency)
+    const freq = n.filter.frequency.value;
+    if (freq > 1000) {
+      // rain
+      n.gain.gain.value = base * 0.18;
+    } else if (freq < 1000 && n.lfo) {
+      // ocean
+      n.gain.gain.value = base * 0.12;
+      if (n.lfoGain) n.lfoGain.gain.value = base * 0.09;
+    } else {
+      // forest
+      n.gain.gain.value = base * 0.07;
+    }
+  }, []);
+
+  return { ensureAC, tone, tick, hum, pumpTone, doneTone, powerBreathTone, S, startSoundscape, stopSoundscape, setSoundscapeVolume };
 }

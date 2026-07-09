@@ -251,6 +251,88 @@ h1 {
   text-align: right;
 }
 
+/* Background Audio block */
+.opt-bg-audio-block {
+  background: rgba(229, 169, 60, 0.03);
+  border: 1px solid rgba(229, 169, 60, 0.1);
+  border-radius: 10px;
+  padding: 0.5rem 0.65rem 0.4rem;
+  margin-bottom: 0.65rem;
+}
+
+.opt-bg-audio-row { align-items: center; margin-bottom: 0.35rem; }
+.opt-bg-audio-label { letter-spacing: 0.04em; }
+
+.opt-bg-audio-body { transition: opacity 0.2s; }
+.bg-audio-dim { opacity: 0.3; pointer-events: none; }
+
+.bg-cat-row { display: flex; gap: 0.4rem; margin-bottom: 0.45rem; }
+
+.bg-cat-btn {
+  flex: 1;
+  background: rgba(229, 169, 60, 0.06);
+  border: 1px solid rgba(229, 169, 60, 0.14);
+  border-radius: 9999px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--dim);
+  padding: 0.3rem 0.5rem;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.bg-cat-btn:hover { color: var(--text); background: rgba(229, 169, 60, 0.12); }
+.bg-cat-on {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #2C1F14;
+  font-weight: 600;
+}
+
+.bg-sound-row {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.35rem;
+}
+
+.bg-sound-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.1rem;
+  min-width: 42px;
+  min-height: 42px;
+  background: rgba(229, 169, 60, 0.05);
+  border: 1px solid rgba(229, 169, 60, 0.12);
+  border-radius: 10px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.68rem;
+  color: var(--dim);
+  padding: 0.25rem 0.3rem;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.bg-sound-btn:hover {
+  background: rgba(229, 169, 60, 0.12);
+  border-color: rgba(229, 169, 60, 0.25);
+  color: var(--text);
+}
+.bg-sound-on {
+  background: rgba(229, 169, 60, 0.25);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.bg-sound-emoji { font-size: 0.95rem; line-height: 1; }
+.bg-sound-hz    { font-size: 0.6rem; font-weight: 500; }
+
+.bg-vol-row { align-items: center; margin-bottom: 0; }
+.opt-bg-vol-label { font-size: 0.58rem; letter-spacing: 0.08em; }
+
 /* Music block */
 .opt-music-block {
   background: rgba(229, 169, 60, 0.03);

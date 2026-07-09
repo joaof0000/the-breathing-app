@@ -9,6 +9,7 @@ import ReferenceTable from './ReferenceTable';
 import { TABS, NOSTRIL_TECHS, PUMP_TECHS, YT_LINKS, YT_LABELS, REC_DURATION, TECH_LABELS, getPhases } from '../data/techniques';
 import { useAudio } from '../hooks/useAudio';
 import { useSessionMusic } from '../hooks/useSessionMusic';
+import { useBackgroundAudio, NATURE_SOUNDS, FREQUENCY_SOUNDS } from '../hooks/useBackgroundAudio';
 import { useSessionStorage, addJournal } from '../hooks/useSessionStorage';
 import { useLang } from '../i18n/LangContext';
 import type { Translations } from '../i18n/lang';
@@ -87,6 +88,7 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
   const getVolume = useCallback(() => volRef.current / 100, []);
   const audio = useAudio(getVolume);
   const music = useSessionMusic(goalKey ?? null);
+  const bgAudio = useBackgroundAudio(getVolume);
   const { record } = useSessionStorage();
 
   const runningRef = useRef(false);
@@ -113,6 +115,7 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
     lastSessionTsRef.current = ts;
     setRefreshKey(k => k + 1);
     music.stop();
+    bgAudio.stop();
     audio.doneTone();
     setRunning(false);
     setWhWaiting(false);
@@ -132,6 +135,7 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
   const stopSession = useCallback(() => {
     if (!runningRef.current && !whWaitingRef.current) return;
     music.stop();
+    bgAudio.stop();
     const elapsed = Math.floor((Date.now() - sessionStartRef.current) / 1000);
     if (elapsed > 10) record(tech, elapsed);
     setRefreshKey(k => k + 1);
@@ -398,6 +402,7 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
   const beginSession = useCallback(() => {
     audio.ensureAC();
     music.play();
+    bgAudio.play();
     const hasIntention = intention.trim().length > 0;
     const hasGratitude = gratitude.trim().length > 0;
     if (hasIntention || hasGratitude) {
@@ -638,6 +643,74 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
               <span className="opt-label">{t.session.volume}</span>
               <input type="range" min={0} max={100} value={volume} className="vol-slider" onChange={e => setVolume(+e.target.value)} />
               <span className="vol-val">{volume}%</span>
+            </div>
+
+            <div className="opt-bg-audio-block">
+              <div className="opt-row opt-bg-audio-row">
+                <span className="opt-label opt-bg-audio-label">{'\u2728'} {t.session.bgAudio}</span>
+                <button
+                  className={`music-toggle ${bgAudio.enabled ? 'music-on' : 'music-off'}`}
+                  onClick={() => bgAudio.setEnabled(!bgAudio.enabled)}
+                  title={bgAudio.enabled ? 'Mute background audio' : 'Unmute background audio'}
+                >
+                  {bgAudio.enabled ? '🔊' : '🔇'}
+                </button>
+              </div>
+              <div className={`opt-bg-audio-body${bgAudio.enabled ? '' : ' bg-audio-dim'}`}>
+                <div className="opt-row bg-cat-row">
+                  <button
+                    className={`bg-cat-btn ${bgAudio.category === 'nature' ? 'bg-cat-on' : ''}`}
+                    onClick={() => bgAudio.setCategory('nature')}
+                  >
+                    {t.session.nature}
+                  </button>
+                  <button
+                    className={`bg-cat-btn ${bgAudio.category === 'frequencies' ? 'bg-cat-on' : ''}`}
+                    onClick={() => bgAudio.setCategory('frequencies')}
+                  >
+                    {t.session.frequencies}
+                  </button>
+                </div>
+                <div className="opt-row bg-sound-row">
+                  {bgAudio.category === 'nature' && NATURE_SOUNDS.map(s => {
+                    const label = (t as Translations).session.natureSounds?.[s.id] ?? s.label;
+                    return (
+                      <button
+                        key={s.id}
+                        className={`bg-sound-btn ${bgAudio.sound === s.id ? 'bg-sound-on' : ''}`}
+                        onClick={() => bgAudio.setSound(s.id)}
+                        title={label}
+                      >
+                        {s.emoji}
+                      </button>
+                    );
+                  })}
+                  {bgAudio.category === 'frequencies' && FREQUENCY_SOUNDS.map(s => {
+                    const label = (t as Translations).session.freqSounds?.[s.id] ?? s.label;
+                    return (
+                      <button
+                        key={s.id}
+                        className={`bg-sound-btn ${bgAudio.sound === s.id ? 'bg-sound-on' : ''}`}
+                        onClick={() => bgAudio.setSound(s.id)}
+                        title={label}
+                      >
+                        <span className="bg-sound-emoji">{s.emoji}</span>
+                        <span className="bg-sound-hz">{s.hz}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <div className="opt-row bg-vol-row">
+                  <span className="opt-label opt-bg-vol-label">{t.session.bgAudioVol}</span>
+                  <input
+                    type="range" min={0} max={100}
+                    value={bgAudio.volume}
+                    className="vol-slider bg-vol-slider"
+                    onChange={e => bgAudio.setVolume(+e.target.value)}
+                  />
+                  <span className="vol-val">{bgAudio.volume}%</span>
+                </div>
+              </div>
             </div>
 
             {goalKey && (

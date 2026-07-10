@@ -10,6 +10,7 @@ import { TABS, NOSTRIL_TECHS, PUMP_TECHS, YT_LINKS, YT_LABELS, REC_DURATION, TEC
 import { useAudio } from '../hooks/useAudio';
 import { useSessionMusic } from '../hooks/useSessionMusic';
 import { useBackgroundAudio, NATURE_SOUNDS, FREQUENCY_SOUNDS } from '../hooks/useBackgroundAudio';
+import { useVoiceCues } from '../hooks/useVoiceCues';
 import { useSessionStorage, addJournal } from '../hooks/useSessionStorage';
 import { useLang } from '../i18n/LangContext';
 import type { Translations } from '../i18n/lang';
@@ -89,6 +90,7 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
   const audio = useAudio(getVolume);
   const music = useSessionMusic(goalKey ?? null);
   const bgAudio = useBackgroundAudio(getVolume);
+  const voiceCues = useVoiceCues(getVolume);
   const { record } = useSessionStorage();
 
   const runningRef = useRef(false);
@@ -116,6 +118,7 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
     setRefreshKey(k => k + 1);
     music.stop();
     bgAudio.stop();
+    voiceCues.stop();
     audio.doneTone();
     setRunning(false);
     setWhWaiting(false);
@@ -130,12 +133,13 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
     setJournalMode(true);
     setJournalText('');
     setJournalMood(0);
-  }, [record, audio, music, stopAllEngines]);
+  }, [record, audio, music, voiceCues, stopAllEngines]);
 
   const stopSession = useCallback(() => {
     if (!runningRef.current && !whWaitingRef.current) return;
     music.stop();
     bgAudio.stop();
+    voiceCues.stop();
     const elapsed = Math.floor((Date.now() - sessionStartRef.current) / 1000);
     if (elapsed > 10) record(tech, elapsed);
     setRefreshKey(k => k + 1);
@@ -149,7 +153,7 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
     setNostrilL('idle');
     setNostrilR('idle');
     stopAllEngines();
-  }, [record, tech, music, stopAllEngines]);
+  }, [record, tech, music, voiceCues, stopAllEngines]);
 
   const startDuration = useCallback((techKey: string) => {
     const totalSecs = durMin * 60;
@@ -162,9 +166,9 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
 
     const playPhaseSound = (p: typeof phases[0]) => {
       switch (p.snd) {
-        case 'inhale': audio.S.inhale(); break;
-        case 'exhale': audio.S.exhale(); break;
-        case 'hold':   audio.S.hold();   break;
+        case 'inhale': audio.S.inhale(); voiceCues.play('inhale'); break;
+        case 'exhale': audio.S.exhale(); voiceCues.play('exhale'); break;
+        case 'hold':   audio.S.hold();   voiceCues.play('hold');   break;
         case 'fire':   audio.S.fire();   break;
         case 'sun':    audio.S.sun();    break;
         case 'moon':   audio.S.moon();   break;
@@ -210,7 +214,7 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
       rafRef.current = requestAnimationFrame(tick);
     };
     rafRef.current = requestAnimationFrame(tick);
-  }, [durMin, customIn, customH1, customOut, customH2, audio, finishSession]);
+  }, [durMin, customIn, customH1, customOut, customH2, audio, voiceCues, finishSession]);
 
   const startPump = useCallback((techKey: string) => {
     const totalSecs = durMin * 60;
@@ -272,8 +276,8 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
       setPhaseClass(p.cls);
       setPhaseName(p.name);
       setFill(0);
-      if (p.hum) audio.hum(p.s);
-      else audio.S.inhale();
+      if (p.hum) { audio.hum(p.s); voiceCues.play('hold'); }
+      else { audio.S.inhale(); voiceCues.play('inhale'); }
     };
 
     startPhase(0);
@@ -300,7 +304,7 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
       rafRef.current = requestAnimationFrame(tick);
     };
     rafRef.current = requestAnimationFrame(tick);
-  }, [durMin, audio, finishSession]);
+  }, [durMin, audio, voiceCues, finishSession]);
 
   const startWimHof = useCallback(() => {
     let round = 0;
@@ -709,6 +713,45 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
                     onChange={e => bgAudio.setVolume(+e.target.value)}
                   />
                   <span className="vol-val">{bgAudio.volume}%</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="opt-voice-block">
+              <div className="opt-row opt-voice-row">
+                <span className="opt-label opt-voice-label">🗣 {t.session.voiceCues}</span>
+                <button
+                  className={`music-toggle ${voiceCues.enabled ? 'music-on' : 'music-off'}`}
+                  onClick={() => voiceCues.setEnabled(!voiceCues.enabled)}
+                  title={voiceCues.enabled ? 'Mute voice cues' : 'Unmute voice cues'}
+                >
+                  {voiceCues.enabled ? '🔊' : '🔇'}
+                </button>
+              </div>
+              <div className={`opt-voice-body${voiceCues.enabled ? '' : ' voice-dim'}`}>
+                <div className="opt-row voice-gender-row">
+                  <button
+                    className={`voice-gender-btn ${voiceCues.gender === 'male' ? 'voice-gender-on' : ''}`}
+                    onClick={() => voiceCues.setGender('male')}
+                  >
+                    {t.session.voiceMale}
+                  </button>
+                  <button
+                    className={`voice-gender-btn ${voiceCues.gender === 'female' ? 'voice-gender-on' : ''}`}
+                    onClick={() => voiceCues.setGender('female')}
+                  >
+                    {t.session.voiceFemale}
+                  </button>
+                </div>
+                <div className="opt-row voice-vol-row">
+                  <span className="opt-label opt-voice-vol-label">{t.session.voiceCuesVol}</span>
+                  <input
+                    type="range" min={0} max={100}
+                    value={voiceCues.volume}
+                    className="vol-slider voice-vol-slider"
+                    onChange={e => voiceCues.setVolume(+e.target.value)}
+                  />
+                  <span className="vol-val">{voiceCues.volume}%</span>
                 </div>
               </div>
             </div>

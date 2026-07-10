@@ -1,8 +1,43 @@
 uploads = []
-outputs = []
 
 [[generated]]
 id = "vtalvwmn-wJK26f3Z7AzE"
 uri = "file://artifacts/breathwork/src/assets/hero.png"
 type = "image"
 title = "generated_image"
+
+[[outputs]]
+id = "tYNP2fI1VNKr5AlFn1MBA"
+uri = "file://attached_assets/generated_audio/voice_male_inhale.mp3"
+type = "audio"
+title = "voice_male_inhale"
+
+[[outputs]]
+id = "E4yVjS6-jXRK4xV0fkyjT"
+uri = "file://attached_assets/generated_audio/voice_male_exhale.mp3"
+type = "audio"
+title = "voice_male_exhale"
+
+[[outputs]]
+id = "n51rQCYfICIPZihAJFJ90"
+uri = "file://attached_assets/generated_audio/voice_male_hold.mp3"
+type = "audio"
+title = "voice_male_hold"
+
+[[outputs]]
+id = "kzcbGIVv3MaePkbS87aWE"
+uri = "file://attached_assets/generated_audio/voice_female_exhale.mp3"
+type = "audio"
+title = "voice_female_exhale"
+
+[[outputs]]
+id = "VIH6FIAsIB1HfVCroYsGK"
+uri = "file://attached_assets/generated_audio/voice_female_hold.mp3"
+type = "audio"
+title = "voice_female_hold"
+
+[[outputs]]
+id = "jhWgKG57IBsAx42KTLToN"
+uri = "file://attached_assets/generated_audio/voice_female_inhale.mp3"
+type = "audio"
+title = "voice_female_inhale"

@@ -576,3 +576,46 @@ h1 {
 }
 
 .info-link:hover { color: var(--gold); }
+
+/* Voice Cues block */
+.opt-voice-block {
+  background: rgba(229, 169, 60, 0.03);
+  border: 1px solid rgba(229, 169, 60, 0.1);
+  border-radius: 10px;
+  padding: 0.5rem 0.65rem 0.4rem;
+  margin-bottom: 0.65rem;
+}
+
+.opt-voice-row { align-items: center; margin-bottom: 0.35rem; }
+.opt-voice-label { letter-spacing: 0.04em; }
+
+.opt-voice-body { transition: opacity 0.2s; }
+.voice-dim { opacity: 0.3; pointer-events: none; }
+
+.voice-gender-row { display: flex; gap: 0.4rem; margin-bottom: 0.45rem; }
+
+.voice-gender-btn {
+  flex: 1;
+  background: rgba(229, 169, 60, 0.06);
+  border: 1px solid rgba(229, 169, 60, 0.14);
+  border-radius: 9999px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--dim);
+  padding: 0.3rem 0.5rem;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.voice-gender-btn:hover { color: var(--text); background: rgba(229, 169, 60, 0.12); }
+.voice-gender-on {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #2C1F14;
+  font-weight: 600;
+}
+
+.voice-vol-row { align-items: center; margin-bottom: 0; }
+.opt-voice-vol-label { font-size: 0.58rem; letter-spacing: 0.08em; }

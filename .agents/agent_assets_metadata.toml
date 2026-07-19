@@ -6,6 +6,12 @@ uri = "file://artifacts/breathwork/src/assets/hero.png"
 type = "image"
 title = "generated_image"
 
+[[generated]]
+id = "od6vJkEnUeCUXqatynj3U"
+uri = "file://artifacts/breathwork-mobile/assets/images/icon.png"
+type = "image"
+title = "generated_image"
+
 [[outputs]]
 id = "tYNP2fI1VNKr5AlFn1MBA"
 uri = "file://attached_assets/generated_audio/voice_male_inhale.mp3"

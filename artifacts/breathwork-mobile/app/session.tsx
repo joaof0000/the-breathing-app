@@ -14,8 +14,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
 import { BreathRing } from '@/components/BreathRing';
+import NostrilIndicator from '@/components/NostrilIndicator';
 import { useSession } from '@/contexts/SessionContext';
-import { TECH_LABELS, getPhaseColor, getPhases } from '@/data/techniques';
+import { NOSTRIL_TECHS, TECH_LABELS, getPhaseColor, getPhases } from '@/data/techniques';
 import { useColors } from '@/hooks/useColors';
 
 const TOTAL_ROUNDS = 3;
@@ -193,6 +194,9 @@ export default function SessionScreen() {
               <Text style={[styles.phaseName, { color: colors.dim }]} numberOfLines={2}>
                 {currentPhase?.name}
               </Text>
+              {NOSTRIL_TECHS.includes(selectedTech) && currentPhase && (
+                <NostrilIndicator phaseName={currentPhase.name} />
+              )}
             </>
           ) : (
             <>

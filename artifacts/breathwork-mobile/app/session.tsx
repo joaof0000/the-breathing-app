@@ -15,8 +15,9 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { BreathRing } from '@/components/BreathRing';
 import NostrilIndicator from '@/components/NostrilIndicator';
+import TechInfoDrawer from '@/components/TechInfoDrawer';
 import { useSession } from '@/contexts/SessionContext';
-import { NOSTRIL_TECHS, TECH_LABELS, getPhaseColor, getPhases } from '@/data/techniques';
+import { NOSTRIL_TECHS, TECH_LABELS, TECH_INFO, getPhaseColor, getPhases } from '@/data/techniques';
 import { useColors } from '@/hooks/useColors';
 import { useAudioTones } from '@/hooks/useAudioTones';
 
@@ -40,6 +41,7 @@ export default function SessionScreen() {
   const [isComplete, setIsComplete] = useState(false);
   const [totalSeconds, setTotalSeconds] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(false);
 
   const { playPhase, playDone, stopHum } = useAudioTones({ muted: isMuted });
 
@@ -188,18 +190,35 @@ export default function SessionScreen() {
         <Text style={[styles.techName, { color: colors.foreground }]}>
           {TECH_LABELS[selectedTech] ?? selectedTech}
         </Text>
-        <Pressable
-          onPress={() => setIsMuted(m => !m)}
-          style={({ pressed }) => [styles.muteBtn, { opacity: pressed ? 0.5 : 1 }]}
-          hitSlop={12}
-        >
-          <Ionicons
-            name={isMuted ? 'volume-mute' : 'volume-medium'}
-            size={22}
-            color={isMuted ? colors.faint : colors.primary}
-          />
-        </Pressable>
+        <View style={styles.headerRight}>
+          {TECH_INFO[selectedTech] && (
+            <Pressable
+              onPress={() => setInfoOpen(true)}
+              style={({ pressed }) => [styles.iconBtn, { opacity: pressed ? 0.5 : 1 }]}
+              hitSlop={12}
+            >
+              <Ionicons name="information-circle-outline" size={24} color={colors.primary} />
+            </Pressable>
+          )}
+          <Pressable
+            onPress={() => setIsMuted(m => !m)}
+            style={({ pressed }) => [styles.iconBtn, { opacity: pressed ? 0.5 : 1, alignItems: 'flex-end' }]}
+            hitSlop={12}
+          >
+            <Ionicons
+              name={isMuted ? 'volume-mute' : 'volume-medium'}
+              size={22}
+              color={isMuted ? colors.faint : colors.primary}
+            />
+          </Pressable>
+        </View>
       </View>
+
+      <TechInfoDrawer
+        tech={selectedTech}
+        visible={infoOpen}
+        onClose={() => setInfoOpen(false)}
+      />
 
       <View style={styles.ringSection}>
         <BreathRing
@@ -361,11 +380,16 @@ const styles = StyleSheet.create({
     height: 44,
     justifyContent: 'center',
   },
-  muteBtn: {
-    width: 44,
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  iconBtn: {
+    width: 36,
     height: 44,
     justifyContent: 'center',
-    alignItems: 'flex-end',
+    alignItems: 'center',
   },
   techName: {
     fontSize: 17,

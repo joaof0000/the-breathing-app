@@ -1,6 +1,8 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
+import * as Speech from 'expo-speech';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Platform,
@@ -22,8 +24,27 @@ import { useColors } from '@/hooks/useColors';
 import { useAudioTones } from '@/hooks/useAudioTones';
 
 const TOTAL_ROUNDS = 3;
+const VOLUME_KEY = 'breathwork_mobile_volume_v1';
+const VOICE_KEY  = 'breathwork_mobile_voice_v1';
 
 const ALL_TECHS = Object.keys(TECH_LABELS).filter(t => t !== 'custom' && getPhases(t).length > 0);
+
+/** Map a phase class + name to a short spoken cue. */
+function getVoiceLabel(cls: string, name: string): string {
+  const n = name.toLowerCase();
+  if (n.includes('hum'))                                              return 'Hum';
+  if (n.includes('inhale') || n.includes('breathe in'))              return 'Breathe in';
+  if (n.includes('exhale') || n.includes('breathe out'))             return 'Breathe out';
+  if (n.includes('hold') || n.includes('retention') || n.includes('lock')) return 'Hold';
+  if (n.includes('rest') || n.includes('recov'))                     return 'Rest';
+  // cls fallback
+  switch (cls) {
+    case 'p-inhale': case 'p-ice':   return 'Breathe in';
+    case 'p-exhale': case 'p-fire':  return 'Breathe out';
+    case 'p-hold':   case 'p-hold2': return 'Hold';
+    default:                          return '';
+  }
+}
 
 export default function SessionScreen() {
   const { tech: techParam } = useLocalSearchParams<{ tech?: string }>();
@@ -34,23 +55,73 @@ export default function SessionScreen() {
   const [selectedTech, setSelectedTech] = useState(techParam ?? 'box');
   const phases = getPhases(selectedTech);
 
-  const [isRunning, setIsRunning] = useState(false);
-  const [phaseIndex, setPhaseIndex] = useState(0);
-  const [roundNum, setRoundNum] = useState(1);
+  const [isRunning, setIsRunning]           = useState(false);
+  const [phaseIndex, setPhaseIndex]         = useState(0);
+  const [roundNum, setRoundNum]             = useState(1);
   const [secondsElapsed, setSecondsElapsed] = useState(0);
-  const [isComplete, setIsComplete] = useState(false);
-  const [totalSeconds, setTotalSeconds] = useState(0);
-  const [isMuted, setIsMuted] = useState(false);
-  const [infoOpen, setInfoOpen] = useState(false);
+  const [isComplete, setIsComplete]         = useState(false);
+  const [totalSeconds, setTotalSeconds]     = useState(0);
+  const [infoOpen, setInfoOpen]             = useState(false);
 
-  const { playPhase, playDone, stopHum } = useAudioTones({ muted: isMuted });
+  // ── Audio & voice settings ──────────────────────────────────────────────────
+  const [volume, setVolume]           = useState(70);      // 0–100
+  const volumeBeforeMute              = useRef(70);
+  const [voiceEnabled, setVoiceEnabled] = useState(false);
+
+  // Load persisted settings once on mount
+  useEffect(() => {
+    (async () => {
+      try {
+        const [vol, voice] = await Promise.all([
+          AsyncStorage.getItem(VOLUME_KEY),
+          AsyncStorage.getItem(VOICE_KEY),
+        ]);
+        if (vol !== null) {
+          const v = Number(vol);
+          setVolume(v);
+          if (v > 0) volumeBeforeMute.current = v;
+        }
+        if (voice !== null) setVoiceEnabled(voice === 'true');
+      } catch { /* non-fatal */ }
+    })();
+  }, []);
+
+  const saveVolume = useCallback(async (v: number) => {
+    setVolume(v);
+    await AsyncStorage.setItem(VOLUME_KEY, String(v)).catch(() => {});
+  }, []);
+
+  const saveVoice = useCallback(async (on: boolean) => {
+    setVoiceEnabled(on);
+    await AsyncStorage.setItem(VOICE_KEY, String(on)).catch(() => {});
+  }, []);
+
+  const handleVolumeToggle = useCallback(() => {
+    if (volume > 0) {
+      volumeBeforeMute.current = volume;
+      void saveVolume(0);
+    } else {
+      void saveVolume(volumeBeforeMute.current || 70);
+    }
+  }, [volume, saveVolume]);
+
+  // Derive ionicon name from volume level
+  const volumeIconName: React.ComponentProps<typeof Ionicons>['name'] =
+    volume === 0   ? 'volume-mute'
+    : volume < 40  ? 'volume-low'
+    : volume < 75  ? 'volume-medium'
+    : 'volume-high';
+
+  const { playPhase, playDone, stopHum } = useAudioTones({ volume: volume / 100 });
 
   const sessionStartRef = useRef<number | null>(null);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const intervalRef     = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const currentPhase = phases[phaseIndex];
-  const phaseKey = `${phaseIndex}-${roundNum}`;
-  const phaseColor = currentPhase ? getPhaseColor(currentPhase.cls, colors as unknown as Record<string, string>) : colors.primary;
+  const currentPhase    = phases[phaseIndex];
+  const phaseKey        = `${phaseIndex}-${roundNum}`;
+  const phaseColor      = currentPhase
+    ? getPhaseColor(currentPhase.cls, colors as unknown as Record<string, string>)
+    : colors.primary;
   const secondsRemaining = currentPhase ? Math.max(0, currentPhase.s - secondsElapsed) : 0;
 
   // Play tone at the start of each phase
@@ -59,6 +130,21 @@ export default function SessionScreen() {
     playPhase(currentPhase.cls, currentPhase.name, currentPhase.s);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phaseIndex, isRunning, selectedTech]);
+
+  // Speak phase name when voice cues are on
+  useEffect(() => {
+    if (!isRunning || !currentPhase || !voiceEnabled) return;
+    const label = getVoiceLabel(currentPhase.cls, currentPhase.name);
+    if (!label) return;
+    void Speech.stop().catch(() => {});
+    Speech.speak(label, { rate: 0.85, pitch: 1.0 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phaseIndex, isRunning, selectedTech, voiceEnabled]);
+
+  // Stop speech whenever session stops
+  useEffect(() => {
+    if (!isRunning) void Speech.stop().catch(() => {});
+  }, [isRunning]);
 
   // Play completion chime
   useEffect(() => {
@@ -75,10 +161,7 @@ export default function SessionScreen() {
   }
 
   const tick = useCallback(() => {
-    setSecondsElapsed(prev => {
-      const next = prev + 1;
-      return next;
-    });
+    setSecondsElapsed(prev => prev + 1);
     setTotalSeconds(prev => prev + 1);
   }, []);
 
@@ -105,7 +188,9 @@ export default function SessionScreen() {
           stopTimer();
           setIsRunning(false);
           setIsComplete(true);
-          const dur = sessionStartRef.current ? Math.round((Date.now() - sessionStartRef.current) / 1000) : 0;
+          const dur = sessionStartRef.current
+            ? Math.round((Date.now() - sessionStartRef.current) / 1000)
+            : 0;
           void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
           void recordSession(selectedTech, dur);
         }
@@ -140,9 +225,7 @@ export default function SessionScreen() {
     setIsRunning(false);
     if (sessionStartRef.current) {
       const dur = Math.round((Date.now() - sessionStartRef.current) / 1000);
-      if (dur >= 5) {
-        void recordSession(selectedTech, dur);
-      }
+      if (dur >= 5) void recordSession(selectedTech, dur);
       sessionStartRef.current = null;
     }
   }
@@ -166,8 +249,44 @@ export default function SessionScreen() {
     setIsComplete(false);
   }
 
-  const topPad = Platform.OS === 'web' ? 67 : insets.top + 8;
+  const topPad    = Platform.OS === 'web' ? 67 : insets.top + 8;
   const bottomPad = Platform.OS === 'web' ? 34 : insets.bottom + 20;
+
+  // ── Volume bar row (5 steps: 0, 25, 50, 75, 100) ───────────────────────────
+  const VOL_STEPS = [20, 40, 60, 80, 100];
+  const VolumeBars = (
+    <View style={styles.volRow}>
+      <Pressable onPress={handleVolumeToggle} hitSlop={8}>
+        <Ionicons
+          name={volumeIconName}
+          size={18}
+          color={volume === 0 ? colors.faint : colors.primary}
+        />
+      </Pressable>
+      <View style={styles.volBars}>
+        {VOL_STEPS.map(step => (
+          <Pressable
+            key={step}
+            onPress={() => {
+              const next = volume === step ? 0 : step;
+              if (next > 0) volumeBeforeMute.current = next;
+              void saveVolume(next);
+            }}
+            hitSlop={6}
+            style={[
+              styles.volBar,
+              {
+                backgroundColor: volume >= step ? colors.primary : colors.card,
+                borderColor: volume >= step ? colors.primary : colors.border,
+                height: 6 + (step / 100) * 10, // bars grow taller → left to right
+              },
+            ]}
+          />
+        ))}
+      </View>
+      <Text style={[styles.volPct, { color: colors.faint }]}>{volume}%</Text>
+    </View>
+  );
 
   return (
     <LinearGradient
@@ -187,9 +306,11 @@ export default function SessionScreen() {
         >
           <Ionicons name="chevron-back" size={28} color={colors.primary} />
         </Pressable>
+
         <Text style={[styles.techName, { color: colors.foreground }]}>
           {TECH_LABELS[selectedTech] ?? selectedTech}
         </Text>
+
         <View style={styles.headerRight}>
           {TECH_INFO[selectedTech] && (
             <Pressable
@@ -200,15 +321,30 @@ export default function SessionScreen() {
               <Ionicons name="information-circle-outline" size={24} color={colors.primary} />
             </Pressable>
           )}
+
+          {/* Voice cues toggle */}
           <Pressable
-            onPress={() => setIsMuted(m => !m)}
+            onPress={() => void saveVoice(!voiceEnabled)}
+            style={({ pressed }) => [styles.iconBtn, { opacity: pressed ? 0.5 : 1 }]}
+            hitSlop={12}
+          >
+            <Ionicons
+              name={voiceEnabled ? 'mic' : 'mic-off-outline'}
+              size={20}
+              color={voiceEnabled ? colors.primary : colors.faint}
+            />
+          </Pressable>
+
+          {/* Volume quick-toggle */}
+          <Pressable
+            onPress={handleVolumeToggle}
             style={({ pressed }) => [styles.iconBtn, { opacity: pressed ? 0.5 : 1, alignItems: 'flex-end' }]}
             hitSlop={12}
           >
             <Ionicons
-              name={isMuted ? 'volume-mute' : 'volume-medium'}
+              name={volumeIconName}
               size={22}
-              color={isMuted ? colors.faint : colors.primary}
+              color={volume === 0 ? colors.faint : colors.primary}
             />
           </Pressable>
         </View>
@@ -303,7 +439,7 @@ export default function SessionScreen() {
       )}
 
       {!isComplete && (
-        <View style={[styles.controlRow, { paddingBottom: bottomPad }]}>
+        <View style={[styles.controlRow, { paddingBottom: isRunning ? bottomPad : 12 }]}>
           {isRunning ? (
             <Pressable
               style={({ pressed }) => [
@@ -331,7 +467,12 @@ export default function SessionScreen() {
 
       {!isRunning && !isComplete && (
         <View style={[styles.techPicker, { paddingBottom: bottomPad + 8 }]}>
-          <Text style={[styles.pickerLabel, { color: colors.faint }]}>TECHNIQUE</Text>
+          {/* Volume control */}
+          <Text style={[styles.pickerLabel, { color: colors.faint }]}>TONE VOLUME</Text>
+          {VolumeBars}
+
+          {/* Technique picker */}
+          <Text style={[styles.pickerLabel, { color: colors.faint, marginTop: 16 }]}>TECHNIQUE</Text>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -518,5 +659,31 @@ const styles = StyleSheet.create({
   techChipText: {
     fontSize: 13,
     fontFamily: 'Inter_500Medium',
+  },
+  // ── Volume bar row ──────────────────────────────────────────────────────────
+  volRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    gap: 8,
+    paddingLeft: 4,
+    marginBottom: 4,
+  },
+  volBars: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    gap: 5,
+    flex: 1,
+  },
+  volBar: {
+    flex: 1,
+    borderRadius: 3,
+    borderWidth: 1,
+    maxWidth: 32,
+  },
+  volPct: {
+    fontSize: 12,
+    fontFamily: 'Inter_400Regular',
+    minWidth: 34,
+    textAlign: 'right',
   },
 });

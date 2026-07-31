@@ -18,7 +18,7 @@ function buildWavDataUri(
   volume = 0.28,
   bhramari = false,
 ): string {
-  const key = `${freq}|${durationSec}|${volume}|${bhramari}`;
+  const key = `${freq}|${durationSec}|${volume.toFixed(3)}|${bhramari}`;
   if (wavCache.has(key)) return wavCache.get(key)!;
 
   const SR = 11025; // sample rate — good enough for tones, small buffer size
@@ -171,10 +171,11 @@ function webHum(ac: AudioContext, dur: number, vol: number) {
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
 interface AudioTonesOptions {
-  muted: boolean;
+  /** 0–1; 0 = silent */
+  volume: number;
 }
 
-export function useAudioTones({ muted }: AudioTonesOptions) {
+export function useAudioTones({ volume }: AudioTonesOptions) {
   // Web AudioContext ref
   const acRef = useRef<AudioContext | null>(null);
   // Native sound ref — we keep one Sound at a time (reused across phases)
@@ -262,7 +263,7 @@ export function useAudioTones({ muted }: AudioTonesOptions) {
   // ── Play a phase tone ──
   const playPhase = useCallback(
     (cls: string, phaseName: string, phaseDurSec: number) => {
-      if (muted) return;
+      if (volume <= 0) return;
 
       // Stop any ongoing hum first
       humStopRef.current?.();
@@ -276,32 +277,31 @@ export function useAudioTones({ muted }: AudioTonesOptions) {
         const ac = ensureAC();
         if (!ac) return;
         if (isBhramariHum) {
-          webHum(ac, dur, 1);
-          // Nothing to "stop" early on web since it auto-decays, but track it anyway
+          webHum(ac, dur, volume);
           humStopRef.current = () => { /* web hum auto-fades */ };
         } else {
-          webTone(ac, freq, dur, 1);
+          webTone(ac, freq, dur, volume);
         }
       } else {
-        const wavUri = buildWavDataUri(freq, dur, 0.28, isBhramariHum);
+        const wavUri = buildWavDataUri(freq, dur, volume * 0.28, isBhramariHum);
         void nativePlay(wavUri);
         if (isBhramariHum) {
           humStopRef.current = stopHum;
         }
       }
     },
-    [muted, ensureAC, nativePlay, stopHum],
+    [volume, ensureAC, nativePlay, stopHum],
   );
 
   // ── Completion chime ──
   const playDone = useCallback(() => {
-    if (muted) return;
+    if (volume <= 0) return;
     if (Platform.OS === 'web') {
       const ac = ensureAC();
       if (!ac) return;
-      webTone(ac, 528, 2.5, 1);
-      setTimeout(() => webTone(ac, 396, 2, 1), 400);
-      setTimeout(() => webTone(ac, 639, 1.8, 1), 800);
+      webTone(ac, 528, 2.5, volume);
+      setTimeout(() => webTone(ac, 396, 2, volume), 400);
+      setTimeout(() => webTone(ac, 639, 1.8, volume), 800);
     } else {
       // Play chimes sequentially on native
       const play = async () => {
@@ -320,7 +320,7 @@ export function useAudioTones({ muted }: AudioTonesOptions) {
               await soundRef.current.unloadAsync().catch(() => {});
               soundRef.current = null;
             }
-            const uri = buildWavDataUri(freq, dur, 0.28, false);
+            const uri = buildWavDataUri(freq, dur, volume * 0.28, false);
             const { sound } = await Audio.Sound.createAsync({ uri });
             soundRef.current = sound;
             await sound.playAsync();
@@ -331,7 +331,7 @@ export function useAudioTones({ muted }: AudioTonesOptions) {
       };
       void play();
     }
-  }, [muted, ensureAC]);
+  }, [volume, ensureAC]);
 
   return { playPhase, playDone, stopHum };
 }

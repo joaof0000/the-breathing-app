@@ -18,6 +18,7 @@ import NostrilIndicator from '@/components/NostrilIndicator';
 import { useSession } from '@/contexts/SessionContext';
 import { NOSTRIL_TECHS, TECH_LABELS, getPhaseColor, getPhases } from '@/data/techniques';
 import { useColors } from '@/hooks/useColors';
+import { useAudioTones } from '@/hooks/useAudioTones';
 
 const TOTAL_ROUNDS = 3;
 
@@ -38,6 +39,9 @@ export default function SessionScreen() {
   const [secondsElapsed, setSecondsElapsed] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
   const [totalSeconds, setTotalSeconds] = useState(0);
+  const [isMuted, setIsMuted] = useState(false);
+
+  const { playPhase, playDone, stopHum } = useAudioTones({ muted: isMuted });
 
   const sessionStartRef = useRef<number | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -46,6 +50,20 @@ export default function SessionScreen() {
   const phaseKey = `${phaseIndex}-${roundNum}`;
   const phaseColor = currentPhase ? getPhaseColor(currentPhase.cls, colors as unknown as Record<string, string>) : colors.primary;
   const secondsRemaining = currentPhase ? Math.max(0, currentPhase.s - secondsElapsed) : 0;
+
+  // Play tone at the start of each phase
+  useEffect(() => {
+    if (!isRunning || !currentPhase) return;
+    playPhase(currentPhase.cls, currentPhase.name, currentPhase.s);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phaseIndex, isRunning, selectedTech]);
+
+  // Play completion chime
+  useEffect(() => {
+    if (!isComplete) return;
+    playDone();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isComplete]);
 
   function stopTimer() {
     if (intervalRef.current) {
@@ -115,6 +133,7 @@ export default function SessionScreen() {
 
   function handleStop() {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    stopHum();
     stopTimer();
     setIsRunning(false);
     if (sessionStartRef.current) {
@@ -127,6 +146,7 @@ export default function SessionScreen() {
   }
 
   function handleReset() {
+    stopHum();
     setIsComplete(false);
     setIsRunning(false);
     setPhaseIndex(0);
@@ -168,7 +188,17 @@ export default function SessionScreen() {
         <Text style={[styles.techName, { color: colors.foreground }]}>
           {TECH_LABELS[selectedTech] ?? selectedTech}
         </Text>
-        <View style={{ width: 44 }} />
+        <Pressable
+          onPress={() => setIsMuted(m => !m)}
+          style={({ pressed }) => [styles.muteBtn, { opacity: pressed ? 0.5 : 1 }]}
+          hitSlop={12}
+        >
+          <Ionicons
+            name={isMuted ? 'volume-mute' : 'volume-medium'}
+            size={22}
+            color={isMuted ? colors.faint : colors.primary}
+          />
+        </Pressable>
       </View>
 
       <View style={styles.ringSection}>
@@ -330,6 +360,12 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     justifyContent: 'center',
+  },
+  muteBtn: {
+    width: 44,
+    height: 44,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
   },
   techName: {
     fontSize: 17,

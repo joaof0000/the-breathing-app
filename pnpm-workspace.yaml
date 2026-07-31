@@ -62,7 +62,7 @@ catalog:
   tailwind-merge: ^3.3.1
   tailwindcss: ^4.1.14
   tsx: ^4.21.0
-  vite: ^7.3.2
+  vite: ^7.3.5
   wouter: ^3.3.5
   zod: ^3.25.76
 
@@ -160,3 +160,9 @@ overrides:
   esbuild: "0.27.3"
   # qs >=6.15.2 patches GHSA-q8mj-m7cp-5q26 (DoS via stringify on null entries)
   qs: ">=6.15.2"
+  # brace-expansion: patches CVE-2026-13149 and CVE-2026-14257 (DoS via consecutive non-expanding {} groups)
+  "brace-expansion@1": "1.1.18"
+  "brace-expansion@2": "2.1.4"
+  "brace-expansion@>=3": "5.0.9"
+  # js-yaml >=4.3.0 patches CVE-2026-59869 (quadratic CPU via YAML merge-key chains)
+  js-yaml: ">=4.3.0"

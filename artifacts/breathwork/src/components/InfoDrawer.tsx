@@ -1,8 +1,9 @@
 import type { ReactNode } from 'react';
 import { useLang } from '../i18n/LangContext';
-import { YT_LINKS } from '../data/techniques';
+import { YT_LINKS, NOSTRIL_TECHS, getPhases } from '../data/techniques';
 import type { InfoEntry } from '../i18n/lang';
 import './InfoDrawer.css';
+import './NostrilIndicator.css';
 
 interface Props {
   tech: string;
@@ -23,6 +24,48 @@ function renderStep(text: string): ReactNode {
   );
 }
 
+function shortLabel(name: string): string {
+  return name
+    .replace(/^Set \d+ — \w+:\s*/i, '')  // "Set 1 — Anger: Inhale Left" → "Inhale Left"
+    .replace(/^Set \d+ — /i, '')           // "Set 3 — Both Nostrils" → "Both Nostrils"
+    .replace('Both Nostrils', 'Both')
+    .replace('Exhale Both', 'Ex Both')
+    .replace(' — Left', ' L')
+    .replace(' — Right', ' R')
+    .replace(' Left', ' L')
+    .replace(' Right', ' R')
+    .replace('Inhale', 'In')
+    .replace('Exhale', 'Ex');
+}
+
+function NostrilSequenceDiagram({ tech }: { tech: string }) {
+  if (!NOSTRIL_TECHS.includes(tech)) return null;
+  const phases = getPhases(tech).filter(p => p.nos);
+  if (phases.length === 0) return null;
+
+  return (
+    <div className="nostril-seq">
+      {phases.map((phase, i) => {
+        const { l, r } = phase.nos!;
+        const both = l === 'active' && r === 'active';
+        return (
+          <div key={i} className="nostril-seq-step">
+            <div className="nostril-seq-label">{shortLabel(phase.name)}</div>
+            <div className="nostril-seq-pair">
+              <div className={`nos left nos-${l}${both ? ' both' : ''}`}>
+                <span className="nos-label">L</span>
+              </div>
+              <div className={`nos right nos-${r}${both ? ' both' : ''}`}>
+                <span className="nos-label">R</span>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function InfoContent({ entry, tech, ytHref }: { entry: InfoEntry; tech: string; ytHref?: string }) {
   const { t } = useLang();
 
@@ -35,6 +78,8 @@ function InfoContent({ entry, tech, ytHref }: { entry: InfoEntry; tech: string; 
           {renderStep(para)}
         </p>
       ))}
+
+      <NostrilSequenceDiagram tech={tech} />
 
       {entry.sections?.map((sec, si) => (
         <div key={si}>

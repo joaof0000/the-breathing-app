@@ -158,3 +158,48 @@
 }
 
 .btn-close:hover { color: var(--gold); }
+
+/* Static nostril sequence diagram */
+.nostril-seq {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 0.4rem;
+  align-items: flex-end;
+  justify-content: center;
+  margin: 0.8rem 0 0.5rem;
+  padding: 0.7rem 0.6rem 0.6rem;
+  background: rgba(255,255,255,0.025);
+  border-radius: 14px;
+  border: 1px solid rgba(201,168,76,0.08);
+}
+
+.nostril-seq-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.28rem;
+}
+
+.nostril-seq-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--dim);
+  white-space: nowrap;
+}
+
+.nostril-seq-pair {
+  display: flex;
+  gap: 0.25rem;
+}
+
+/* Override NostrilIndicator sizes for the static diagram */
+.nostril-seq .nos {
+  width: 22px;
+  height: 22px;
+}
+
+.nostril-seq .nos-label {
+  font-size: 0.58rem;
+}

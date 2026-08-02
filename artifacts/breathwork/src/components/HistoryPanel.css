@@ -37,6 +37,95 @@
   padding: 0 1rem 1rem;
 }
 
+.mood-trend {
+  margin: 0.15rem 0 1rem;
+  padding: 0.85rem 0.9rem 0.7rem;
+  border-radius: 16px;
+  background: rgba(229,169,60,0.045);
+  border: 1px solid rgba(229,169,60,0.1);
+}
+
+.mood-trend-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.mood-trend-header h3 {
+  margin: 0;
+  color: var(--text);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.mood-trend-header p {
+  margin: 0.12rem 0 0;
+  color: var(--faint);
+  font-family: 'Newsreader', serif;
+  font-size: 0.7rem;
+  font-style: italic;
+}
+
+.mood-trend-badge {
+  display: grid;
+  width: 1.65rem;
+  height: 1.65rem;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--gold);
+  background: rgba(229,169,60,0.1);
+  font-size: 1rem;
+}
+
+.mood-trend-badge.down { color: #c47c70; background: rgba(196,124,112,0.1); }
+.mood-trend-badge.steady { color: var(--dim); background: rgba(255,255,255,0.05); }
+
+.mood-trend-chart {
+  display: block;
+  width: 100%;
+  height: 112px;
+  margin-top: 0.55rem;
+  overflow: visible;
+}
+
+.mood-trend-grid {
+  stroke: rgba(229,169,60,0.11);
+  stroke-width: 1;
+  stroke-dasharray: 2 4;
+}
+
+.mood-trend-area {
+  fill: url(#mood-trend-fill);
+}
+
+.mood-trend-line {
+  fill: none;
+  stroke: var(--gold);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.5;
+}
+
+.mood-trend-point {
+  fill: var(--gold);
+  stroke: var(--bg, #2a1c10);
+  stroke-width: 2;
+}
+
+.mood-trend-summary {
+  margin: 0.2rem 0 0;
+  color: var(--gold);
+  font-family: 'Newsreader', serif;
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+.mood-trend-summary.down { color: #c47c70; }
+.mood-trend-summary.steady { color: var(--dim); }
+
 .history-filters {
   display: flex;
   flex-wrap: wrap;

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { useLang } from '../i18n/LangContext';
 import { YT_LINKS, NOSTRIL_TECHS, getPhases } from '../data/techniques';
-import type { InfoEntry } from '../i18n/lang';
+import type { InfoEntry, Lang } from '../i18n/lang';
 import './InfoDrawer.css';
 import './NostrilIndicator.css';
 
@@ -24,21 +24,34 @@ function renderStep(text: string): ReactNode {
   );
 }
 
-function shortLabel(name: string): string {
-  return name
-    .replace(/^Set \d+ — \w+:\s*/i, '')  // "Set 1 — Anger: Inhale Left" → "Inhale Left"
-    .replace(/^Set \d+ — /i, '')           // "Set 3 — Both Nostrils" → "Both Nostrils"
-    .replace('Both Nostrils', 'Both')
-    .replace('Exhale Both', 'Ex Both')
-    .replace(' — Left', ' L')
-    .replace(' — Right', ' R')
-    .replace(' Left', ' L')
-    .replace(' Right', ' R')
-    .replace('Inhale', 'In')
-    .replace('Exhale', 'Ex');
+function shortLabel(name: string, translatedName: string, lang: Lang): string {
+  const words = {
+    en: { inhale: 'Inhale', exhale: 'Exhale', hold: 'Hold', left: 'Left', right: 'Right', both: 'Both Nostrils' },
+    pt: { inhale: 'Inspirar', exhale: 'Expirar', hold: 'Reter', left: 'Esquerda', right: 'Direita', both: 'Ambas Narinas' },
+    es: { inhale: 'Inhalar', exhale: 'Exhalar', hold: 'Retener', left: 'Izquierda', right: 'Derecha', both: 'Ambas Fosas' },
+  }[lang];
+  const compact = {
+    en: { inhale: 'In', exhale: 'Ex', hold: 'Hold', left: 'L', right: 'R', both: 'Both' },
+    pt: { inhale: 'Insp.', exhale: 'Exp.', hold: 'Reter', left: 'E', right: 'D', both: 'Ambas' },
+    es: { inhale: 'Inh.', exhale: 'Exh.', hold: 'Ret.', left: 'Izq.', right: 'Der.', both: 'Ambas' },
+  }[lang];
+  const translated = translatedName
+    .replace(/^.+?:\s*/, '')
+    .replace(words.both, compact.both)
+    .replace(words.inhale, compact.inhale)
+    .replace(words.exhale, compact.exhale)
+    .replace(words.hold, compact.hold)
+    .replace(words.left, compact.left)
+    .replace(words.right, compact.right);
+
+  if (/^Set \d+/i.test(name)) return translated;
+  return translated
+    .replace(/\s+—\s+/g, ' ')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
 }
 
-function NostrilSequenceDiagram({ tech }: { tech: string }) {
+function NostrilSequenceDiagram({ tech, translatePhase, lang }: { tech: string; translatePhase: (name: string) => string; lang: Lang }) {
   if (!NOSTRIL_TECHS.includes(tech)) return null;
   const phases = getPhases(tech).filter(p => p.nos);
   if (phases.length === 0) return null;
@@ -50,7 +63,7 @@ function NostrilSequenceDiagram({ tech }: { tech: string }) {
         const both = l === 'active' && r === 'active';
         return (
           <div key={i} className="nostril-seq-step">
-            <div className="nostril-seq-label">{shortLabel(phase.name)}</div>
+            <div className="nostril-seq-label">{shortLabel(phase.name, translatePhase(phase.name), lang)}</div>
             <div className="nostril-seq-pair">
               <div className={`nos left nos-${l}${both ? ' both' : ''}`}>
                 <span className="nos-label">L</span>
@@ -67,7 +80,8 @@ function NostrilSequenceDiagram({ tech }: { tech: string }) {
 }
 
 function InfoContent({ entry, tech, ytHref }: { entry: InfoEntry; tech: string; ytHref?: string }) {
-  const { t } = useLang();
+  const { lang, t } = useLang();
+  const translatePhase = (name: string) => t.phases[name as keyof typeof t.phases] || name;
 
   return (
     <>
@@ -79,7 +93,7 @@ function InfoContent({ entry, tech, ytHref }: { entry: InfoEntry; tech: string; 
         </p>
       ))}
 
-      <NostrilSequenceDiagram tech={tech} />
+      <NostrilSequenceDiagram tech={tech} translatePhase={translatePhase} lang={lang} />
 
       {entry.sections?.map((sec, si) => (
         <div key={si}>

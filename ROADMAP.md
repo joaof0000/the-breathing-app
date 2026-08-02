@@ -73,7 +73,7 @@ A living document of feature ideas, organized by category and effort. Updated Au
 | Session presets | | One-tap combos: "Quick 2 min", "Focus burst 5 min", "Sleep wind-down 10 min". Reduces friction for returning users. |
 | Mood trend chart | Proposed (#20) | Visualize mood ratings from the journal over 30/90 days. SVG only, no library needed. Data already exists. |
 | Ambient soundscapes | | Rain, forest, Tibetan bowls, brown noise, ocean. Layered under breath tones via existing Web Audio plumbing. User picks one per session. |
-| Guided voice instructions | ✅ Web | Web app ships pre-recorded ElevenLabs clips (male/female). Mobile spoken cues built and pending merge (#44). |
+| Guided voice instructions | ✅ Web · ⏳ Mobile | Web app ships pre-recorded ElevenLabs clips (male/female). Mobile spoken cues are implemented but not merged yet — Task #44 remains pending. |
 
 ---
 

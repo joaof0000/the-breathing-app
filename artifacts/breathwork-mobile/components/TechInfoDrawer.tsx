@@ -11,8 +11,9 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import Svg, { Line, Path } from 'react-native-svg';
 
-import { TECH_INFO } from '@/data/techniques';
+import { getPhases, NOSTRIL_TECHS, TECH_INFO } from '@/data/techniques';
 import { useColors } from '@/hooks/useColors';
 
 interface Props {
@@ -36,6 +37,74 @@ function StyledText({ text, style }: { text: string; style: object }) {
         ),
       )}
     </Text>
+  );
+}
+
+type NostrilState = 'left' | 'right' | 'both' | null;
+
+function getNostrilState(phaseName: string): NostrilState {
+  const lower = phaseName.toLowerCase();
+  if (lower.includes('both')) return 'both';
+  if (lower.includes('left') && lower.includes('right')) return 'both';
+  if (lower.includes('left')) return 'left';
+  if (lower.includes('right')) return 'right';
+  return null;
+}
+
+function shortLabel(name: string): string {
+  return name
+    .replace(/^Set \d+ — \w+:\s*/i, '')
+    .replace(/^Set \d+ — /i, '')
+    .replace('Both Nostrils', 'Both')
+    .replace('Exhale Both', 'Ex Both')
+    .replace(' — Left', ' L')
+    .replace(' — Right', ' R')
+    .replace('Inhale', 'In')
+    .replace('Exhale', 'Ex');
+}
+
+function NostrilSequenceDiagram({ tech, colors }: { tech: string; colors: ReturnType<typeof useColors> }) {
+  if (!NOSTRIL_TECHS.includes(tech)) return null;
+  const phases = getPhases(tech);
+  if (!phases.some(phase => ['left', 'right', 'both'].includes(getNostrilState(phase.name) ?? ''))) return null;
+
+  return (
+    <View style={[styles.sequence, { borderColor: 'rgba(229,169,60,0.18)', backgroundColor: 'rgba(229,169,60,0.05)' }]}>
+      <Text style={[styles.sequenceTitle, { color: colors.primary }]}>Nostril sequence</Text>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.sequenceScroll}>
+        {phases.map((phase, index) => {
+          const state = getNostrilState(phase.name);
+          const leftActive = state === 'left' || state === 'both';
+          const rightActive = state === 'right' || state === 'both';
+          const activeColor = state === 'both' ? '#C9A84C' : state === 'left' ? '#6B8AB5' : '#D4854A';
+          return (
+            <View key={`${phase.name}-${index}`} style={styles.sequenceStep}>
+              <Text style={[styles.sequenceLabel, { color: colors.dim }]} numberOfLines={2}>
+                {shortLabel(phase.name)}
+              </Text>
+              <View style={styles.sequencePair}>
+                <View style={[styles.sequenceBadge, {
+                  borderColor: leftActive ? activeColor : 'rgba(255,255,255,0.18)',
+                  backgroundColor: leftActive ? `${activeColor}22` : 'rgba(255,255,255,0.03)',
+                }]}>
+                  <Text style={[styles.sequenceBadgeText, { color: leftActive ? activeColor : 'rgba(255,255,255,0.25)' }]}>L</Text>
+                </View>
+                <Svg viewBox="0 0 30 50" width={18} height={30}>
+                  <Path d="M15 5 C 6 5 3 18 3 28 C 3 38 8 44 15 44 C 22 44 27 38 27 28 C 27 18 24 5 15 5 Z" fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="1.2" />
+                  <Line x1="15" y1="5" x2="15" y2="44" stroke="rgba(255,255,255,0.18)" strokeWidth="0.8" />
+                </Svg>
+                <View style={[styles.sequenceBadge, {
+                  borderColor: rightActive ? activeColor : 'rgba(255,255,255,0.18)',
+                  backgroundColor: rightActive ? `${activeColor}22` : 'rgba(255,255,255,0.03)',
+                }]}>
+                  <Text style={[styles.sequenceBadgeText, { color: rightActive ? activeColor : 'rgba(255,255,255,0.25)' }]}>R</Text>
+                </View>
+              </View>
+            </View>
+          );
+        })}
+      </ScrollView>
+    </View>
   );
 }
 
@@ -138,6 +207,8 @@ export default function TechInfoDrawer({ tech, visible, onClose }: Props) {
                   style={[styles.introPara, { color: colors.foreground, marginTop: i > 0 ? 8 : 0 }]}
                 />
               ))}
+
+              <NostrilSequenceDiagram tech={tech} colors={colors} />
 
               {/* Sections */}
               {info.sections?.map((sec, si) => (
@@ -337,5 +408,52 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_400Regular',
     lineHeight: 18,
     marginTop: 10,
+  },
+  sequence: {
+    marginTop: 16,
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingVertical: 12,
+  },
+  sequenceTitle: {
+    fontSize: 11,
+    fontFamily: 'Inter_600SemiBold',
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
+    paddingHorizontal: 14,
+    marginBottom: 10,
+  },
+  sequenceScroll: {
+    paddingHorizontal: 14,
+    gap: 12,
+  },
+  sequenceStep: {
+    width: 92,
+    alignItems: 'center',
+  },
+  sequenceLabel: {
+    minHeight: 28,
+    fontSize: 10,
+    fontFamily: 'Inter_400Regular',
+    lineHeight: 14,
+    textAlign: 'center',
+  },
+  sequencePair: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: 6,
+  },
+  sequenceBadge: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    borderWidth: 1.25,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  sequenceBadgeText: {
+    fontSize: 9,
+    fontFamily: 'Inter_600SemiBold',
   },
 });

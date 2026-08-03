@@ -267,9 +267,10 @@ export function useBackgroundAudio(getVolume: () => number) {
   // Restart if config changes while playing
   useEffect(() => {
     if (isPlayingRef.current) {
-      play();
+      if (config.enabled) play();
+      else stop();
     }
-  }, [config.enabled, config.category, config.sound, config.volume, play]);
+  }, [config.enabled, config.category, config.sound, config.volume, play, stop]);
 
   // Cleanup on unmount
   useEffect(() => {

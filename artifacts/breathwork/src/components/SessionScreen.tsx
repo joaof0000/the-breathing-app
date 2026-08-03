@@ -93,6 +93,10 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
   const voiceCues = useVoiceCues(getVolume);
   const { record } = useSessionStorage();
 
+  useEffect(() => {
+    if (music.enabled && bgAudio.enabled) bgAudio.setEnabled(false);
+  }, [music.enabled, bgAudio.enabled]);
+
   const runningRef = useRef(false);
   const rafRef = useRef<number | null>(null);
   const whRafRef = useRef<number | null>(null);
@@ -405,8 +409,16 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
 
   const beginSession = useCallback(() => {
     audio.ensureAC();
-    music.play();
-    bgAudio.play();
+    if (music.enabled) {
+      music.play();
+      bgAudio.stop();
+    } else if (bgAudio.enabled) {
+      bgAudio.play();
+      music.stop();
+    } else {
+      music.stop();
+      bgAudio.stop();
+    }
     const hasIntention = intention.trim().length > 0;
     const hasGratitude = gratitude.trim().length > 0;
     if (hasIntention || hasGratitude) {
@@ -419,6 +431,18 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
     }
     launchEngines();
   }, [audio, music, intention, gratitude, launchEngines]);
+
+  const toggleMusic = useCallback(() => {
+    const next = !music.enabled;
+    music.setEnabled(next);
+    if (next && bgAudio.enabled) bgAudio.setEnabled(false);
+  }, [music, bgAudio]);
+
+  const toggleBackgroundAudio = useCallback(() => {
+    const next = !bgAudio.enabled;
+    bgAudio.setEnabled(next);
+    if (next && music.enabled) music.setEnabled(false);
+  }, [bgAudio, music]);
 
   const handleWimHofStop = useCallback(() => {
     if (whStopRetRef.current) { whStopRetRef.current(); whStopRetRef.current = null; }
@@ -654,12 +678,13 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
                 <span className="opt-label opt-bg-audio-label">{'\u2728'} {t.session.bgAudio}</span>
                 <button
                   className={`music-toggle ${bgAudio.enabled ? 'music-on' : 'music-off'}`}
-                  onClick={() => bgAudio.setEnabled(!bgAudio.enabled)}
+                  onClick={toggleBackgroundAudio}
                   title={bgAudio.enabled ? 'Mute background audio' : 'Unmute background audio'}
                 >
                   {bgAudio.enabled ? '🔊' : '🔇'}
                 </button>
               </div>
+              <div className="audio-choice-hint">{t.session.bgAudioChoiceHint}</div>
               <div className={`opt-bg-audio-body${bgAudio.enabled ? '' : ' bg-audio-dim'}`}>
                 <div className="opt-row bg-cat-row">
                   <button
@@ -762,7 +787,7 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
                   <span className="opt-label opt-music-label">♪ {t.session.music}</span>
                   <button
                     className={`music-toggle ${music.enabled ? 'music-on' : 'music-off'}`}
-                    onClick={() => music.setEnabled(e => !e)}
+                    onClick={toggleMusic}
                     title={music.enabled ? 'Mute music' : 'Unmute music'}
                   >
                     {music.enabled ? '🔊' : '🔇'}

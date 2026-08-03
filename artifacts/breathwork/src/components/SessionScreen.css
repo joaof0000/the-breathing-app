@@ -262,6 +262,13 @@ h1 {
 
 .opt-bg-audio-row { align-items: center; margin-bottom: 0.35rem; }
 .opt-bg-audio-label { letter-spacing: 0.04em; }
+.audio-choice-hint {
+  margin: -0.05rem 0 0.45rem;
+  color: var(--faint);
+  font-family: 'Newsreader', serif;
+  font-size: 0.68rem;
+  font-style: italic;
+}
 
 .opt-bg-audio-body { transition: opacity 0.2s; }
 .bg-audio-dim { opacity: 0.3; pointer-events: none; }

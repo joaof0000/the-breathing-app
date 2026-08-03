@@ -677,25 +677,28 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
               <div className="opt-row opt-bg-audio-row">
                 <span className="opt-label opt-bg-audio-label">{'\u2728'} {t.session.bgAudio}</span>
                 <button
-                  className={`music-toggle ${bgAudio.enabled ? 'music-on' : 'music-off'}`}
+                  className={`music-toggle ${bgAudio.enabled ? 'music-on' : 'music-off'}${music.enabled ? ' audio-source-locked' : ''}`}
                   onClick={toggleBackgroundAudio}
-                  title={bgAudio.enabled ? 'Mute background audio' : 'Unmute background audio'}
+                  disabled={music.enabled}
+                  title={music.enabled ? 'Turn off music before enabling background audio' : bgAudio.enabled ? 'Mute background audio' : 'Unmute background audio'}
                 >
                   {bgAudio.enabled ? '🔊' : '🔇'}
                 </button>
               </div>
               <div className="audio-choice-hint">{t.session.bgAudioChoiceHint}</div>
-              <div className={`opt-bg-audio-body${bgAudio.enabled ? '' : ' bg-audio-dim'}`}>
+              <div className={`opt-bg-audio-body${bgAudio.enabled ? '' : ' bg-audio-dim'}${music.enabled ? ' audio-source-locked' : ''}`}>
                 <div className="opt-row bg-cat-row">
                   <button
                     className={`bg-cat-btn ${bgAudio.category === 'nature' ? 'bg-cat-on' : ''}`}
                     onClick={() => bgAudio.setCategory('nature')}
+                    disabled={music.enabled}
                   >
                     {t.session.nature}
                   </button>
                   <button
                     className={`bg-cat-btn ${bgAudio.category === 'frequencies' ? 'bg-cat-on' : ''}`}
                     onClick={() => bgAudio.setCategory('frequencies')}
+                    disabled={music.enabled}
                   >
                     {t.session.frequencies}
                   </button>
@@ -708,6 +711,7 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
                         key={s.id}
                         className={`bg-sound-btn ${bgAudio.sound === s.id ? 'bg-sound-on' : ''}`}
                         onClick={() => bgAudio.setSound(s.id)}
+                        disabled={music.enabled}
                         title={label}
                       >
                         {s.emoji}
@@ -721,6 +725,7 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
                         key={s.id}
                         className={`bg-sound-btn ${bgAudio.sound === s.id ? 'bg-sound-on' : ''}`}
                         onClick={() => bgAudio.setSound(s.id)}
+                        disabled={music.enabled}
                         title={label}
                       >
                         <span className="bg-sound-emoji">{s.emoji}</span>
@@ -736,6 +741,7 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
                     value={bgAudio.volume}
                     className="vol-slider bg-vol-slider"
                     onChange={e => bgAudio.setVolume(+e.target.value)}
+                    disabled={music.enabled}
                   />
                   <span className="vol-val">{bgAudio.volume}%</span>
                 </div>
@@ -786,20 +792,22 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
                 <div className="opt-row opt-music-row">
                   <span className="opt-label opt-music-label">♪ {t.session.music}</span>
                   <button
-                    className={`music-toggle ${music.enabled ? 'music-on' : 'music-off'}`}
+                    className={`music-toggle ${music.enabled ? 'music-on' : 'music-off'}${bgAudio.enabled ? ' audio-source-locked' : ''}`}
                     onClick={toggleMusic}
-                    title={music.enabled ? 'Mute music' : 'Unmute music'}
+                    disabled={bgAudio.enabled}
+                    title={bgAudio.enabled ? 'Turn off background audio before enabling music' : music.enabled ? 'Mute music' : 'Unmute music'}
                   >
                     {music.enabled ? '🔊' : '🔇'}
                   </button>
                 </div>
-                <div className={`opt-row opt-music-vol-row${music.enabled ? '' : ' music-vol-dim'}`}>
+                <div className={`opt-row opt-music-vol-row${music.enabled ? '' : ' music-vol-dim'}${bgAudio.enabled ? ' audio-source-locked' : ''}`}>
                   <span className="opt-label opt-music-vol-label">{t.session.musicVol}</span>
                   <input
                     type="range" min={0} max={100}
                     value={music.musicVolume}
                     className="vol-slider music-vol-slider"
                     onChange={e => music.setMusicVolume(+e.target.value)}
+                    disabled={bgAudio.enabled}
                   />
                   <span className="vol-val">{music.musicVolume}%</span>
                 </div>

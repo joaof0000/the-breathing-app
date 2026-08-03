@@ -370,7 +370,20 @@ h1 {
 }
 
 .music-toggle:hover { border-color: var(--gold); }
+.music-toggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.22;
+  border-color: rgba(229,169,60,0.12);
+}
 .music-off { opacity: 0.45; }
+.audio-source-locked {
+  opacity: 0.38;
+}
+
+.audio-source-locked .bg-cat-btn,
+.audio-source-locked .bg-sound-btn {
+  cursor: not-allowed;
+}
 
 .opt-music-vol-row {
   align-items: center;

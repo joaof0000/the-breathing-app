@@ -6,7 +6,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Smooth breathing scale — transitions between phase states */
+  transition: transform 1.1s cubic-bezier(0.45, 0, 0.25, 1);
 }
+
+/* ── Breathing scale — ring expands on inhale, softens on exhale ─────────
+   :not(.ring-idle) ensures these don't fight the heartPulse animation    */
+.ring-wrap:not(.ring-idle).p-inhale { transform: scale(1.07); }
+.ring-wrap:not(.ring-idle).p-exhale { transform: scale(0.94); }
+.ring-wrap:not(.ring-idle).p-fire   { transform: scale(0.94); }
+.ring-wrap:not(.ring-idle).p-hold   { transform: scale(1.03); }
+.ring-wrap:not(.ring-idle).p-hold2  { transform: scale(1.03); }
+.ring-wrap:not(.ring-idle).p-ret    { transform: scale(1.04); }
+/* Nostril phases — neutral scale (direction ambiguous) */
+.ring-wrap:not(.ring-idle).p-sun    { transform: scale(1.01); }
+.ring-wrap:not(.ring-idle).p-moon   { transform: scale(1.01); }
 
 /* ── Cream-to-amber gradient halo border ── */
 .ring-wrap::before {

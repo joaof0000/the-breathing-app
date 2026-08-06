@@ -15,7 +15,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
-import { BreathRing } from '@/components/BreathRing';
+import { BreathRing, type PhaseType } from '@/components/BreathRing';
 import NostrilIndicator from '@/components/NostrilIndicator';
 import TechInfoDrawer from '@/components/TechInfoDrawer';
 import { useSession } from '@/contexts/SessionContext';
@@ -119,6 +119,20 @@ export default function SessionScreen() {
 
   const currentPhase    = phases[phaseIndex];
   const phaseKey        = `${phaseIndex}-${roundNum}`;
+
+  const phaseType: PhaseType = (() => {
+    if (!isRunning || !currentPhase) return 'idle';
+    const cls = currentPhase.cls;
+    if (cls === 'p-inhale' || cls === 'p-ice') return 'inhale';
+    if (cls === 'p-exhale' || cls === 'p-fire') return 'exhale';
+    if (cls === 'p-hold' || cls === 'p-hold2' || cls === 'p-ret') return 'hold';
+    // Nostril phases: derive from name
+    const n = currentPhase.name.toLowerCase();
+    if (n.includes('inhale') || n.includes('breathe in')) return 'inhale';
+    if (n.includes('exhale') || n.includes('breathe out')) return 'exhale';
+    return 'hold';
+  })();
+
   const phaseColor      = currentPhase
     ? getPhaseColor(currentPhase.cls, colors as unknown as Record<string, string>)
     : colors.primary;
@@ -364,6 +378,7 @@ export default function SessionScreen() {
           phaseKey={phaseKey}
           bgColor={colors.card}
           dimColor={colors.primary}
+          phaseType={phaseType}
         />
         <View style={styles.ringCenter}>
           {isComplete ? (

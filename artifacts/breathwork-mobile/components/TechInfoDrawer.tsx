@@ -15,6 +15,7 @@ import Svg, { Line, Path } from 'react-native-svg';
 
 import { getPhases, NOSTRIL_TECHS, TECH_INFO } from '@/data/techniques';
 import { useColors } from '@/hooks/useColors';
+import { useLang, type Lang } from '@/hooks/useLang';
 
 interface Props {
   tech: string;
@@ -51,26 +52,52 @@ function getNostrilState(phaseName: string): NostrilState {
   return null;
 }
 
-function shortLabel(name: string): string {
-  return name
-    .replace(/^Set \d+ — \w+:\s*/i, '')
-    .replace(/^Set \d+ — /i, '')
-    .replace('Both Nostrils', 'Both')
-    .replace('Exhale Both', 'Ex Both')
-    .replace(' — Left', ' L')
-    .replace(' — Right', ' R')
-    .replace('Inhale', 'In')
-    .replace('Exhale', 'Ex');
+const COMPACT: Record<Lang, { in: string; ex: string; hold: string; l: string; r: string; both: string }> = {
+  en: { in: 'In',    ex: 'Ex',    hold: 'Hold', l: 'L',    r: 'R',    both: 'Both' },
+  pt: { in: 'Insp.', ex: 'Exp.',  hold: 'Reter',l: 'E',    r: 'D',    both: 'Ambas' },
+  es: { in: 'Inh.',  ex: 'Exh.',  hold: 'Ret.', l: 'Izq.', r: 'Der.', both: 'Ambas' },
+};
+
+const SEQ_TITLE: Record<Lang, string> = {
+  en: 'Nostril sequence',
+  pt: 'Sequência de narinas',
+  es: 'Secuencia de fosas',
+};
+
+function shortLabel(name: string, lang: Lang): string {
+  const c = COMPACT[lang];
+  // Strip "Set N — keyword: " prefixes (Nine Purification sets)
+  let s = name.replace(/^Set \d+ — \w+:\s*/i, '').replace(/^Set \d+ — /i, '');
+  // Strip emotion/intent suffix after ' — ' for nine purification phases
+  s = s.replace(/\s+—\s+\w[\w\s.]*$/, '');
+  // Normalise word order: "Exhale Both" / "Inhale Both" etc.
+  s = s
+    .replace(/Both Nostrils/i, c.both)
+    .replace(/Both/i, c.both)
+    .replace(/Inhale/i, c.in)
+    .replace(/Exhale/i, c.ex)
+    .replace(/Hold/i, c.hold)
+    .replace(/Left Nostril/i, c.l)
+    .replace(/Right Nostril/i, c.r)
+    .replace(/ — Left\b/i, ` ${c.l}`)
+    .replace(/ — Right\b/i, ` ${c.r}`)
+    .replace(/\bLeft\b/i, c.l)
+    .replace(/\bRight\b/i, c.r)
+    .replace(/\s{2,}/g, ' ')
+    .replace(/\s*—\s*/g, ' ')
+    .trim();
+  return s;
 }
 
-function NostrilSequenceDiagram({ tech, colors }: { tech: string; colors: ReturnType<typeof useColors> }) {
+function NostrilSequenceDiagram({ tech, colors, lang }: { tech: string; colors: ReturnType<typeof useColors>; lang: Lang }) {
   if (!NOSTRIL_TECHS.includes(tech)) return null;
-  const phases = getPhases(tech);
-  if (!phases.some(phase => ['left', 'right', 'both'].includes(getNostrilState(phase.name) ?? ''))) return null;
+  // Only show phases that have an active nostril side
+  const phases = getPhases(tech).filter(p => getNostrilState(p.name) !== null);
+  if (phases.length === 0) return null;
 
   return (
     <View style={[styles.sequence, { borderColor: 'rgba(229,169,60,0.18)', backgroundColor: 'rgba(229,169,60,0.05)' }]}>
-      <Text style={[styles.sequenceTitle, { color: colors.primary }]}>Nostril sequence</Text>
+      <Text style={[styles.sequenceTitle, { color: colors.primary }]}>{SEQ_TITLE[lang]}</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.sequenceScroll}>
         {phases.map((phase, index) => {
           const state = getNostrilState(phase.name);
@@ -80,14 +107,14 @@ function NostrilSequenceDiagram({ tech, colors }: { tech: string; colors: Return
           return (
             <View key={`${phase.name}-${index}`} style={styles.sequenceStep}>
               <Text style={[styles.sequenceLabel, { color: colors.dim }]} numberOfLines={2}>
-                {shortLabel(phase.name)}
+                {shortLabel(phase.name, lang)}
               </Text>
               <View style={styles.sequencePair}>
                 <View style={[styles.sequenceBadge, {
                   borderColor: leftActive ? activeColor : 'rgba(255,255,255,0.18)',
                   backgroundColor: leftActive ? `${activeColor}22` : 'rgba(255,255,255,0.03)',
                 }]}>
-                  <Text style={[styles.sequenceBadgeText, { color: leftActive ? activeColor : 'rgba(255,255,255,0.25)' }]}>L</Text>
+                  <Text style={[styles.sequenceBadgeText, { color: leftActive ? activeColor : 'rgba(255,255,255,0.25)' }]}>{COMPACT[lang].l}</Text>
                 </View>
                 <Svg viewBox="0 0 30 50" width={18} height={30}>
                   <Path d="M15 5 C 6 5 3 18 3 28 C 3 38 8 44 15 44 C 22 44 27 38 27 28 C 27 18 24 5 15 5 Z" fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="1.2" />
@@ -97,7 +124,7 @@ function NostrilSequenceDiagram({ tech, colors }: { tech: string; colors: Return
                   borderColor: rightActive ? activeColor : 'rgba(255,255,255,0.18)',
                   backgroundColor: rightActive ? `${activeColor}22` : 'rgba(255,255,255,0.03)',
                 }]}>
-                  <Text style={[styles.sequenceBadgeText, { color: rightActive ? activeColor : 'rgba(255,255,255,0.25)' }]}>R</Text>
+                  <Text style={[styles.sequenceBadgeText, { color: rightActive ? activeColor : 'rgba(255,255,255,0.25)' }]}>{COMPACT[lang].r}</Text>
                 </View>
               </View>
             </View>
@@ -110,6 +137,7 @@ function NostrilSequenceDiagram({ tech, colors }: { tech: string; colors: Return
 
 export default function TechInfoDrawer({ tech, visible, onClose }: Props) {
   const colors = useColors();
+  const lang = useLang();
   const insets = useSafeAreaInsets();
   const slideAnim = useRef(new Animated.Value(0)).current;
   const info = TECH_INFO[tech];
@@ -208,7 +236,7 @@ export default function TechInfoDrawer({ tech, visible, onClose }: Props) {
                 />
               ))}
 
-              <NostrilSequenceDiagram tech={tech} colors={colors} />
+              <NostrilSequenceDiagram tech={tech} colors={colors} lang={lang} />
 
               {/* Sections */}
               {info.sections?.map((sec, si) => (

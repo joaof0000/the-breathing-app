@@ -1,7 +1,7 @@
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Platform,
   Pressable,
@@ -15,6 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { GOALS } from '@/data/goals';
 import { useColors } from '@/hooks/useColors';
+import TechInfoDrawer from '@/components/TechInfoDrawer';
 
 const PHASE_ACCENT_COLORS = [
   '#6A9E7F',
@@ -26,6 +27,7 @@ export default function PickScreen() {
   const { goal } = useLocalSearchParams<{ goal?: string }>();
   const colors = useColors();
   const insets = useSafeAreaInsets();
+  const [infoTech, setInfoTech] = useState<string | null>(null);
 
   const goalData = goal ? GOALS[goal] : null;
 
@@ -35,6 +37,11 @@ export default function PickScreen() {
   function handlePick(tech: string) {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     router.push(`/session?tech=${tech}`);
+  }
+
+  function handleInfo(tech: string) {
+    void Haptics.selectionAsync();
+    setInfoTech(tech);
   }
 
   if (!goalData) {
@@ -89,7 +96,14 @@ export default function PickScreen() {
               <Text style={[styles.techName, { color: colors.foreground }]}>{choice.name}</Text>
               <Text style={[styles.techDesc, { color: colors.dim }]}>{choice.desc}</Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color={colors.faint} />
+            <Pressable
+              onPress={(e) => { e.stopPropagation(); handleInfo(choice.tech); }}
+              hitSlop={10}
+              style={({ pressed }) => [styles.infoBtn, { opacity: pressed ? 0.5 : 1 }]}
+            >
+              <Ionicons name="information-circle-outline" size={22} color={colors.dim} />
+            </Pressable>
+            <Ionicons name="chevron-forward" size={20} color={colors.faint} style={{ marginLeft: 4 }} />
           </Pressable>
         ))}
 
@@ -113,6 +127,12 @@ export default function PickScreen() {
           <Text style={[styles.browseBtnText, { color: colors.dim }]}>Browse all techniques</Text>
         </Pressable>
       </ScrollView>
+
+      <TechInfoDrawer
+        tech={infoTech ?? ''}
+        visible={infoTech !== null}
+        onClose={() => setInfoTech(null)}
+      />
     </LinearGradient>
   );
 }
@@ -203,5 +223,8 @@ const styles = StyleSheet.create({
   browseBtnText: {
     fontSize: 14,
     fontFamily: 'Inter_500Medium',
+  },
+  infoBtn: {
+    padding: 4,
   },
 });

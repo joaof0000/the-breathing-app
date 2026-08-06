@@ -548,17 +548,27 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
             Breathwork
           </h1>
 
-          <div className="tabs" ref={tabsRef}>
-            {TABS.map(tab => (
-              <button
-                key={tab.id}
-                className={`tab ${tech === tab.id ? 'on' : ''}`}
-                data-t={tab.id}
-                onClick={() => activateTech(tab.id)}
-              >
-                {tab.label}
-              </button>
-            ))}
+          <div className="tabs-row">
+            <div className="tabs" ref={tabsRef}>
+              {TABS.map(tab => (
+                <button
+                  key={tab.id}
+                  className={`tab ${tech === tab.id ? 'on' : ''}`}
+                  data-t={tab.id}
+                  onClick={() => activateTech(tab.id)}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+            <button
+              className={`tech-info-btn${infoOpen ? ' tech-info-btn-on' : ''}`}
+              onClick={() => setInfoOpen(o => !o)}
+              title={infoOpen ? t.session.hideInfo : t.session.howWorks}
+              aria-label={infoOpen ? t.session.hideInfo : t.session.howWorks}
+            >
+              ⓘ
+            </button>
           </div>
 
           {isIdle && (

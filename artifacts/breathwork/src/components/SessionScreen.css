@@ -56,6 +56,48 @@ h1 {
 .tabs::-webkit-scrollbar { height: 3px; }
 .tabs::-webkit-scrollbar-thumb { background: rgba(229,169,60,0.2); border-radius: 2px; }
 
+/* Tabs row with inline info button */
+.tabs-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+.tabs-row .tabs {
+  margin-bottom: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.tech-info-btn {
+  flex-shrink: 0;
+  background: rgba(229,169,60,0.08);
+  border: 1px solid rgba(229,169,60,0.18);
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--gdim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.18s, background 0.18s, border-color 0.18s, transform 0.12s;
+}
+.tech-info-btn:hover {
+  color: var(--gold);
+  background: rgba(229,169,60,0.15);
+  border-color: rgba(229,169,60,0.35);
+}
+.tech-info-btn:active { transform: scale(0.92); }
+.tech-info-btn.tech-info-btn-on {
+  color: #2C1F14;
+  background: #E5A93C;
+  border-color: #E5A93C;
+  box-shadow: 0 0 14px rgba(229,169,60,0.4);
+}
+
 .tab {
   flex-shrink: 0;
   background: rgba(229,169,60,0.06);

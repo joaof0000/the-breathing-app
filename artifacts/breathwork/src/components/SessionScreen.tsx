@@ -12,6 +12,7 @@ import { useSessionMusic } from '../hooks/useSessionMusic';
 import { useBackgroundAudio, NATURE_SOUNDS, FREQUENCY_SOUNDS } from '../hooks/useBackgroundAudio';
 import { useVoiceCues } from '../hooks/useVoiceCues';
 import { useSessionStorage, addJournal } from '../hooks/useSessionStorage';
+import { useWakeLock } from '../hooks/useWakeLock';
 import { useLang } from '../i18n/LangContext';
 import type { Translations } from '../i18n/lang';
 import './SessionScreen.css';
@@ -92,6 +93,7 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
   const bgAudio = useBackgroundAudio(getVolume);
   const voiceCues = useVoiceCues(getVolume);
   const { record } = useSessionStorage();
+  useWakeLock(running);
 
   useEffect(() => {
     if (music.enabled && bgAudio.enabled) bgAudio.setEnabled(false);

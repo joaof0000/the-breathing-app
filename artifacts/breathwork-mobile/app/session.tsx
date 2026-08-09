@@ -22,6 +22,7 @@ import { useSession } from '@/contexts/SessionContext';
 import { NOSTRIL_TECHS, TECH_LABELS, TECH_INFO, getPhaseColor, getPhases } from '@/data/techniques';
 import { useColors } from '@/hooks/useColors';
 import { useAudioTones } from '@/hooks/useAudioTones';
+import { useLang, type Lang } from '@/hooks/useLang';
 
 const TOTAL_ROUNDS = 3;
 const VOLUME_KEY = 'breathwork_mobile_volume_v1';
@@ -113,6 +114,14 @@ export default function SessionScreen() {
     : 'volume-high';
 
   const { playPhase, playDone, stopHum } = useAudioTones({ volume: volume / 100 });
+
+  // ── Language picker ─────────────────────────────────────────────────────────
+  const { lang, setLang } = useLang();
+  const LANGS: { code: Lang; label: string }[] = [
+    { code: 'en', label: 'EN' },
+    { code: 'pt', label: 'PT' },
+    { code: 'es', label: 'ES' },
+  ];
 
   const sessionStartRef = useRef<number | null>(null);
   const intervalRef     = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -486,6 +495,33 @@ export default function SessionScreen() {
           <Text style={[styles.pickerLabel, { color: colors.faint }]}>TONE VOLUME</Text>
           {VolumeBars}
 
+          {/* Language picker */}
+          <Text style={[styles.pickerLabel, { color: colors.faint, marginTop: 16 }]}>LANGUAGE</Text>
+          <View style={styles.langRow}>
+            {LANGS.map(({ code, label }) => (
+              <Pressable
+                key={code}
+                onPress={() => setLang(code)}
+                style={[
+                  styles.langChip,
+                  {
+                    backgroundColor: lang === code ? colors.primary : colors.card,
+                    borderColor: lang === code ? colors.primary : colors.border,
+                  },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.langChipText,
+                    { color: lang === code ? colors.primaryForeground : colors.dim },
+                  ]}
+                >
+                  {label}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+
           {/* Technique picker */}
           <Text style={[styles.pickerLabel, { color: colors.faint, marginTop: 16 }]}>TECHNIQUE</Text>
           <ScrollView
@@ -700,5 +736,22 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_400Regular',
     minWidth: 34,
     textAlign: 'right',
+  },
+  // ── Language picker ─────────────────────────────────────────────────────────
+  langRow: {
+    flexDirection: 'row',
+    gap: 8,
+    paddingLeft: 4,
+  },
+  langChip: {
+    borderRadius: 20,
+    borderWidth: 1,
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+  },
+  langChipText: {
+    fontSize: 13,
+    fontFamily: 'Inter_600SemiBold',
+    letterSpacing: 0.5,
   },
 });

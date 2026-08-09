@@ -137,7 +137,7 @@ function NostrilSequenceDiagram({ tech, colors, lang }: { tech: string; colors: 
 
 export default function TechInfoDrawer({ tech, visible, onClose }: Props) {
   const colors = useColors();
-  const lang = useLang();
+  const { lang } = useLang();
   const insets = useSafeAreaInsets();
   const slideAnim = useRef(new Animated.Value(0)).current;
   const info = TECH_INFO[tech];

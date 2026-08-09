@@ -1,23 +1,6 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useEffect, useState } from 'react';
-
-export type Lang = 'en' | 'pt' | 'es';
-
-/** Same storage key as the web app so the chosen language is shared. */
-const LANG_KEY = 'breathwork_lang';
-
-const VALID: Lang[] = ['en', 'pt', 'es'];
-
-export function useLang(): Lang {
-  const [lang, setLang] = useState<Lang>('en');
-
-  useEffect(() => {
-    AsyncStorage.getItem(LANG_KEY)
-      .then(v => {
-        if (VALID.includes(v as Lang)) setLang(v as Lang);
-      })
-      .catch(() => {});
-  }, []);
-
-  return lang;
-}
+/**
+ * Thin hook — delegates to LangContext so all consumers share one source of truth.
+ * Returns [currentLang, setLang].
+ */
+export type { Lang } from '@/contexts/LangContext';
+export { useLangContext as useLang } from '@/contexts/LangContext';

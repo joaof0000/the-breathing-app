@@ -462,6 +462,12 @@ export default function SessionScreen() {
         </View>
       )}
 
+      {isRunning && (
+        <View style={styles.runningVolRow}>
+          {VolumeBars}
+        </View>
+      )}
+
       {!isComplete && (
         <View style={[styles.controlRow, { paddingBottom: isRunning ? bottomPad : 12 }]}>
           {isRunning ? (
@@ -710,6 +716,11 @@ const styles = StyleSheet.create({
   techChipText: {
     fontSize: 13,
     fontFamily: 'Inter_500Medium',
+  },
+  // ── Mid-session volume row ──────────────────────────────────────────────────
+  runningVolRow: {
+    paddingHorizontal: 28,
+    paddingBottom: 12,
   },
   // ── Volume bar row ──────────────────────────────────────────────────────────
   volRow: {

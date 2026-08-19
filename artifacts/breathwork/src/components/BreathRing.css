@@ -296,6 +296,26 @@
 .journal-save-btn:hover { box-shadow: 0 0 24px rgba(229,169,60,0.5); }
 .journal-save-btn:active { transform: scale(0.95); }
 
+.journal-share-btn {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  background: rgba(229,169,60,0.08);
+  border: 1px solid rgba(229,169,60,0.28);
+  border-radius: 9999px;
+  padding: 0.35rem 1.1rem;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.12s;
+}
+.journal-share-btn:hover:not(:disabled) {
+  background: rgba(229,169,60,0.15);
+  border-color: rgba(229,169,60,0.5);
+}
+.journal-share-btn:active:not(:disabled) { transform: scale(0.95); }
+.journal-share-btn:disabled { opacity: 0.5; cursor: default; }
+
 .journal-skip-btn {
   background: none;
   border: none;

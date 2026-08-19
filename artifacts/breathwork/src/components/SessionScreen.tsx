@@ -11,7 +11,8 @@ import { useAudio } from '../hooks/useAudio';
 import { useSessionMusic } from '../hooks/useSessionMusic';
 import { useBackgroundAudio, NATURE_SOUNDS, FREQUENCY_SOUNDS } from '../hooks/useBackgroundAudio';
 import { useVoiceCues } from '../hooks/useVoiceCues';
-import { useSessionStorage, addJournal } from '../hooks/useSessionStorage';
+import { useSessionStorage, addJournal, calcStreak, loadSessions } from '../hooks/useSessionStorage';
+import { generateShareCard, shareCard } from '../hooks/useShareCard';
 import { useWakeLock } from '../hooks/useWakeLock';
 import { useLang } from '../i18n/LangContext';
 import type { Translations } from '../i18n/lang';
@@ -71,6 +72,15 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
   const [journalMood, setJournalMood] = useState(0);
   const lastSessionTsRef = useRef<number>(0);
 
+  // Share card state — set when a session finishes
+  const [shareLoading, setShareLoading] = useState(false);
+  const finishedTechLabelRef = useRef('');
+  const finishedElapsedRef = useRef(0);
+  const finishedStreakRef = useRef(0);
+  // Pre-generated PNG blob, kept fresh whenever mood or session data changes.
+  // Ready before the user taps Share so navigator.share() gets a live activation.
+  const shareBlobRef = useRef<Blob | null>(null);
+
   const [fill, setFill] = useState(0);
   const [phaseClass, setPhaseClass] = useState('');
   const [phaseName, setPhaseName] = useState('');
@@ -121,6 +131,10 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
     const elapsed = Math.floor((Date.now() - sessionStartRef.current) / 1000);
     const ts = record(techUsed, elapsed);
     lastSessionTsRef.current = ts;
+    // Capture data for the share card
+    finishedTechLabelRef.current = TECH_LABELS[techUsed] || techUsed;
+    finishedElapsedRef.current = elapsed;
+    finishedStreakRef.current = calcStreak(loadSessions());
     setRefreshKey(k => k + 1);
     music.stop();
     bgAudio.stop();
@@ -469,6 +483,38 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
     onBack();
   }, [onBack]);
 
+  // Pre-generate the share card blob as soon as journal mode is open and
+  // whenever the user changes their mood rating. This ensures the blob is
+  // ready before the Share button click so navigator.share() is called with
+  // a live transient user-activation (no async gap in the click handler).
+  useEffect(() => {
+    if (!journalMode) { shareBlobRef.current = null; return; }
+    let cancelled = false;
+    generateShareCard({
+      techLabel: finishedTechLabelRef.current,
+      durationSecs: finishedElapsedRef.current,
+      mood: journalMood,
+      streak: finishedStreakRef.current,
+    }).then(blob => {
+      if (!cancelled) shareBlobRef.current = blob;
+    }).catch(() => { /* non-fatal — share will fall back to download */ });
+    return () => { cancelled = true; };
+  }, [journalMode, journalMood]);
+
+  const handleShare = useCallback(async () => {
+    const blob = shareBlobRef.current;
+    if (!blob) return;
+    setShareLoading(true);
+    try {
+      // blob is pre-generated — no async gap before navigator.share()
+      await shareCard({ blob, techLabel: finishedTechLabelRef.current });
+    } catch (err) {
+      console.error('Share failed:', err);
+    } finally {
+      setShareLoading(false);
+    }
+  }, []);
+
   const handleInspireMe = useCallback(() => {
     const next = (inspireIdx + 1) % INTENTION_ANCHORS.length;
     setInspireIdx(next);
@@ -612,6 +658,8 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
             onJournalMoodChange={setJournalMood}
             onSaveInsight={handleSaveInsight}
             onSkipInsight={handleSkipInsight}
+            onShare={journalMode ? handleShare : undefined}
+            shareLoading={shareLoading}
             idleIntention={isIdle ? intention : ''}
             idleTechLabel={isIdle ? techLabel : ''}
             idleGratitude={isIdle ? gratText : ''}

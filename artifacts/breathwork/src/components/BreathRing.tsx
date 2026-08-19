@@ -21,6 +21,8 @@ interface Props {
   onJournalMoodChange?: (m: number) => void;
   onSaveInsight?: () => void;
   onSkipInsight?: () => void;
+  onShare?: () => void;
+  shareLoading?: boolean;
   idleIntention?: string;
   idleTechLabel?: string;
   idleGratitude?: string;
@@ -50,6 +52,8 @@ export default function BreathRing({
   onJournalMoodChange,
   onSaveInsight,
   onSkipInsight,
+  onShare,
+  shareLoading,
   idleIntention,
   idleTechLabel,
   idleGratitude,
@@ -143,6 +147,16 @@ export default function BreathRing({
             <button className="journal-save-btn" onClick={onSaveInsight}>
               {t.ring.saveInsight}
             </button>
+            {onShare && (
+              <button
+                className="journal-share-btn"
+                onClick={onShare}
+                disabled={shareLoading}
+                title="Share session card"
+              >
+                {shareLoading ? '…' : '↗ Share'}
+              </button>
+            )}
             <button className="journal-skip-btn" onClick={onSkipInsight}>
               {t.ring.skipInsight}
             </button>

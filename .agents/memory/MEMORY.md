@@ -1,0 +1,1 @@
+- [GitHub sync divergence](github-sync-divergence.md) — GitHub sync is deliberately non-force; merge remote main before retrying when it has advanced.

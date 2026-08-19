@@ -27,6 +27,43 @@ html {
   background-color: #2C1F14;
 }
 
+html[data-theme="light"] {
+  --bg:    #F5EFE0;
+  --card:  #EDE4D0;
+  --gold:  #A0680A;
+  --gdim:  #7A4E08;
+  --rose:  #A0503A;
+  --text:  #2C1F14;
+  --dim:   #5A4030;
+  --faint: #8A6A50;
+  --bdr:   rgba(160,104,10,0.25);
+  background: linear-gradient(160deg, #F5EFE0 0%, #EDE4D0 60%, #F0EAD8 100%) fixed;
+  background-color: #F5EFE0;
+}
+
+html[data-theme="light"] body {
+  color: #2C1F14;
+}
+
+html[data-theme="light"] .app {
+  background-image: radial-gradient(rgba(160,104,10,0.06) 1.5px, transparent 1.5px);
+}
+
+html[data-theme="light"] .glow-1 {
+  background: radial-gradient(ellipse at center, rgba(160,104,10,0.10) 0%, transparent 65%);
+}
+html[data-theme="light"] .glow-2 {
+  background: radial-gradient(ellipse at center, rgba(180,120,80,0.08) 0%, transparent 65%);
+}
+html[data-theme="light"] .glow-3 {
+  background: radial-gradient(ellipse at center, rgba(160,104,10,0.05) 0%, transparent 68%);
+}
+
+html[data-theme="light"] .lang-toggle {
+  background: rgba(240,230,210,0.9);
+  border-color: rgba(160,104,10,0.25);
+}
+
 body {
   font-family: 'Poppins', sans-serif;
   background: transparent;

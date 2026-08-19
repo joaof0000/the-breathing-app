@@ -153,7 +153,7 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
     setJournalMode(true);
     setJournalText('');
     setJournalMood(0);
-  }, [record, audio, music, voiceCues, stopAllEngines]);
+  }, [record, audio, music, bgAudio, voiceCues, stopAllEngines]);
 
   const stopSession = useCallback(() => {
     if (!runningRef.current && !whWaitingRef.current) return;
@@ -173,7 +173,7 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
     setNostrilL('idle');
     setNostrilR('idle');
     stopAllEngines();
-  }, [record, tech, music, voiceCues, stopAllEngines]);
+  }, [record, tech, music, bgAudio, voiceCues, stopAllEngines]);
 
   const startDuration = useCallback((techKey: string) => {
     const totalSecs = durMin * 60;
@@ -446,7 +446,7 @@ export default function SessionScreen({ initialTech, onBack, gratitude, goalKey 
       return;
     }
     launchEngines();
-  }, [audio, music, intention, gratitude, launchEngines]);
+  }, [audio, music, bgAudio, intention, gratitude, launchEngines]);
 
   const toggleMusic = useCallback(() => {
     const next = !music.enabled;

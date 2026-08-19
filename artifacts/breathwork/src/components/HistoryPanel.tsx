@@ -87,7 +87,6 @@ export default function HistoryPanel({ refreshKey, onRefresh }: Props) {
 
     return { width, height, line, area, coords };
   }, [moodTrend]);
-
   const excerptNote = (s: { note?: string; insight?: string }) => {
     const text = s.note ?? s.insight ?? '';
     return text.length > 80 ? text.slice(0, 77) + '…' : text;

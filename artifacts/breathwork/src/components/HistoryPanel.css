@@ -225,3 +225,17 @@
 }
 
 .history-export:hover { color: var(--gold); }
+
+.mood-chart-wrap {
+  padding: 0.5rem 0.5rem 0;
+}
+
+.mood-chart-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 0.3rem;
+  padding-left: 0.25rem;
+}

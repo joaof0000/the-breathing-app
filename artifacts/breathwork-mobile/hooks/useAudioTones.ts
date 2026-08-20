@@ -176,10 +176,16 @@ interface AudioTonesOptions {
 }
 
 export function useAudioTones({ volume }: AudioTonesOptions) {
+  // Phase changes should use the latest setting without restarting the tone
+  // currently playing when the user adjusts volume.
+  const volumeRef = useRef(volume);
+  volumeRef.current = volume;
   // Web AudioContext ref
   const acRef = useRef<AudioContext | null>(null);
   // Native sound ref — we keep one Sound at a time (reused across phases)
   const soundRef = useRef<import('expo-av').Audio.Sound | null>(null);
+  // Invalidates async native playback work when a newer tone replaces it.
+  const nativePlaybackRequestRef = useRef(0);
   // Tracks the running bhramari hum on web so we can stop it on phase change
   const humStopRef = useRef<(() => void) | null>(null);
 
@@ -200,17 +206,25 @@ export function useAudioTones({ volume }: AudioTonesOptions) {
     })();
   }, []);
 
+  const cancelNativePlayback = useCallback(() => {
+    nativePlaybackRequestRef.current += 1;
+    const sound = soundRef.current;
+    soundRef.current = null;
+    if (sound) {
+      void (async () => {
+        await sound.stopAsync().catch(() => {});
+        await sound.unloadAsync().catch(() => {});
+      })();
+    }
+  }, []);
+
   // ── Cleanup on unmount ──
   useEffect(() => {
     return () => {
       humStopRef.current?.();
-      if (Platform.OS !== 'web') {
-        soundRef.current?.stopAsync().catch(() => {});
-        soundRef.current?.unloadAsync().catch(() => {});
-        soundRef.current = null;
-      }
+      if (Platform.OS !== 'web') cancelNativePlayback();
     };
-  }, []);
+  }, [cancelNativePlayback]);
 
   // ── Ensure Web AudioContext ──
   const ensureAC = useCallback((): AudioContext | null => {
@@ -226,17 +240,38 @@ export function useAudioTones({ volume }: AudioTonesOptions) {
 
   // ── Native: play a WAV data URI ──
   const nativePlay = useCallback(async (uri: string) => {
+    const requestId = nativePlaybackRequestRef.current + 1;
+    nativePlaybackRequestRef.current = requestId;
+    let createdSound: import('expo-av').Audio.Sound | null = null;
+
     try {
       const { Audio } = await import('expo-av');
-      // Unload previous
-      if (soundRef.current) {
-        await soundRef.current.stopAsync().catch(() => {});
-        await soundRef.current.unloadAsync().catch(() => {});
-        soundRef.current = null;
+      if (requestId !== nativePlaybackRequestRef.current) return;
+
+      const previousSound = soundRef.current;
+      soundRef.current = null;
+      if (previousSound) {
+        await previousSound.stopAsync().catch(() => {});
+        await previousSound.unloadAsync().catch(() => {});
       }
+      if (requestId !== nativePlaybackRequestRef.current) return;
+
       const { sound } = await Audio.Sound.createAsync({ uri });
+      createdSound = sound;
+      if (requestId !== nativePlaybackRequestRef.current) {
+        await sound.unloadAsync().catch(() => {});
+        return;
+      }
+
       soundRef.current = sound;
       await sound.playAsync();
+      if (requestId !== nativePlaybackRequestRef.current) {
+        if (soundRef.current === sound) soundRef.current = null;
+        await sound.stopAsync().catch(() => {});
+        await sound.unloadAsync().catch(() => {});
+        return;
+      }
+
       // Auto-unload after playback
       sound.setOnPlaybackStatusUpdate(status => {
         if (status.isLoaded && status.didJustFinish) {
@@ -245,29 +280,32 @@ export function useAudioTones({ volume }: AudioTonesOptions) {
         }
       });
     } catch {
+      if (createdSound && soundRef.current === createdSound) {
+        soundRef.current = null;
+      }
+      createdSound?.unloadAsync().catch(() => {});
       // audio failure is non-fatal
     }
   }, []);
 
   // ── Stop any running bhramari hum ──
   const stopHum = useCallback(() => {
-    humStopRef.current?.();
+    const stop = humStopRef.current;
     humStopRef.current = null;
+    stop?.();
     if (Platform.OS !== 'web') {
-      soundRef.current?.stopAsync().catch(() => {});
-      soundRef.current?.unloadAsync().catch(() => {});
-      soundRef.current = null;
+      cancelNativePlayback();
     }
-  }, []);
+  }, [cancelNativePlayback]);
 
   // ── Play a phase tone ──
   const playPhase = useCallback(
     (cls: string, phaseName: string, phaseDurSec: number) => {
-      if (volume <= 0) return;
+      const currentVolume = volumeRef.current;
+      if (currentVolume <= 0) return;
 
       // Stop any ongoing hum first
-      humStopRef.current?.();
-      humStopRef.current = null;
+      if (humStopRef.current) stopHum();
 
       const isBhramariHum = cls === 'p-moon' && phaseName.toLowerCase().includes('hum');
       const freq = isBhramariHum ? 120 : clsToFreq(cls);
@@ -277,20 +315,20 @@ export function useAudioTones({ volume }: AudioTonesOptions) {
         const ac = ensureAC();
         if (!ac) return;
         if (isBhramariHum) {
-          webHum(ac, dur, volume);
+          webHum(ac, dur, currentVolume);
           humStopRef.current = () => { /* web hum auto-fades */ };
         } else {
-          webTone(ac, freq, dur, volume);
+          webTone(ac, freq, dur, currentVolume);
         }
       } else {
-        const wavUri = buildWavDataUri(freq, dur, volume * 0.28, isBhramariHum);
+        const wavUri = buildWavDataUri(freq, dur, currentVolume * 0.28, isBhramariHum);
         void nativePlay(wavUri);
         if (isBhramariHum) {
           humStopRef.current = stopHum;
         }
       }
     },
-    [volume, ensureAC, nativePlay, stopHum],
+    [ensureAC, nativePlay, stopHum],
   );
 
   // ── Completion chime ──

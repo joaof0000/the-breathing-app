@@ -151,8 +151,7 @@ export default function SessionScreen() {
   useEffect(() => {
     if (!isRunning || !currentPhase) return;
     playPhase(currentPhase.cls, currentPhase.name, currentPhase.s);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [phaseIndex, isRunning, selectedTech]);
+  }, [phaseIndex, isRunning, selectedTech, playPhase]);
 
   // Speak phase name when voice cues are on
   useEffect(() => {

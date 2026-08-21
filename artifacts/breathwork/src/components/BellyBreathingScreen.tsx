@@ -97,39 +97,24 @@ export default function BellyBreathingScreen({ onContinue }: Props) {
         <h2 className="belly-title">{c.title}</h2>
         <p className="belly-sub">{c.sub}</p>
 
-        {/* Animated breathing diagram */}
-        <div className="belly-diagram" aria-hidden="true">
-          <div className="belly-diag-phase-wrap">
-            <span className="belly-diag-phase belly-diag-inhale">{c.svgInhale}</span>
-            <span className="belly-diag-phase belly-diag-exhale">{c.svgExhale}</span>
+        <div className="belly-diagram belly-diagram-organic" role="img" aria-label={c.legend}>
+          <div className="belly-tide-visual" aria-hidden="true">
+            <span className="belly-tide-glow belly-tide-glow-one" />
+            <span className="belly-tide-glow belly-tide-glow-two" />
+            <span className="belly-tide-ripple belly-tide-ripple-one" />
+            <span className="belly-tide-ripple belly-tide-ripple-two" />
+            <span className="belly-tide-ripple belly-tide-ripple-three" />
+            <span className="belly-tide-orbit belly-tide-orbit-one" />
+            <span className="belly-tide-orbit belly-tide-orbit-two" />
+            <span className="belly-tide-spark belly-tide-spark-one" />
+            <span className="belly-tide-spark belly-tide-spark-two" />
+            <span className="belly-tide-core">
+              <span className="belly-tide-core-light" />
+              <span className="belly-diag-phase belly-diag-inhale">{c.svgInhale}</span>
+              <span className="belly-diag-phase belly-diag-exhale">{c.svgExhale}</span>
+            </span>
           </div>
-          <svg viewBox="0 0 200 230" fill="none" xmlns="http://www.w3.org/2000/svg" className="belly-diag-svg">
-            {/* Body silhouette */}
-            <ellipse cx="100" cy="100" rx="64" ry="88" className="bd-body" />
-            {/* Ribcage lines */}
-            <path d="M 54 72 Q 44 90 46 112" className="bd-rib" />
-            <path d="M 146 72 Q 156 90 154 112" className="bd-rib" />
-            <path d="M 58 80 Q 50 96 52 114" className="bd-rib bd-rib2" />
-            <path d="M 142 80 Q 150 96 148 114" className="bd-rib bd-rib2" />
-            {/* Left lung */}
-            <ellipse cx="72" cy="84" rx="22" ry="36" className="bd-lung" />
-            {/* Right lung */}
-            <ellipse cx="128" cy="84" rx="22" ry="36" className="bd-lung" />
-            {/* Sternum */}
-            <line x1="100" y1="52" x2="100" y2="118" className="bd-sternum" />
-            {/* Diaphragm */}
-            <path d="M 42 122 Q 100 148 158 122" className="bd-diaphragm" strokeWidth="2.5" strokeLinecap="round" />
-            {/* Belly area */}
-            <ellipse cx="100" cy="167" rx="52" ry="26" className="bd-belly" />
-            {/* Belly hand indicator */}
-            <ellipse cx="100" cy="155" rx="30" ry="8" className="bd-hand" />
-            {/* Labels */}
-            <text x="100" y="86" className="bd-label">{c.svgChest}</text>
-            <text x="100" y="166" className="bd-label bd-label-belly">{c.svgBelly}</text>
-            {/* Down arrow for diaphragm on inhale */}
-            <path d="M 100 150 L 100 162 M 95 157 L 100 163 L 105 157" className="bd-arrow bd-arrow-down" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-          <div className="belly-diag-legend">
+          <div className="belly-diag-legend" aria-hidden="true">
             <span className="belly-diag-dot bd-gold" />
             <span className="belly-diag-legend-text">{c.legend}</span>
           </div>

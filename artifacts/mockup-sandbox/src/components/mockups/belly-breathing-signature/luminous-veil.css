@@ -1,0 +1,109 @@
+.bbs-group-root .luminous-veil-visual {
+  width: min(100%, 360px);
+  height: 236px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.bbs-group-root .luminous-veil-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.bbs-group-root .veil-aura {
+  opacity: 0.18;
+  filter: url(#veil-blur);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: veil-bloom 7.8s cubic-bezier(.42, 0, .25, 1) infinite;
+}
+
+.bbs-group-root .veil-fold {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.bbs-group-root .veil-fold-back {
+  animation: veil-gather-back 7.8s ease-in-out infinite;
+}
+
+.bbs-group-root .veil-fold-front {
+  animation: veil-gather-front 7.8s ease-in-out infinite;
+}
+
+.bbs-group-root .veil-drift {
+  animation: veil-drift 9s ease-in-out infinite;
+}
+
+.bbs-group-root .veil-phase {
+  font-family: 'Poppins', sans-serif;
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 2.2px;
+  fill: #f2d19b;
+}
+
+.bbs-group-root .veil-phase line {
+  stroke: #e7b76f;
+  stroke-width: 1;
+  opacity: .45;
+}
+
+.bbs-group-root .veil-phase-inhale {
+  animation: veil-inhale 7.8s ease-in-out infinite;
+}
+
+.bbs-group-root .veil-phase-exhale {
+  opacity: 0;
+  animation: veil-exhale 7.8s ease-in-out infinite;
+}
+
+@keyframes veil-gather-back {
+  0%, 100% { transform: translateY(9px) scale(.87, .82); opacity: .55; }
+  43%, 58% { transform: translateY(-3px) scale(1.08, 1.15); opacity: .9; }
+}
+
+@keyframes veil-gather-front {
+  0%, 100% { transform: translateY(8px) scale(.84, .8); opacity: .58; }
+  43%, 58% { transform: translateY(-5px) scale(1.1, 1.17); opacity: 1; }
+}
+
+@keyframes veil-bloom {
+  0%, 100% { transform: scale(.74, .7); opacity: .1; }
+  43%, 58% { transform: scale(1.18, 1.25); opacity: .32; }
+}
+
+@keyframes veil-drift {
+  0%, 100% { transform: translateX(-4px) translateY(6px); opacity: .5; }
+  50% { transform: translateX(6px) translateY(-4px); opacity: .9; }
+}
+
+@keyframes veil-inhale {
+  0%, 42% { opacity: 1; }
+  50%, 92% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes veil-exhale {
+  0%, 42% { opacity: 0; }
+  50%, 92% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bbs-group-root .veil-aura,
+  .bbs-group-root .veil-fold,
+  .bbs-group-root .veil-drift,
+  .bbs-group-root .veil-phase {
+    animation: none;
+  }
+
+  .bbs-group-root .veil-aura { opacity: .18; transform: scale(1); }
+  .bbs-group-root .veil-fold-back,
+  .bbs-group-root .veil-fold-front { transform: none; }
+  .bbs-group-root .veil-phase-inhale { opacity: 1; }
+  .bbs-group-root .veil-phase-exhale { opacity: 0; }
+}

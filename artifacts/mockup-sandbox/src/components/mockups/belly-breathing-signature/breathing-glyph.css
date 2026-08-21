@@ -1,0 +1,145 @@
+.bbs-group-root .breathing-glyph-visual {
+  width: min(100%, 320px);
+  height: 226px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+}
+
+.breathing-glyph-visual::before {
+  content: '';
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(229,169,60,.14), rgba(212,140,112,.04) 48%, transparent 72%);
+  filter: blur(7px);
+  animation: glyph-aura 6.6s cubic-bezier(.42,0,.25,1) infinite;
+}
+
+.breathing-glyph-svg {
+  width: 218px;
+  height: 218px;
+  overflow: visible;
+}
+
+.glyph-ring,
+.glyph-ray,
+.glyph-petal,
+.glyph-orbit,
+.glyph-cross {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.glyph-ring {
+  fill: none;
+  stroke: rgba(229,169,60,.3);
+  stroke-width: .8;
+  animation: glyph-ring 6.6s cubic-bezier(.42,0,.25,1) infinite;
+}
+
+.glyph-ring-inner {
+  stroke: rgba(245,240,232,.25);
+  stroke-dasharray: 1 5;
+  animation-delay: -.18s;
+}
+
+.glyph-orbit {
+  fill: none;
+  stroke: rgba(212,140,112,.42);
+  stroke-width: .7;
+  stroke-dasharray: 2 6;
+  animation: glyph-orbit 12s linear infinite;
+}
+
+.glyph-orbit-two { animation-delay: -6s; animation-direction: reverse; opacity: .7; }
+
+.glyph-ray {
+  stroke: rgba(229,169,60,.5);
+  stroke-width: .7;
+  stroke-linecap: round;
+  animation: glyph-rays 6.6s cubic-bezier(.42,0,.25,1) infinite;
+}
+
+.glyph-petal {
+  fill: rgba(229,169,60,.035);
+  stroke: rgba(229,169,60,.55);
+  stroke-width: .8;
+  animation: glyph-petals 6.6s cubic-bezier(.42,0,.25,1) infinite;
+}
+
+.glyph-petal:nth-of-type(2) { animation-delay: -.06s; }
+.glyph-petal:nth-of-type(3) { animation-delay: -.12s; }
+.glyph-petal:nth-of-type(4) { animation-delay: -.18s; }
+
+.glyph-core {
+  fill: #f0bd68;
+  animation: glyph-core 6.6s cubic-bezier(.42,0,.25,1) infinite;
+}
+
+.glyph-core-halo {
+  fill: rgba(255,226,164,.2);
+  filter: blur(3px);
+  animation: glyph-core 6.6s cubic-bezier(.42,0,.25,1) infinite;
+}
+
+.glyph-phase {
+  font-family: 'Poppins', sans-serif;
+  font-size: 7px;
+  font-weight: 500;
+  letter-spacing: 2.3px;
+  fill: #f5f0e8;
+  text-anchor: middle;
+  animation-duration: 6.6s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+.glyph-inhale { animation-name: glyph-inhale; }
+.glyph-exhale { opacity: 0; animation-name: glyph-exhale; }
+
+@keyframes glyph-aura {
+  0%,100% { transform: scale(.72); opacity: .45; }
+  43%,58% { transform: scale(1.14); opacity: .9; }
+}
+@keyframes glyph-ring {
+  0%,100% { transform: scale(.73); opacity: .3; }
+  43%,58% { transform: scale(1.07); opacity: .9; }
+}
+@keyframes glyph-rays {
+  0%,100% { transform: scale(.72); opacity: .35; }
+  43%,58% { transform: scale(1.06); opacity: .8; }
+}
+@keyframes glyph-petals {
+  0%,100% { transform: scale(.72); opacity: .4; }
+  43%,58% { transform: scale(1.08); opacity: 1; }
+}
+@keyframes glyph-core {
+  0%,100% { transform: scale(.72); opacity: .7; }
+  43%,58% { transform: scale(1.12); opacity: 1; }
+}
+@keyframes glyph-orbit {
+  to { transform: rotate(360deg); }
+}
+@keyframes glyph-inhale {
+  0%,42% { opacity: 1; }
+  50%,92% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes glyph-exhale {
+  0%,42% { opacity: 0; }
+  50%,92% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .breathing-glyph-visual::before,
+  .breathing-glyph-svg *,
+  .glyph-phase { animation: none; }
+  .glyph-ring, .glyph-ray, .glyph-petal { transform: scale(1); opacity: .7; }
+  .glyph-core, .glyph-core-halo { transform: scale(1); opacity: 1; }
+  .glyph-inhale { opacity: 1; }
+  .glyph-exhale { opacity: 0; }
+}

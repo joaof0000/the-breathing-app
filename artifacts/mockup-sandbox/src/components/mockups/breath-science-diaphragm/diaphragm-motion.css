@@ -1,0 +1,25 @@
+.dm-root { background: radial-gradient(circle at 50% 18%, rgba(182,113,67,.16), transparent 30%), linear-gradient(160deg,#2c1f14,#392519 60%,#24180f); }
+.dm-root .bsci-wrap { max-width: 680px; }
+.dm-reason-mark { color: var(--gold); font: 600 .65rem Poppins,sans-serif; letter-spacing:.12em; border:1px solid rgba(229,169,60,.35); border-radius:50%; width:28px; height:28px; display:grid; place-items:center; flex-shrink:0; }
+.dm-visual { margin: 26px 0 22px; padding: 17px 14px 14px; border:1px solid rgba(229,169,60,.22); border-radius:16px; background:linear-gradient(145deg,rgba(67,42,27,.9),rgba(39,27,19,.85)); box-shadow:0 18px 42px rgba(16,8,3,.22); overflow:hidden; }
+.dm-visual-top,.dm-legend { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+.dm-kicker,.dm-live,.dm-legend { color:var(--faint); font:500 .58rem Poppins,sans-serif; letter-spacing:.09em; text-transform:uppercase; }
+.dm-live { color:var(--gdim); white-space:nowrap; } .dm-live i { display:inline-block; width:5px; height:5px; margin-right:5px; border-radius:50%; background:var(--gold); vertical-align:middle; animation:dmPulse 3s ease-in-out infinite; }
+.dm-visual svg { display:block; width:100%; height:auto; margin:3px 0 0; }
+.dm-orb { animation:dmGlow 8s ease-in-out infinite; transform-origin:center; }
+.dm-air { fill:none; stroke:rgba(245,201,121,.15); stroke-width:1; stroke-dasharray:2 7; animation:dmDrift 7s linear infinite; }
+.dm-air-two { animation-delay:-3s; opacity:.65; }
+.dm-ribbon,.dm-ribbon-glow { fill:none; stroke:url(#dmRibbon); stroke-linecap:round; stroke-width:2.2; stroke-dasharray:330; stroke-dashoffset:0; animation:dmBreath 8s cubic-bezier(.45,.05,.55,.95) infinite; }
+.dm-ribbon-glow { stroke:#f5c979; stroke-width:10; opacity:.09; filter:blur(5px); }
+.dm-breath-dot { fill:#f5c979; filter:drop-shadow(0 0 5px rgba(245,201,121,.6)); animation:dmTravel 8s cubic-bezier(.45,.05,.55,.95) infinite; }
+.dm-guide { stroke:rgba(245,201,121,.14); stroke-width:1; stroke-dasharray:2 5; }
+.dm-label { fill:rgba(245,201,121,.84); font:600 8px Poppins,sans-serif; letter-spacing:.16em; }
+.dm-label-exhale { fill:rgba(196,168,130,.72); }
+.dm-visual figcaption { margin:0 auto 13px; max-width:390px; color:var(--faint); font:italic .85rem Newsreader,serif; line-height:1.5; text-align:center; }
+.dm-legend { justify-content:center; flex-wrap:wrap; gap:13px; font-size:.54rem; letter-spacing:.05em; }
+.dm-swatch { display:inline-block; width:16px; height:2px; margin-right:5px; vertical-align:middle; background:var(--gold); }.dm-swatch-out{background:var(--dim);}
+@keyframes dmBreath { 0%,8% { transform:translateY(0); } 43%,57% { transform:translateY(-9px); } 92%,100% { transform:translateY(0); } }
+@keyframes dmTravel { 0% { transform:translateX(0); opacity:.45; } 48% { transform:translateX(296px); opacity:1; } 55%,100% { transform:translateX(0); opacity:.45; } }
+@keyframes dmDrift { to { stroke-dashoffset:-36; } } @keyframes dmGlow { 0%,100%{opacity:.65;transform:scale(.94)}50%{opacity:1;transform:scale(1.05)} } @keyframes dmPulse {50%{opacity:.35;transform:scale(.65)}}
+@media (prefers-reduced-motion: reduce) { .dm-root *, .dm-root *::before { animation:none!important; transition:none!important; } .dm-ribbon,.dm-ribbon-glow{transform:translateY(-4px)} .dm-breath-dot{transform:translateX(148px)} }
+@media (max-width:480px) { .dm-visual { padding-inline:10px; } .dm-visual-top { gap:4px; } .dm-kicker,.dm-live { font-size:.52rem; } }

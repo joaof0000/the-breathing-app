@@ -1,3 +1,42 @@
+/* ── Breath Science Diaphragm group CSS ── */
+/* Fonts from the breathwork app */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Newsreader:ital,wght@0,300;0,400;1,300&family=Poppins:wght@300;400;500;600&display=swap');
+
+/* Theme tokens from artifacts/breathwork/src/index.css */
+.bsci-group-root {
+  --bg:    #2C1F14;
+  --card:  #3A2A1C;
+  --gold:  #E5A93C;
+  --gdim:  #C8922A;
+  --rose:  #D48C70;
+  --text:  #F5F0E8;
+  --dim:   #C4A882;
+  --faint: #8A7560;
+  --bdr:   rgba(229,169,60,0.18);
+
+  --grn:   #6A9E7F;
+  --pur:   #8E7A9C;
+  --fire:  #D4663A;
+  --ice:   #5AAABF;
+  --sun:   #D4854A;
+  --moon:  #7A8FC2;
+
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(160deg, #2C1F14 0%, #3A2618 60%, #2A1C10 100%);
+  background-attachment: fixed;
+  color: var(--text);
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.bsci-group-root *, .bsci-group-root *::before, .bsci-group-root *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── BreathScienceScreen.css (verbatim) ── */
+
 .bsci-page {
   min-height: 100dvh;
   overflow-y: auto;
@@ -291,192 +330,110 @@
   background: rgba(229, 169, 60, 0.12);
 }
 
-/* ── Diaphragm motion lesson ── */
-.bsci-diaphragm-motion {
-  margin: 26px 0 22px;
-  padding: 17px 14px 14px;
-  border: 1px solid rgba(229, 169, 60, 0.22);
-  border-radius: 16px;
-  background: linear-gradient(145deg, rgba(67, 42, 27, 0.9), rgba(39, 27, 19, 0.85));
-  box-shadow: 0 18px 42px rgba(16, 8, 3, 0.22);
-  overflow: hidden;
-}
-
-.bsci-motion-header,
-.bsci-motion-legend {
+/* ── Anatomy diagram ── */
+.bsci-anatomy {
+  margin: 0 0 20px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+  gap: 10px;
 }
 
-.bsci-motion-kicker,
-.bsci-motion-cycle,
-.bsci-motion-legend {
-  font-family: 'Poppins', sans-serif;
-  font-size: 0.58rem;
-  font-weight: 500;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  color: var(--faint);
-}
-
-.bsci-motion-cycle {
-  color: var(--gdim);
-  white-space: nowrap;
-}
-
-.bsci-motion-cycle i {
-  display: inline-block;
-  width: 5px;
-  height: 5px;
-  margin-right: 5px;
-  border-radius: 50%;
-  background: var(--gold);
-  vertical-align: middle;
-  animation: bsciMotionPulse 8s ease-in-out infinite;
-}
-
-.bsci-diaphragm-motion svg {
-  display: block;
+.bsci-anat-svg {
   width: 100%;
+  max-width: 520px;
   height: auto;
-  margin-top: 3px;
+  border: 1px solid rgba(229, 169, 60, 0.1);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.02);
+  padding: 12px;
+  box-sizing: border-box;
 }
 
-.bsci-motion-orb {
-  transform-origin: center;
-  animation: bsciMotionGlow 8s ease-in-out infinite;
+.bsci-anat-body {
+  fill: rgba(229, 169, 60, 0.04);
+  stroke: rgba(229, 169, 60, 0.2);
+  stroke-width: 0.7;
 }
 
-.bsci-motion-air {
-  fill: none;
-  stroke: rgba(245, 201, 121, 0.15);
-  stroke-width: 1;
-  stroke-dasharray: 2 7;
-  animation: bsciMotionDrift 8s linear infinite;
+.bsci-anat-lung {
+  fill: rgba(100, 160, 220, 0.1);
+  stroke: rgba(100, 160, 220, 0.32);
+  stroke-width: 0.7;
+}
+.bsci-anat-lung-full {
+  fill: rgba(100, 160, 220, 0.18);
+  stroke: rgba(100, 160, 220, 0.48);
 }
 
-.bsci-motion-air-two {
-  animation-delay: -4s;
+.bsci-anat-sternum {
+  stroke: rgba(229, 169, 60, 0.18);
+  stroke-width: 0.7;
+}
+
+.bsci-anat-diaph {
+  stroke: var(--gold);
   opacity: 0.65;
-}
-
-.bsci-motion-ribbon-group {
-  transform-origin: center;
-  animation: bsciMotionBreath 8s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
-}
-
-.bsci-motion-ribbon,
-.bsci-motion-ribbon-glow {
   fill: none;
-  stroke: url(#bsciMotionRibbon);
-  stroke-width: 2.2;
-  stroke-linecap: round;
+}
+.bsci-anat-diaph-down {
+  opacity: 0.9;
 }
 
-.bsci-motion-ribbon-glow {
-  stroke: #f5c979;
-  stroke-width: 10;
-  opacity: 0.09;
-  filter: blur(5px);
+.bsci-anat-belly {
+  stroke-width: 0.7;
+}
+.bsci-anat-belly-flat {
+  fill: rgba(229, 169, 60, 0.05);
+  stroke: rgba(229, 169, 60, 0.2);
+}
+.bsci-anat-belly-full {
+  fill: rgba(229, 169, 60, 0.12);
+  stroke: rgba(229, 169, 60, 0.4);
 }
 
-.bsci-motion-dot {
-  fill: #f5c979;
-  filter: drop-shadow(0 0 5px rgba(245, 201, 121, 0.6));
-  animation: bsciMotionTravel 8s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+.bsci-anat-divider {
+  stroke: rgba(255,255,255,0.07);
+  stroke-width: 0.7;
+  stroke-dasharray: 3 3;
 }
 
-.bsci-motion-guide {
-  stroke: rgba(245, 201, 121, 0.14);
-  stroke-width: 1;
-  stroke-dasharray: 2 5;
-}
-
-.bsci-motion-label {
-  fill: rgba(245, 201, 121, 0.84);
+.bsci-anat-phase-lbl {
   font-family: 'Poppins', sans-serif;
-  font-size: 8px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-anchor: middle;
 }
+.bsci-anat-exhale-lbl { fill: rgba(100, 160, 220, 0.8); }
+.bsci-anat-inhale-lbl { fill: var(--gold); }
 
-.bsci-motion-label-exhale {
-  fill: rgba(196, 168, 130, 0.72);
-}
-
-.bsci-diaphragm-motion figcaption {
-  max-width: 390px;
-  margin: 0 auto 13px;
-  color: var(--faint);
-  font-family: 'Newsreader', serif;
-  font-size: 0.85rem;
-  font-style: italic;
-  line-height: 1.5;
-  text-align: center;
-}
-
-.bsci-motion-legend {
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 13px;
-  font-size: 0.54rem;
+.bsci-anat-sub-lbl {
+  font-family: 'Poppins', sans-serif;
+  font-size: 5.5px;
+  font-weight: 300;
   letter-spacing: 0.05em;
+  fill: rgba(255,255,255,0.35);
+  text-anchor: middle;
 }
 
-.bsci-motion-swatch {
-  display: inline-block;
-  width: 16px;
-  height: 2px;
-  margin-right: 5px;
-  background: var(--gold);
-  vertical-align: middle;
+.bsci-anat-arrow-up,
+.bsci-anat-arrow-down {
+  stroke-width: 1.2;
+  fill: none;
 }
+.bsci-anat-arrow-up { stroke: rgba(100, 160, 220, 0.6); }
+.bsci-anat-arrow-down { stroke: var(--gold); opacity: 0.8; }
 
-.bsci-motion-swatch-out {
-  background: var(--dim);
-}
-
-@keyframes bsciMotionBreath {
-  0%, 10%, 100% { transform: translateY(0); }
-  44%, 58% { transform: translateY(30px); }
-  92% { transform: translateY(0); }
-}
-
-@keyframes bsciMotionTravel {
-  0% { transform: translateX(0); opacity: 0.45; }
-  48% { transform: translateX(296px); opacity: 1; }
-  55%, 100% { transform: translateX(0); opacity: 0.45; }
-}
-
-@keyframes bsciMotionDrift {
-  to { stroke-dashoffset: -36; }
-}
-
-@keyframes bsciMotionGlow {
-  0%, 100% { opacity: 0.65; transform: scale(0.94); }
-  50% { opacity: 1; transform: scale(1.05); }
-}
-
-@keyframes bsciMotionPulse {
-  44%, 58% { opacity: 0.35; transform: scale(0.65); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .bsci-diaphragm-motion *,
-  .bsci-diaphragm-motion *::before {
-    animation: none !important;
-    transition: none !important;
-  }
-
-  .bsci-motion-ribbon-group {
-    transform: translateY(15px);
-  }
-
-  .bsci-motion-dot {
-    transform: translateX(148px);
-  }
+.bsci-anat-caption {
+  font-family: 'Newsreader', serif;
+  font-size: 0.82rem;
+  font-style: italic;
+  color: var(--faint);
+  text-align: center;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 460px;
 }
 
 /* ── Video resources ── */
@@ -555,9 +512,6 @@
   .bsci-wrap { padding: 20px 16px 48px; }
   .bsci-reason { padding: 14px 16px; }
   .bsci-card { padding: 16px 16px; }
-  .bsci-diaphragm-motion { padding-inline: 10px; }
-  .bsci-motion-header { gap: 4px; }
-  .bsci-motion-kicker,
-  .bsci-motion-cycle { font-size: 0.52rem; }
+  .bsci-anat-svg { padding: 8px; }
   .bsci-video-card { padding: 12px 14px; gap: 12px; }
 }

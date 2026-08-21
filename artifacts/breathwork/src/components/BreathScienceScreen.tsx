@@ -33,6 +33,10 @@ interface Content {
   anatDiaphRises: string;
   anatInhale: string;
   anatDiaphDescends: string;
+  diaphMotionKicker: string;
+  diaphMotionCycle: string;
+  diaphInhaleAction: string;
+  diaphExhaleAction: string;
   diaphWhatTitle: string;
   diaphWhat: string;
   diaphStepsTitle: string;
@@ -125,6 +129,10 @@ const CONTENT: Record<Lang, Content> = {
     anatDiaphRises: 'diaphragm rises',
     anatInhale: 'INHALE',
     anatDiaphDescends: 'diaphragm descends',
+    diaphMotionKicker: 'A quiet lesson in motion',
+    diaphMotionCycle: 'Breathing cycle',
+    diaphInhaleAction: 'makes room',
+    diaphExhaleAction: 'returns',
     diaphWhatTitle: 'What is the diaphragm?',
     diaphWhat: 'The diaphragm is a large, dome-shaped muscle that sits at the base of your lungs, separating the chest from the abdomen. When it contracts and flattens downward, it creates a vacuum that draws air deep into the lower lobes of the lungs — the most oxygen-rich regions. Chest breathing uses roughly ⅓ of lung capacity. Diaphragmatic breathing uses the full lung — plus stimulates the vagus nerve fibres that run through the diaphragm itself.',
     diaphStepsTitle: 'Step-by-step: learn it in 5 minutes',
@@ -232,6 +240,10 @@ const CONTENT: Record<Lang, Content> = {
     anatDiaphRises: 'diafragma sobe',
     anatInhale: 'INSPIRAR',
     anatDiaphDescends: 'diafragma desce',
+    diaphMotionKicker: 'Uma lição tranquila em movimento',
+    diaphMotionCycle: 'Ciclo respiratório',
+    diaphInhaleAction: 'cria espaço',
+    diaphExhaleAction: 'retorna',
     diaphWhatTitle: 'O que é o diafragma?',
     diaphWhat: 'O diafragma é um músculo grande em forma de cúpula que fica na base dos pulmões, separando o tórax do abdômen. Quando se contrai e achata para baixo, cria um vácuo que atrai ar profundamente para os lobos inferiores dos pulmões — as regiões mais ricas em oxigênio. A respiração torácica usa cerca de ⅓ da capacidade pulmonar. A respiração diafragmática usa o pulmão inteiro — além de estimular as fibras do nervo vago que percorrem o próprio diafragma.',
     diaphStepsTitle: 'Passo a passo: aprenda em 5 minutos',
@@ -339,6 +351,10 @@ const CONTENT: Record<Lang, Content> = {
     anatDiaphRises: 'diafragma sube',
     anatInhale: 'INHALAR',
     anatDiaphDescends: 'diafragma desciende',
+    diaphMotionKicker: 'Una lección tranquila en movimiento',
+    diaphMotionCycle: 'Ciclo respiratorio',
+    diaphInhaleAction: 'crea espacio',
+    diaphExhaleAction: 'regresa',
     diaphWhatTitle: '¿Qué es el diafragma?',
     diaphWhat: 'El diafragma es un músculo grande en forma de cúpula que se asienta en la base de los pulmones, separando el tórax del abdomen. Cuando se contrae y se aplana hacia abajo, crea un vacío que atrae aire profundamente hacia los lóbulos inferiores de los pulmones — las regiones más ricas en oxígeno. La respiración torácica usa aproximadamente ⅓ de la capacidad pulmonar. La respiración diafragmática usa el pulmón completo — además de estimular las fibras del nervio vago que recorren el propio diafragma.',
     diaphStepsTitle: 'Paso a paso: apréndelo en 5 minutos',
@@ -418,42 +434,47 @@ export default function BreathScienceScreen({ onBack, onContinue }: Props) {
           <h2 className="bsci-section-title">{c.diaphTitle}</h2>
           <p className="bsci-diaphr-intro">{c.diaphIntro}</p>
 
-          {/* Anatomy comparison diagram */}
-          <div className="bsci-anatomy" aria-hidden="true">
-            <svg viewBox="0 0 288 172" fill="none" xmlns="http://www.w3.org/2000/svg" className="bsci-anat-svg">
-              {/* ─── EXHALE (left) ─── */}
-              <ellipse cx="72" cy="80" rx="50" ry="66" className="bsci-anat-body" />
-              <ellipse cx="55" cy="66" rx="16" ry="26" className="bsci-anat-lung" />
-              <ellipse cx="89" cy="66" rx="16" ry="26" className="bsci-anat-lung" />
-              <line x1="72" y1="44" x2="72" y2="92" className="bsci-anat-sternum" />
-              {/* Diaphragm dome-up (exhale) */}
-              <path d="M 28 88 Q 72 68 116 88" className="bsci-anat-diaph" strokeWidth="2" strokeLinecap="round" />
-              {/* Belly flat */}
-              <ellipse cx="72" cy="110" rx="36" ry="10" className="bsci-anat-belly bsci-anat-belly-flat" />
-              <text x="72" y="135" className="bsci-anat-phase-lbl bsci-anat-exhale-lbl">{c.anatExhale}</text>
-              <text x="72" y="146" className="bsci-anat-sub-lbl">{c.anatDiaphRises}</text>
-              {/* Up arrow */}
-              <path d="M 72 100 L 72 88 M 67 93 L 72 87 L 77 93" className="bsci-anat-arrow-up" strokeLinecap="round" strokeLinejoin="round" />
-
-              {/* Divider */}
-              <line x1="144" y1="8" x2="144" y2="162" className="bsci-anat-divider" />
-
-              {/* ─── INHALE (right) ─── */}
-              <ellipse cx="216" cy="80" rx="50" ry="66" className="bsci-anat-body" />
-              <ellipse cx="199" cy="66" rx="16" ry="32" className="bsci-anat-lung bsci-anat-lung-full" />
-              <ellipse cx="233" cy="66" rx="16" ry="32" className="bsci-anat-lung bsci-anat-lung-full" />
-              <line x1="216" y1="44" x2="216" y2="98" className="bsci-anat-sternum" />
-              {/* Diaphragm flat-down (inhale) */}
-              <path d="M 172 100 Q 216 114 260 100" className="bsci-anat-diaph bsci-anat-diaph-down" strokeWidth="2" strokeLinecap="round" />
-              {/* Belly expanded */}
-              <ellipse cx="216" cy="128" rx="42" ry="18" className="bsci-anat-belly bsci-anat-belly-full" />
-              <text x="216" y="152" className="bsci-anat-phase-lbl bsci-anat-inhale-lbl">{c.anatInhale}</text>
-              <text x="216" y="163" className="bsci-anat-sub-lbl">{c.anatDiaphDescends}</text>
-              {/* Down arrow */}
-              <path d="M 216 108 L 216 120 M 211 115 L 216 121 L 221 115" className="bsci-anat-arrow-down" strokeLinecap="round" strokeLinejoin="round" />
+          <figure className="bsci-diaphragm-motion" aria-labelledby="bsci-motion-title">
+            <div className="bsci-motion-header">
+              <span className="bsci-motion-kicker">{c.diaphMotionKicker}</span>
+              <span className="bsci-motion-cycle"><i aria-hidden="true" />{c.diaphMotionCycle}</span>
+            </div>
+            <svg viewBox="0 0 360 220" role="img" aria-labelledby="bsci-motion-title bsci-motion-desc">
+              <title id="bsci-motion-title">{c.diaphCaption}</title>
+              <desc id="bsci-motion-desc">{c.diaphCaption}</desc>
+              <defs>
+                <radialGradient id="bsciMotionGlow">
+                  <stop offset="0" stopColor="#f5c979" stopOpacity=".38" />
+                  <stop offset="1" stopColor="#f5c979" stopOpacity="0" />
+                </radialGradient>
+                <linearGradient id="bsciMotionRibbon" x1="0" x2="1">
+                  <stop stopColor="#b96f4b" />
+                  <stop offset=".5" stopColor="#f1bd68" />
+                  <stop offset="1" stopColor="#b96f4b" />
+                </linearGradient>
+              </defs>
+              <circle className="bsci-motion-orb" cx="180" cy="110" r="76" fill="url(#bsciMotionGlow)" />
+              <path className="bsci-motion-air bsci-motion-air-one" d="M22 74 C85 74 99 74 133 94 S194 150 233 126 S280 74 338 74" />
+              <path className="bsci-motion-air bsci-motion-air-two" d="M22 108 C79 108 108 108 140 119 S194 153 230 138 S286 108 338 108" />
+              <g className="bsci-motion-ribbon-group">
+                <path className="bsci-motion-ribbon-glow" d="M31 96 C91 96 116 96 147 111 S198 139 230 118 S281 96 329 96" />
+                <path className="bsci-motion-ribbon" d="M31 96 C91 96 116 96 147 111 S198 139 230 118 S281 96 329 96" />
+                <circle className="bsci-motion-dot" cx="31" cy="96" r="4" />
+              </g>
+              <line className="bsci-motion-guide" x1="180" y1="38" x2="180" y2="186" />
+              <text className="bsci-motion-label bsci-motion-label-exhale" x="180" y="25" textAnchor="middle">
+                {c.anatExhale} · {c.anatDiaphRises}
+              </text>
+              <text className="bsci-motion-label bsci-motion-label-inhale" x="180" y="207" textAnchor="middle">
+                {c.anatInhale} · {c.anatDiaphDescends}
+              </text>
             </svg>
-            <p className="bsci-anat-caption">{c.diaphCaption}</p>
-          </div>
+            <figcaption>{c.diaphCaption}</figcaption>
+            <div className="bsci-motion-legend" aria-hidden="true">
+              <span><b className="bsci-motion-swatch" />{c.anatInhale.toLowerCase()} · {c.diaphInhaleAction}</span>
+              <span><b className="bsci-motion-swatch bsci-motion-swatch-out" />{c.anatExhale.toLowerCase()} · {c.diaphExhaleAction}</span>
+            </div>
+          </figure>
 
           <div className="bsci-card">
             <h3 className="bsci-card-title">{c.diaphWhatTitle}</h3>

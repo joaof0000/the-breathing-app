@@ -1,0 +1,498 @@
+/* ── Belly Breathing Signature group CSS ── */
+/* Fonts from the breathwork app */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Newsreader:ital,wght@0,300;0,400;1,300&family=Poppins:wght@300;400;500;600&display=swap');
+
+/* Theme tokens + background scoped to this group's root wrapper */
+.bbs-group-root {
+  --bg:    #2C1F14;
+  --card:  #3A2A1C;
+  --gold:  #E5A93C;
+  --gdim:  #C8922A;
+  --rose:  #D48C70;
+  --text:  #F5F0E8;
+  --dim:   #C4A882;
+  --faint: #8A7560;
+  --bdr:   rgba(229,169,60,0.18);
+
+  --grn:   #6A9E7F;
+  --pur:   #8E7A9C;
+  --fire:  #D4663A;
+  --ice:   #5AAABF;
+  --sun:   #D4854A;
+  --moon:  #7A8FC2;
+
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(160deg, #2C1F14 0%, #3A2618 60%, #2A1C10 100%);
+  background-attachment: fixed;
+  color: var(--text);
+  min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.bbs-group-root *, .bbs-group-root *::before, .bbs-group-root *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── BellyBreathingScreen.css (verbatim, scoped under .bbs-group-root) ── */
+
+.bbs-group-root .belly {
+  position: relative;
+  z-index: 10;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+}
+
+.bbs-group-root .belly-inner {
+  max-width: 420px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.4rem;
+  animation: belly-rise 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes belly-rise {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.bbs-group-root .belly-symbol {
+  width: 58px;
+  height: 58px;
+  color: var(--gold);
+  opacity: 0.8;
+  animation: belly-breathe 4s ease-in-out infinite;
+}
+
+@keyframes belly-breathe {
+  0%, 100% { transform: scale(1);    opacity: 0.65; }
+  50%       { transform: scale(1.1);  opacity: 1; }
+}
+
+.bbs-group-root .belly-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(2rem, 6vw, 2.6rem);
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  color: var(--text);
+  text-align: center;
+  line-height: 1;
+  margin-bottom: -0.4rem;
+}
+
+.bbs-group-root .belly-sub {
+  font-family: 'Newsreader', Georgia, serif;
+  font-style: italic;
+  font-size: 0.9rem;
+  font-weight: 300;
+  color: var(--dim);
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.bbs-group-root .belly-steps {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-top: 0.2rem;
+}
+
+.bbs-group-root .belly-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(229,169,60,0.14);
+  border-radius: 8px;
+  padding: 0.9rem 1rem;
+}
+
+.bbs-group-root .belly-step-num {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 300;
+  color: var(--gold);
+  opacity: 0.75;
+  line-height: 1;
+  flex-shrink: 0;
+  min-width: 1.2rem;
+  text-align: center;
+  padding-top: 0.05rem;
+}
+
+.bbs-group-root .belly-step-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 300;
+  line-height: 1.65;
+  color: var(--dim);
+  margin: 0;
+}
+
+.bbs-group-root .belly-step-text strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.bbs-group-root .belly-callout {
+  background: rgba(229,169,60,0.05);
+  border: 1px solid rgba(229,169,60,0.18);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+}
+
+.bbs-group-root .belly-callout p {
+  font-family: 'Newsreader', Georgia, serif;
+  font-size: 0.88rem;
+  font-weight: 300;
+  line-height: 1.7;
+  color: var(--dim);
+  margin: 0;
+  font-style: italic;
+  text-align: center;
+}
+
+.bbs-group-root .belly-callout em {
+  color: var(--gold);
+  font-style: normal;
+}
+
+.bbs-group-root .belly-btn {
+  margin-top: 0.4rem;
+  padding: 0.85rem 2.6rem;
+  background: transparent;
+  border: 1px solid var(--gold);
+  border-radius: 3px;
+  color: var(--gold);
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.bbs-group-root .belly-btn:hover {
+  background: rgba(229,169,60,0.12);
+  box-shadow: 0 0 24px rgba(229,169,60,0.18);
+  color: var(--text);
+}
+
+.bbs-group-root .belly-btn:active {
+  background: rgba(229,169,60,0.2);
+}
+
+/* ── Breathing diagram ── */
+.bbs-group-root .belly-diagram {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 0.2rem 0 0.4rem;
+}
+
+.bbs-group-root .belly-diagram-organic {
+  position: relative;
+  isolation: isolate;
+}
+
+.bbs-group-root .belly-tide-visual {
+  width: min(100%, 320px);
+  height: 226px;
+  position: relative;
+}
+
+.bbs-group-root .belly-tide-core,
+.bbs-group-root .belly-tide-ripple,
+.bbs-group-root .belly-tide-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.bbs-group-root .belly-tide-glow {
+  width: 176px;
+  height: 130px;
+  filter: blur(25px);
+  opacity: 0.52;
+  animation: belly-tide-bloom 6.6s ease-in-out infinite;
+}
+
+.bbs-group-root .belly-tide-glow-one {
+  background: rgba(221, 145, 94, 0.36);
+}
+
+.bbs-group-root .belly-tide-glow-two {
+  width: 104px;
+  height: 90px;
+  background: rgba(232, 187, 104, 0.25);
+  animation-delay: -3.3s;
+}
+
+.bbs-group-root .belly-tide-ripple {
+  width: 114px;
+  height: 114px;
+  border: 1px solid rgba(228, 165, 95, 0.34);
+  box-shadow: inset 0 0 28px rgba(228, 165, 95, 0.08);
+  animation: belly-tide-expand 6.6s cubic-bezier(0.42, 0, 0.25, 1) infinite;
+}
+
+.bbs-group-root .belly-tide-ripple-two {
+  animation-delay: -0.8s;
+  opacity: 0.72;
+}
+
+.bbs-group-root .belly-tide-ripple-three {
+  animation-delay: -1.6s;
+  opacity: 0.45;
+}
+
+.bbs-group-root .belly-tide-core {
+  width: 104px;
+  height: 104px;
+  overflow: hidden;
+  background: radial-gradient(circle at 35% 30%, #ecbc80, #c87860 42%, #6f4540 100%);
+  box-shadow: 0 0 0 1px rgba(249, 198, 122, 0.28), 0 16px 45px rgba(213, 122, 82, 0.22);
+  animation: belly-tide-core-breathe 6.6s ease-in-out infinite;
+}
+
+.bbs-group-root .belly-tide-core::after {
+  content: '';
+  position: absolute;
+  width: 170%;
+  height: 55%;
+  left: -30%;
+  bottom: -17%;
+  border-radius: 50%;
+  background: rgba(255, 222, 161, 0.25);
+  transform: rotate(-12deg);
+  animation: belly-tide-current 5s ease-in-out infinite;
+}
+
+.bbs-group-root .belly-tide-core-light {
+  position: absolute;
+  top: 15px;
+  left: 22px;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: rgba(255, 234, 186, 0.42);
+  filter: blur(10px);
+}
+
+.bbs-group-root .belly-diag-phase {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.57rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding-left: 0.2em;
+  color: #fff0d6;
+}
+
+.bbs-group-root .belly-diag-inhale { animation: belly-phase-inhale 6.6s ease-in-out infinite; }
+.bbs-group-root .belly-diag-exhale { opacity: 0; animation: belly-phase-exhale 6.6s ease-in-out infinite; }
+
+@keyframes belly-phase-inhale {
+  0%, 42% { opacity: 1; }
+  50%, 92% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes belly-phase-exhale {
+  0%, 42% { opacity: 0; }
+  50%, 92% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.bbs-group-root .belly-tide-orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 166px;
+  height: 45px;
+  border-top: 1px solid rgba(245, 194, 120, 0.35);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) rotate(18deg);
+  animation: belly-tide-orbit 8s ease-in-out infinite;
+}
+
+.bbs-group-root .belly-tide-orbit-two {
+  transform: translate(-50%, -50%) rotate(-32deg);
+  animation-delay: -4s;
+  opacity: 0.5;
+}
+
+.bbs-group-root .belly-tide-spark {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #f3c276;
+  box-shadow: 0 0 12px 2px rgba(243, 194, 118, 0.45);
+  animation: belly-tide-spark 6.6s ease-in-out infinite;
+}
+
+.bbs-group-root .belly-tide-spark-one { top: 33%; left: 24%; }
+.bbs-group-root .belly-tide-spark-two { top: 67%; left: 74%; animation-delay: -3.3s; }
+
+.bbs-group-root .belly-diag-legend {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bbs-group-root .belly-diag-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.bbs-group-root .bd-gold { background: var(--gold); opacity: 0.7; }
+
+.bbs-group-root .belly-diag-legend-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 300;
+  color: var(--faint);
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+@keyframes belly-tide-core-breathe {
+  0%, 100% { transform: translate(-50%, -50%) scale(0.76, 0.72); }
+  43%, 58% { transform: translate(-50%, -50%) scale(1.08, 1); }
+}
+
+@keyframes belly-tide-expand {
+  0%, 100% { transform: translate(-50%, -50%) scale(0.7); opacity: 0.15; }
+  43%, 58% { transform: translate(-50%, -50%) scale(1.28); opacity: 0.88; }
+}
+
+@keyframes belly-tide-bloom {
+  0%, 100% { transform: translate(-50%, -50%) scale(0.75); opacity: 0.3; }
+  45%, 57% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.62; }
+}
+
+@keyframes belly-tide-current {
+  0%, 100% { transform: rotate(-12deg) translateX(-8%); }
+  50% { transform: rotate(-12deg) translateX(8%); }
+}
+
+@keyframes belly-tide-orbit {
+  0%, 100% { transform: translate(-50%, -50%) rotate(18deg) scaleX(0.84); }
+  50% { transform: translate(-50%, -50%) rotate(26deg) scaleX(1.12); }
+}
+
+@keyframes belly-tide-spark {
+  0%, 100% { transform: translate(0, 5px); opacity: 0.25; }
+  50% { transform: translate(8px, -8px); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bbs-group-root .belly-tide-glow,
+  .bbs-group-root .belly-tide-ripple,
+  .bbs-group-root .belly-tide-core,
+  .bbs-group-root .belly-tide-core::after,
+  .bbs-group-root .belly-diag-phase,
+  .bbs-group-root .belly-tide-orbit,
+  .bbs-group-root .belly-tide-spark {
+    animation: none;
+  }
+
+  .bbs-group-root .belly-tide-core {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  .bbs-group-root .belly-diag-exhale {
+    opacity: 0;
+  }
+}
+
+/* ── Video links ── */
+.bbs-group-root .belly-videos {
+  width: 100%;
+  margin-top: 0.2rem;
+}
+
+.bbs-group-root .belly-videos-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin: 0 0 0.6rem;
+  text-align: center;
+}
+
+.bbs-group-root .belly-video-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.bbs-group-root .belly-video-link {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(229,169,60,0.12);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  text-decoration: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+.bbs-group-root .belly-video-link:hover {
+  border-color: rgba(229,169,60,0.3);
+  background: rgba(229,169,60,0.05);
+}
+
+.bbs-group-root .belly-video-play {
+  font-size: 0.75rem;
+  color: var(--gold);
+  opacity: 0.8;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(229,169,60,0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 2px;
+}
+
+.bbs-group-root .belly-video-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.bbs-group-root .belly-video-text strong {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text);
+}
+.bbs-group-root .belly-video-text span {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 300;
+  color: var(--dim);
+}

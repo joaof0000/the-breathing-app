@@ -1,0 +1,427 @@
+/* ── Belly Breathing group CSS ── */
+/* Fonts from the breathwork app */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Newsreader:ital,wght@0,300;0,400;1,300&family=Poppins:wght@300;400;500;600&display=swap');
+
+/* Theme tokens from artifacts/breathwork/src/index.css */
+.belly-group-root {
+  --bg:    #2C1F14;
+  --card:  #3A2A1C;
+  --gold:  #E5A93C;
+  --gdim:  #C8922A;
+  --rose:  #D48C70;
+  --text:  #F5F0E8;
+  --dim:   #C4A882;
+  --faint: #8A7560;
+  --bdr:   rgba(229,169,60,0.18);
+
+  --grn:   #6A9E7F;
+  --pur:   #8E7A9C;
+  --fire:  #D4663A;
+  --ice:   #5AAABF;
+  --sun:   #D4854A;
+  --moon:  #7A8FC2;
+
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(160deg, #2C1F14 0%, #3A2618 60%, #2A1C10 100%);
+  background-attachment: fixed;
+  color: var(--text);
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.belly-group-root *, .belly-group-root *::before, .belly-group-root *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── BellyBreathingScreen.css ── */
+.belly {
+  position: relative;
+  z-index: 10;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+}
+
+.belly-inner {
+  max-width: 420px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.4rem;
+  animation: belly-rise 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes belly-rise {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.belly-symbol {
+  width: 58px;
+  height: 58px;
+  color: var(--gold);
+  opacity: 0.8;
+  animation: belly-breathe 4s ease-in-out infinite;
+}
+
+@keyframes belly-breathe {
+  0%, 100% { transform: scale(1);    opacity: 0.65; }
+  50%       { transform: scale(1.1);  opacity: 1; }
+}
+
+.belly-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(2rem, 6vw, 2.6rem);
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  color: var(--text);
+  text-align: center;
+  line-height: 1;
+  margin-bottom: -0.4rem;
+}
+
+.belly-sub {
+  font-family: 'Newsreader', Georgia, serif;
+  font-style: italic;
+  font-size: 0.9rem;
+  font-weight: 300;
+  color: var(--dim);
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.belly-steps {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-top: 0.2rem;
+}
+
+.belly-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(229,169,60,0.14);
+  border-radius: 8px;
+  padding: 0.9rem 1rem;
+}
+
+.belly-step-num {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 300;
+  color: var(--gold);
+  opacity: 0.75;
+  line-height: 1;
+  flex-shrink: 0;
+  min-width: 1.2rem;
+  text-align: center;
+  padding-top: 0.05rem;
+}
+
+.belly-step-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 300;
+  line-height: 1.65;
+  color: var(--dim);
+  margin: 0;
+}
+
+.belly-step-text strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.belly-callout {
+  background: rgba(229,169,60,0.05);
+  border: 1px solid rgba(229,169,60,0.18);
+  border-radius: 8px;
+  padding: 1rem 1.1rem;
+}
+
+.belly-callout p {
+  font-family: 'Newsreader', Georgia, serif;
+  font-size: 0.88rem;
+  font-weight: 300;
+  line-height: 1.7;
+  color: var(--dim);
+  margin: 0;
+  font-style: italic;
+  text-align: center;
+}
+
+.belly-callout em {
+  color: var(--gold);
+  font-style: normal;
+}
+
+.belly-btn {
+  margin-top: 0.4rem;
+  padding: 0.85rem 2.6rem;
+  background: transparent;
+  border: 1px solid var(--gold);
+  border-radius: 3px;
+  color: var(--gold);
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.belly-btn:hover {
+  background: rgba(229,169,60,0.12);
+  box-shadow: 0 0 24px rgba(229,169,60,0.18);
+  color: var(--text);
+}
+
+.belly-btn:active {
+  background: rgba(229,169,60,0.2);
+}
+
+/* ── Breathing diagram ── */
+.belly-diagram {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0.2rem 0 0.4rem;
+}
+
+.belly-diag-phase-wrap {
+  height: 1.1rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.belly-diag-phase {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  position: absolute;
+}
+
+.belly-diag-inhale { animation: bd-phase-in 5s ease-in-out infinite; }
+.belly-diag-exhale { animation: bd-phase-ex 5s ease-in-out infinite; }
+
+@keyframes bd-phase-in {
+  0%, 42%  { opacity: 1; }
+  50%, 93% { opacity: 0; }
+  100%     { opacity: 1; }
+}
+@keyframes bd-phase-ex {
+  0%, 42%  { opacity: 0; }
+  50%, 93% { opacity: 1; }
+  100%     { opacity: 0; }
+}
+
+.belly-diag-svg {
+  width: 180px;
+  height: auto;
+}
+
+/* SVG anatomy elements */
+.bd-body {
+  fill: rgba(229, 169, 60, 0.04);
+  stroke: rgba(229, 169, 60, 0.18);
+  stroke-width: 0.8;
+}
+
+.bd-rib {
+  stroke: rgba(229, 169, 60, 0.22);
+  stroke-width: 1.2;
+  fill: none;
+}
+.bd-rib2 {
+  opacity: 0.5;
+}
+
+.bd-sternum {
+  stroke: rgba(229, 169, 60, 0.2);
+  stroke-width: 0.8;
+}
+
+.bd-lung {
+  fill: rgba(100, 160, 220, 0.12);
+  stroke: rgba(100, 160, 220, 0.35);
+  stroke-width: 0.8;
+  transform-box: fill-box;
+  transform-origin: center top;
+  animation: bd-lung-breathe 5s ease-in-out infinite;
+}
+@keyframes bd-lung-breathe {
+  0%, 100%  { transform: scaleY(0.86); }
+  42%, 58% { transform: scaleY(1.04); }
+}
+
+.bd-diaphragm {
+  stroke: var(--gold);
+  opacity: 0.7;
+  fill: none;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: bd-diaph-breathe 5s ease-in-out infinite;
+}
+@keyframes bd-diaph-breathe {
+  0%, 100%  { transform: translateY(0px); }
+  42%, 58% { transform: translateY(13px); }
+}
+
+.bd-belly {
+  fill: rgba(229, 169, 60, 0.1);
+  stroke: rgba(229, 169, 60, 0.35);
+  stroke-width: 0.8;
+  transform-box: fill-box;
+  transform-origin: center top;
+  animation: bd-belly-breathe 5s ease-in-out infinite;
+}
+@keyframes bd-belly-breathe {
+  0%, 100%  { transform: scale(0.78, 0.72); }
+  42%, 58% { transform: scale(1, 1); }
+}
+
+.bd-hand {
+  fill: rgba(255,255,255,0.07);
+  stroke: rgba(255,255,255,0.3);
+  stroke-width: 0.6;
+  transform-box: fill-box;
+  transform-origin: center top;
+  animation: bd-belly-breathe 5s ease-in-out infinite;
+}
+
+.bd-label {
+  font-family: 'Poppins', sans-serif;
+  font-size: 8px;
+  font-weight: 600;
+  fill: rgba(229, 169, 60, 0.55);
+  letter-spacing: 0.1em;
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+.bd-label-belly {
+  fill: var(--gold);
+  opacity: 0.9;
+}
+
+.bd-arrow {
+  stroke: var(--gold);
+  stroke-width: 1.5;
+  fill: none;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: bd-arrow-pulse 5s ease-in-out infinite;
+}
+@keyframes bd-arrow-pulse {
+  0%, 30%  { opacity: 0; transform: translateY(-4px); }
+  42%, 58% { opacity: 1; transform: translateY(0); }
+  70%, 100% { opacity: 0; }
+}
+
+.belly-diag-legend {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.belly-diag-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.bd-gold { background: var(--gold); opacity: 0.7; }
+
+.belly-diag-legend-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 300;
+  color: var(--faint);
+  letter-spacing: 0.02em;
+}
+
+/* ── Video links ── */
+.belly-videos {
+  width: 100%;
+  margin-top: 0.2rem;
+}
+
+.belly-videos-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin: 0 0 0.6rem;
+  text-align: center;
+}
+
+.belly-video-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.belly-video-link {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(229,169,60,0.12);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  text-decoration: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+.belly-video-link:hover {
+  border-color: rgba(229,169,60,0.3);
+  background: rgba(229,169,60,0.05);
+}
+
+.belly-video-play {
+  font-size: 0.75rem;
+  color: var(--gold);
+  opacity: 0.8;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(229,169,60,0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 2px;
+}
+
+.belly-video-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.belly-video-text strong {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text);
+}
+.belly-video-text span {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 300;
+  color: var(--dim);
+}

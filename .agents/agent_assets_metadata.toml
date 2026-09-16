@@ -17,33 +17,53 @@ id = "tYNP2fI1VNKr5AlFn1MBA"
 uri = "file://attached_assets/generated_audio/voice_male_inhale.mp3"
 type = "audio"
 title = "voice_male_inhale"
+logical_id = "6e4b66e2-5d60-4d5c-afe1-8ff0d34a3fe2"
 
 [[outputs]]
 id = "E4yVjS6-jXRK4xV0fkyjT"
 uri = "file://attached_assets/generated_audio/voice_male_exhale.mp3"
 type = "audio"
 title = "voice_male_exhale"
+logical_id = "0469cbc8-45fe-4fb1-aaeb-180f67e805a1"
 
 [[outputs]]
 id = "n51rQCYfICIPZihAJFJ90"
 uri = "file://attached_assets/generated_audio/voice_male_hold.mp3"
 type = "audio"
 title = "voice_male_hold"
+logical_id = "c77e8c14-0c34-4306-aaac-7368232b6e47"
 
 [[outputs]]
 id = "kzcbGIVv3MaePkbS87aWE"
 uri = "file://attached_assets/generated_audio/voice_female_exhale.mp3"
 type = "audio"
 title = "voice_female_exhale"
+logical_id = "455c0a01-9915-40b3-b4ab-74028d541f25"
 
 [[outputs]]
 id = "VIH6FIAsIB1HfVCroYsGK"
 uri = "file://attached_assets/generated_audio/voice_female_hold.mp3"
 type = "audio"
 title = "voice_female_hold"
+logical_id = "650c90b0-43b7-4544-8307-242d4b7a7a78"
 
 [[outputs]]
 id = "jhWgKG57IBsAx42KTLToN"
 uri = "file://attached_assets/generated_audio/voice_female_inhale.mp3"
 type = "audio"
 title = "voice_female_inhale"
+logical_id = "7ed35b7c-954f-4a3f-8389-e90f27f1e659"
+
+[[outputs]]
+id = "kfo0_ggVds33WQFp27VuT"
+uri = "file://exports/breathwork-backup.zip"
+type = "unspecified"
+title = "Breathwork — independent project backup"
+description = "Verified ZIP: 331 project files, 46.5 MB. Includes source, audio, images, mockups and recovery instructions. Download and copy to a USB drive. Excludes secrets, browser/phone history, dependencies and Replit account data."
+logical_id = "6e758b13-7fdd-4a74-b4ef-3197c5b4ab70"
+content_hash = "sha256:a94da4d7fc9d1e815ca8ce4ab437d1e9db2587916168fb5abfb2b54593575345"
+size = 48757227
+mtime_ms = 1789602347982
+storage_uri = "gcs://replit-rams-assets-spock/rams/assets/repl:5291e2b1-565e-4b5a-adcd-d82c1dc050f0/6e758b13-7fdd-4a74-b4ef-3197c5b4ab70/0dec7a08-571a-460d-9782-4ffd7d59a84e"
+storage_version_token = "1789602354880191"
+content_type = "application/octet-stream"

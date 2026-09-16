@@ -67,3 +67,17 @@ mtime_ms = 1789602347982
 storage_uri = "gcs://replit-rams-assets-spock/rams/assets/repl:5291e2b1-565e-4b5a-adcd-d82c1dc050f0/6e758b13-7fdd-4a74-b4ef-3197c5b4ab70/0dec7a08-571a-460d-9782-4ffd7d59a84e"
 storage_version_token = "1789602354880191"
 content_type = "application/octet-stream"
+
+[[outputs]]
+id = "9gOxzKybPwXlNerqlIW97"
+uri = "file://.local/tasks/breathwork-future-goals-handoff.md"
+type = "text"
+title = "Breathwork — All Future Goals & AI Handoff"
+description = "Save this Markdown document with your ZIP backup. Includes all 20 outstanding task records, deferred animation/video goals, longer-term ideas, original roadmap and recovery guidance. No work restarted."
+logical_id = "7b0c7a46-019c-48e8-8cbe-792496f0ef8a"
+content_hash = "sha256:e4e20027c0b98f05932719a14e2db598adc6569a6bfc5e99a037aad089ba6e4a"
+size = 41338
+mtime_ms = 1789602613210
+storage_uri = "gcs://replit-rams-assets-spock/rams/assets/repl:5291e2b1-565e-4b5a-adcd-d82c1dc050f0/7b0c7a46-019c-48e8-8cbe-792496f0ef8a/c1b742f1-f7c9-43cb-9684-3c46ffaf8507"
+storage_version_token = "1789602614115378"
+content_type = "text/markdown"

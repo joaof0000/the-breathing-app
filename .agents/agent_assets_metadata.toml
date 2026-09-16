@@ -81,3 +81,45 @@ mtime_ms = 1789602613210
 storage_uri = "gcs://replit-rams-assets-spock/rams/assets/repl:5291e2b1-565e-4b5a-adcd-d82c1dc050f0/7b0c7a46-019c-48e8-8cbe-792496f0ef8a/c1b742f1-f7c9-43cb-9684-3c46ffaf8507"
 storage_version_token = "1789602614115378"
 content_type = "text/markdown"
+
+[[outputs]]
+id = "U6yDCknMjnTpeUqgI_SMG"
+uri = "file://exports/breathwork-future-goals-handoff.md"
+type = "text"
+title = "Breathwork future goals handoff — Markdown"
+description = "Clean, portable Markdown copy of the future-goals and AI handoff document."
+logical_id = "bd707033-e569-4dbf-8797-7b550b1781cd"
+content_hash = "sha256:e4e20027c0b98f05932719a14e2db598adc6569a6bfc5e99a037aad089ba6e4a"
+size = 41338
+mtime_ms = 1789603098262
+storage_uri = "gcs://replit-rams-assets-spock/rams/assets/repl:5291e2b1-565e-4b5a-adcd-d82c1dc050f0/bd707033-e569-4dbf-8797-7b550b1781cd/7a0f97ab-e0d7-4bd5-99fa-f777ff9333b6"
+storage_version_token = "1789603131293677"
+content_type = "text/markdown"
+
+[[outputs]]
+id = "YkAhULyefFnTzt14OKwjt"
+uri = "file://exports/breathwork-future-goals-handoff.pdf"
+type = "pdf"
+title = "Breathwork future goals handoff — PDF"
+description = "23-page A4 PDF version of the future-goals and AI handoff document."
+logical_id = "755e7c77-78bf-479c-b6ad-79aedd6ba089"
+content_hash = "sha256:55d41301df90d650f2f2ac163a036f08b324c1509c27f026d135c8673b6d1a10"
+size = 433073
+mtime_ms = 1789603119372
+storage_uri = "gcs://replit-rams-assets-spock/rams/assets/repl:5291e2b1-565e-4b5a-adcd-d82c1dc050f0/755e7c77-78bf-479c-b6ad-79aedd6ba089/fbab60da-ed5f-44df-b46f-7cd683ac19d8"
+storage_version_token = "1789603132400458"
+content_type = "application/pdf"
+
+[[outputs]]
+id = "PO3EmcAz97h8I0KesV-8Y"
+uri = "file://exports/breathwork-backup-with-handoff.zip"
+type = "unspecified"
+title = "Breathwork backup with handoff document"
+description = "The existing project backup ZIP plus the cleaned Markdown handoff and PDF files."
+logical_id = "7cd3e831-44c9-4dce-b62e-b1f59275b72f"
+content_hash = "sha256:973d7ca331d27878a7388db1eba282d53d24a2e07e5cae8e1b5828b06ff5ed54"
+size = 48997798
+mtime_ms = 1789603124792
+storage_uri = "gcs://replit-rams-assets-spock/rams/assets/repl:5291e2b1-565e-4b5a-adcd-d82c1dc050f0/7cd3e831-44c9-4dce-b62e-b1f59275b72f/0f0b6c42-aac6-4e01-a483-08ac70a6adad"
+storage_version_token = "1789603133584169"
+content_type = "application/octet-stream"

@@ -1,0 +1,403 @@
+{
+  "blurryOmittedCount": 0,
+  "blurryShapes": [],
+  "focusedOmittedCount": 0,
+  "focusedShapes": [
+    {
+      "componentName": "Breathwork",
+      "componentPath": "",
+      "h": 708,
+      "shapeId": "artifact:v3:artifacts/breathwork",
+      "shapeType": "iframe",
+      "state": "live",
+      "url": "[workspace URL omitted; rebuild from componentPath]",
+      "w": 944,
+      "x": 184,
+      "y": -540
+    },
+    {
+      "componentName": "V1 — Information Hierarchy",
+      "componentPath": "",
+      "h": 1080,
+      "shapeId": "cebdc17c-972f-41e2-bec3-8ba67d74ac72",
+      "shapeType": "iframe",
+      "state": "failed",
+      "url": "",
+      "w": 1920,
+      "x": 1328,
+      "y": -540
+    },
+    {
+      "componentName": "V2 — Interaction Affordance",
+      "componentPath": "",
+      "h": 1080,
+      "shapeId": "e03864ce-f34b-4ebf-ab08-7f8976936539",
+      "shapeType": "iframe",
+      "state": "failed",
+      "url": "",
+      "w": 1920,
+      "x": 3448,
+      "y": -540
+    },
+    {
+      "componentName": "V3 — Accessibility & Readability",
+      "componentPath": "",
+      "h": 1080,
+      "shapeId": "dc6e6bc5-e4ab-4566-a224-72d1b1f4e3c5",
+      "shapeType": "iframe",
+      "state": "failed",
+      "url": "",
+      "w": 1920,
+      "x": 5568,
+      "y": -540
+    },
+    {
+      "componentName": "Breathwork Mobile",
+      "componentPath": "",
+      "h": 910,
+      "shapeId": "artifact:v3:artifacts/breathwork-mobile",
+      "shapeType": "iframe",
+      "state": "live",
+      "url": "",
+      "w": 450,
+      "x": 7688,
+      "y": -455
+    },
+    {
+      "componentName": "Current — Belly Breathing",
+      "componentPath": "artifacts/mockup-sandbox/src/components/mockups/belly-breathing-redesign/Current.tsx",
+      "h": 800,
+      "shapeId": "breathwork-belly-current",
+      "shapeType": "iframe",
+      "state": "live",
+      "suggestedActions": [
+        {
+          "category": "motion redesign",
+          "content": {
+            "kind": "prompt",
+            "prompt": "Create a new variant of this design, as a new component file without modifying the source, that replaces the anatomical diagram with a serene abstract breathing animation made of flowing light and organic ripples."
+          },
+          "id": "organic-ripples",
+          "label": "Replace the anatomy drawing with flowing light ripples."
+        },
+        {
+          "category": "conceptual reimagining",
+          "content": {
+            "kind": "prompt",
+            "prompt": "Create a new variant of this design, as a new component file without modifying the source, that teaches diaphragmatic breathing through the metaphor of a softly glowing lantern that fills and releases with each breath."
+          },
+          "id": "living-lantern",
+          "label": "Reimagine the lesson around a softly breathing lantern."
+        },
+        {
+          "category": "new interaction",
+          "content": {
+            "kind": "prompt",
+            "prompt": "Create a new variant of this design, as a new component file without modifying the source, that transforms the educational page into an interactive one-minute guided belly-breathing practice while preserving its core teaching points."
+          },
+          "id": "guided-practice",
+          "label": "Turn this lesson into a short guided practice screen."
+        }
+      ],
+      "url": "[workspace URL omitted; rebuild from componentPath]",
+      "w": 1280,
+      "x": 184,
+      "y": 1725
+    },
+    {
+      "componentName": "New — Organic Breathing Motion",
+      "componentPath": "artifacts/mockup-sandbox/src/components/mockups/belly-breathing-redesign/OrganicMotion.tsx",
+      "h": 800,
+      "shapeId": "breathwork-breathing-motion",
+      "shapeType": "iframe",
+      "state": "live",
+      "suggestedActions": [
+        {
+          "category": "imagery refresh",
+          "content": {
+            "kind": "prompt",
+            "prompt": "Create a new variant of this design, in a new component file without modifying the source, that explores a warmer candlelit visual metaphor with richer organic light and distinctly different imagery."
+          },
+          "id": "warm-lantern-variant",
+          "label": "Make the breathing field feel warmer and more candlelit."
+        },
+        {
+          "category": "extreme reimagining",
+          "content": {
+            "kind": "prompt",
+            "prompt": "Create a new variant of this design, in a new component file without modifying the source, that reimagines the breathing lesson as a bright, airy experience inspired by water, open sky, and weightless motion."
+          },
+          "id": "airy-water-variant",
+          "label": "Explore a lighter version inspired by air and water."
+        },
+        {
+          "category": "new flow",
+          "content": {
+            "kind": "prompt",
+            "prompt": "Create a new frame and component file that extends this visual direction into an interactive one-minute guided breathing practice with clear progress and accessible pause controls; do not modify the source frame."
+          },
+          "id": "guided-minute-variant",
+          "label": "Turn the animation into a one-minute guided practice."
+        }
+      ],
+      "url": "[workspace URL omitted; rebuild from componentPath]",
+      "w": 1280,
+      "x": 1648,
+      "y": 1725
+    },
+    {
+      "componentName": "Current — Organic Light",
+      "componentPath": "artifacts/mockup-sandbox/src/components/mockups/belly-breathing-signature/CurrentSignature.tsx",
+      "h": 900,
+      "shapeId": "breath-signature-current",
+      "shapeType": "iframe",
+      "state": "live",
+      "suggestedActions": [
+        {
+          "category": "new interaction",
+          "content": {
+            "kind": "prompt",
+            "prompt": "Create a new frame and component file that extends this lesson into a short interactive breath calibration with start, pause, and gentle progress feedback; do not modify the source frame."
+          },
+          "id": "guided-calibration",
+          "label": "Turn the visual into a short breath calibration."
+        },
+        {
+          "category": "extreme reimagining",
+          "content": {
+            "kind": "prompt",
+            "prompt": "Create a new variant of this design in a new component file that reimagines the entire lesson as a quiet sunrise ritual with a lighter, atmospheric art direction while preserving its content and action."
+          },
+          "id": "sunrise-reimagining",
+          "label": "Reimagine the lesson as a quiet sunrise ritual."
+        },
+        {
+          "category": "system extension",
+          "content": {
+            "kind": "prompt",
+            "prompt": "Create a new canvas frame showing how this breathing visual language could extend into a cohesive three-screen onboarding motion system without modifying the source component."
+          },
+          "id": "motion-language-system",
+          "label": "Extend this motion language across onboarding."
+        }
+      ],
+      "url": "[workspace URL omitted; rebuild from componentPath]",
+      "w": 1280,
+      "x": 1312,
+      "y": 5100
+    },
+    {
+      "componentName": "A — Breathing Glyph",
+      "componentPath": "artifacts/mockup-sandbox/src/components/mockups/belly-breathing-signature/BreathingGlyph.tsx",
+      "h": 900,
+      "shapeId": "breath-signature-geometry",
+      "shapeType": "iframe",
+      "state": "live",
+      "suggestedActions": [
+        {
+          "category": "new interaction",
+          "content": {
+            "kind": "prompt",
+            "prompt": "Create a new frame and component file that extends this breathing glyph into a short guided practice with start, pause, and gentle progress feedback; do not modify this source frame."
+          },
+          "id": "glyph-guided-practice",
+          "label": "Turn the glyph into a guided breath practice."
+        },
+        {
+          "category": "art direction",
+          "content": {
+            "kind": "prompt",
+            "prompt": "Create a new frame and component file that reimagines this breathing glyph as a moonlit night ritual with a distinct visual metaphor while preserving the lesson content; do not modify this source frame."
+          },
+          "id": "glyph-night-ritual",
+          "label": "Explore a quieter night ritual variant."
+        },
+        {
+          "category": "system extension",
+          "content": {
+            "kind": "prompt",
+            "prompt": "Create a new frame and component file showing how this geometric breathing glyph language can extend across three cohesive onboarding screens; do not modify this source frame."
+          },
+          "id": "glyph-onboarding-system",
+          "label": "Extend the glyph into an onboarding motion system."
+        }
+      ],
+      "url": "[workspace URL omitted; rebuild from componentPath]",
+      "w": 1280,
+      "x": 2616,
+      "y": 5100
+    },
+    {
+      "componentName": "B — Luminous Veil",
+      "componentPath": "artifacts/mockup-sandbox/src/components/mockups/belly-breathing-signature/LuminousVeil.tsx",
+      "h": 900,
+      "shapeId": "breath-signature-veil",
+      "shapeType": "iframe",
+      "state": "live",
+      "suggestedActions": [
+        {
+          "category": "new interaction",
+          "content": {
+            "kind": "prompt",
+            "prompt": "Create a new frame and component file that extends the Luminous Veil into an interactive paced breathing practice with start, pause, and gentle progress; do not modify the source frame."
+          },
+          "id": "veil-guided-practice",
+          "label": "Turn the veil into a paced breathing practice."
+        },
+        {
+          "category": "extreme reimagining",
+          "content": {
+            "kind": "prompt",
+            "prompt": "Create a new variant of this design in a new component file that reimagines the veil as an airy daylight ritual with a distinct luminous atmosphere while preserving the lesson content."
+          },
+          "id": "veil-daylight-ritual",
+          "label": "Reimagine the veil as a bright daylight ritual."
+        },
+        {
+          "category": "motion refinement",
+          "content": {
+            "kind": "prompt",
+            "prompt": "Create a new variant of this design in a new component file that makes inhale, pause, and exhale transitions more legible through the veil movement without increasing intensity."
+          },
+          "id": "veil-transition-clarity",
+          "label": "Make each breath transition easier to feel."
+        }
+      ],
+      "url": "[workspace URL omitted; rebuild from componentPath]",
+      "w": 1280,
+      "x": 3920,
+      "y": 5100
+    },
+    {
+      "componentName": "C — Resonant Field",
+      "componentPath": "artifacts/mockup-sandbox/src/components/mockups/belly-breathing-signature/ResonantField.tsx",
+      "h": 900,
+      "shapeId": "breath-signature-field",
+      "shapeType": "iframe",
+      "state": "live",
+      "suggestedActions": [
+        {
+          "category": "new screen",
+          "content": {
+            "kind": "prompt",
+            "prompt": "Create a new canvas frame and component file that extends the Resonant Field into a complete guided-session visualizer with elapsed time, phase guidance, and calm controls; do not modify the source."
+          },
+          "id": "field-session-visualizer",
+          "label": "Extend the field into a full session visualizer."
+        },
+        {
+          "category": "extreme reimagining",
+          "content": {
+            "kind": "prompt",
+            "prompt": "Create a new variant of this design in a new component file that transforms the resonant lines into an abstract moonlit topography while preserving the lesson and restrained motion."
+          },
+          "id": "field-moonlit-landscape",
+          "label": "Reimagine the field as a moonlit landscape."
+        },
+        {
+          "category": "motion refinement",
+          "content": {
+            "kind": "prompt",
+            "prompt": "Create a new variant of this design in a new component file that introduces a clearer, calmer pause between expansion and release without making the animation more intense."
+          },
+          "id": "field-pause-clarity",
+          "label": "Give the field a clearer moment of stillness."
+        }
+      ],
+      "url": "[workspace URL omitted; rebuild from componentPath]",
+      "w": 1280,
+      "x": 5224,
+      "y": 5100
+    },
+    {
+      "componentName": "Current — Diaphragm Lesson",
+      "componentPath": "artifacts/mockup-sandbox/src/components/mockups/breath-science-diaphragm/CurrentScience.tsx",
+      "h": 900,
+      "shapeId": "diaphragm-science-current",
+      "shapeType": "iframe",
+      "state": "live",
+      "suggestedActions": [
+        {
+          "category": "motion redesign",
+          "content": {
+            "kind": "prompt",
+            "prompt": "Create a new variant of the diaphragm lesson component in a new file that replaces the static side-by-side anatomy SVG with an animated single-view diagram showing the diaphragm descending on inhale and rising on exhale in real time, without modifying the source CurrentScience.tsx."
+          },
+          "id": "animated-anatomy",
+          "label": "Animate the anatomy diagram to show live breathing"
+        },
+        {
+          "category": "information hierarchy",
+          "content": {
+            "kind": "prompt",
+            "prompt": "Create a new variant in a new component file that keeps only the diaphragm section (heading, intro, anatomy diagram, what-is card, and first explanatory card), removing the hero and 10-reasons list, so the diaphragm content is immediately visible without scrolling."
+          },
+          "id": "focus-diaphragm-only",
+          "label": "Strip to just the diaphragm section — no 10-reasons scroll"
+        },
+        {
+          "category": "new interaction",
+          "content": {
+            "kind": "prompt",
+            "prompt": "Create a new variant in a new component file that transforms the five-step diaphragm guide into an interactive step-by-step screen where the user taps Next to advance through each cue, with the anatomy diagram updating to match the current step."
+          },
+          "id": "interactive-guide",
+          "label": "Turn the step-by-step into a tappable guided practice"
+        }
+      ],
+      "url": "[workspace URL omitted; rebuild from componentPath]",
+      "w": 430,
+      "x": 2092,
+      "y": 7167
+    },
+    {
+      "componentName": "Breath Science — Diaphragm Motion",
+      "componentPath": "artifacts/mockup-sandbox/src/components/mockups/breath-science-diaphragm/DiaphragmMotion.tsx",
+      "h": 900,
+      "shapeId": "diaphragm-science-rework",
+      "shapeType": "iframe",
+      "state": "live",
+      "suggestedActions": [
+        {
+          "category": "motion",
+          "content": {
+            "kind": "prompt",
+            "prompt": "Adjust the diaphragm motion signature so the warm ribbon breathes more slowly with a longer exhale, keeping the single-view teaching visual and reduced-motion support."
+          },
+          "id": "slow-motion",
+          "label": "Make the breath cycle slower and more meditative"
+        },
+        {
+          "category": "hierarchy",
+          "content": {
+            "kind": "prompt",
+            "prompt": "Create a new variant that preserves the lesson copy but brings the diaphragm teaching visual immediately below the hero, with a more pronounced instructional caption and phase labels."
+          },
+          "id": "focus-lesson",
+          "label": "Bring the diaphragm lesson into focus"
+        },
+        {
+          "category": "interaction",
+          "content": {
+            "kind": "prompt",
+            "prompt": "Create a new variant with a subtle accessible play/pause control for the diaphragm teaching cycle, preserving autoplay and a reduced-motion state."
+          },
+          "id": "guided-cue",
+          "label": "Add a gentle guided cue"
+        }
+      ],
+      "url": "[workspace URL omitted; rebuild from componentPath]",
+      "w": 430,
+      "x": 2572,
+      "y": 7167
+    }
+  ],
+  "peripheralClusters": [],
+  "summary": "13 shapes total",
+  "viewport": {
+    "h": 8607,
+    "w": 7954,
+    "x": 184,
+    "y": -540
+  }
+}

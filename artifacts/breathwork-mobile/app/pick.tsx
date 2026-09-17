@@ -80,31 +80,42 @@ export default function PickScreen() {
         <Text style={[styles.sectionLabel, { color: colors.faint }]}>CHOOSE A TECHNIQUE</Text>
 
         {goalData.choices.map((choice, idx) => (
-          <Pressable
+          <View
             key={choice.tech}
-            style={({ pressed }) => [
+            style={[
               styles.techCard,
               {
-                backgroundColor: pressed ? 'rgba(229,169,60,0.10)' : colors.card,
+                backgroundColor: colors.card,
                 borderColor: colors.border,
               },
             ]}
-            onPress={() => handlePick(choice.tech)}
           >
             <View style={[styles.accentBar, { backgroundColor: PHASE_ACCENT_COLORS[idx % PHASE_ACCENT_COLORS.length] }]} />
-            <View style={styles.techInfo}>
-              <Text style={[styles.techName, { color: colors.foreground }]}>{choice.name}</Text>
-              <Text style={[styles.techDesc, { color: colors.dim }]}>{choice.desc}</Text>
-            </View>
             <Pressable
-              onPress={(e) => { e.stopPropagation(); handleInfo(choice.tech); }}
+              style={({ pressed }) => [
+                styles.cardAction,
+                { opacity: pressed ? 0.72 : 1 },
+              ]}
+              onPress={() => handlePick(choice.tech)}
+              accessibilityRole="button"
+              accessibilityLabel={`Start ${choice.name}`}
+            >
+              <View style={styles.techInfo}>
+                <Text style={[styles.techName, { color: colors.foreground }]}>{choice.name}</Text>
+                <Text style={[styles.techDesc, { color: colors.dim }]}>{choice.desc}</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={colors.faint} style={{ marginLeft: 4 }} />
+            </Pressable>
+            <Pressable
+              onPress={() => handleInfo(choice.tech)}
               hitSlop={10}
               style={({ pressed }) => [styles.infoBtn, { opacity: pressed ? 0.5 : 1 }]}
+              accessibilityRole="button"
+              accessibilityLabel={`Learn more about ${choice.name}`}
             >
               <Ionicons name="information-circle-outline" size={22} color={colors.dim} />
             </Pressable>
-            <Ionicons name="chevron-forward" size={20} color={colors.faint} style={{ marginLeft: 4 }} />
-          </Pressable>
+          </View>
         ))}
 
         <View style={[styles.divider, { backgroundColor: colors.border }]} />
@@ -120,7 +131,7 @@ export default function PickScreen() {
           ]}
           onPress={() => {
             void Haptics.selectionAsync();
-            router.push('/session?tech=box');
+            router.push('/explore');
           }}
         >
           <Ionicons name="grid-outline" size={18} color={colors.dim} />
@@ -172,9 +183,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 18,
     borderWidth: 1,
-    padding: 20,
+    paddingVertical: 20,
+    paddingLeft: 20,
+    paddingRight: 12,
     marginBottom: 12,
     overflow: 'hidden',
+  },
+  cardAction: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   accentBar: {
     width: 4,

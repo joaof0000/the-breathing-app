@@ -1,3 +1,4 @@
 - [GitHub sync divergence](github-sync-divergence.md) — GitHub sync is deliberately non-force; merge remote main before retrying when it has advanced.
 - [GitHub Pages initialization](github-pages-initialization.md) — Pages must exist before the deployment workflow can configure and publish it.
 - [Breathwork visual language](breathwork-visual-language.md) — prefer warm abstract organic motion over anatomical illustrations in guided experiences.
+- [Expo Web card controls](expo-web-card-controls.md) — keep card actions and secondary controls as sibling pressables to avoid nested-button hydration errors.
